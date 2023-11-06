@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition > 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                   <script>
+        function test(id){
+          idarray=id.split(":")
+          id=idarray[0]+":"+idarray[1]+":"+idarray[2]
+//            console.log(id)
+         let pattern = /^\s*((0?[17]\d{8})|(\+?25[46][17]\d{8}))\s*$/i;
+           buttonid=id+":submitbutton";
+           testmobilesid=id+":testmobilestextarea";
+                    Editcallbackformmessagesid="Editcallbackformmessages";
+
+//           Editcallbackformmessagesid=id+":Editcallbackformmessages";
+//             console.log("buttonid "+buttonid)
+//           console.log("numbers id "+testmobilesid)
+//           console.log("message id"+Editcallbackformmessagesid)
+//           Editcallbackformmessagesid="Editcallbackformmessages";
+//           console.log(Editcallbackformmessagesid)
+           const submitbutton= document.getElementById(buttonid);
+           const testmobiles= document.getElementById(testmobilesid).value.split(",");
+            Editcallbackformmessages= document.getElementById( Editcallbackformmessagesid);
+           
+           let result=null
+         
+           if(testmobiles.length==1 &amp;&amp;testmobiles[0]=="") {
+               console.log("empty number "+testmobiles[0]+"\n")
+              submitbutton.disabled=false
+              Editcallbackformmessages.innerHTML=""
+              return;
+         }
+           for (let str of testmobiles){
+                   result = str.match(pattern);
+                   
+                   if(result==null) break;
+           }
+        
+
+         if(result==null){
+               console.log(Editcallbackformmessages)
+                
+               Editcallbackformmessages.innerHTML="some numbers are invalid"
+               console.log(Editcallbackformmessages.innerHTML)
+               $(Editcallbackformmessagesid).html ('abc');
+
+$(Editcallbackformmessagesid).text('abc');
+
+               
+             submitbutton.disabled=true
+         }else{
+             console.log(Editcallbackformmessages)
+              submitbutton.disabled=false
+              Editcallbackformmessages.innerHTML="all numbers are valid"
+         }
+        }
+        
+        
+        
+        </script>
+                <p:panel id="maintab" header="AVAILABLE CALLBACKS" >
+                    <p:dataTable var="data" value="#{callback.getcallback()}"
+                                   rows="14"
+                                 paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 >
+                        <p:column headerText="UserID">
+                            <h:outputText value="#{data.userid}"/>
+                        </p:column>
+                        <p:column headerText="Username">
+                            <h:outputText  value="#{data.ussd_assigned_code}" />
+                        </p:column>
+
+                        <p:column headerText="SenderID">
+                            <h:outputText value="#{data.callback_url}" />
+                        </p:column>
+                        <p:column headerText="Testbed Numbers">
+                            <h:outputText value="#{data.testbednumbers}" />
+                        </p:column>
+                        <p:column headerText="Testbed">
+                            <h:outputText value="#{data.testbed==true?'Active':'Inactive'}" />
+                        </p:column>
+                        <p:column headerText="Status">
+                            <h:outputText  value="#{data.real_status}" />
+                        </p:column>
+                        <p:column headerText="Action">
+
+                            <!--<p:panelGrid columns="2">-->
+
+                            <h:form>
+                                <p:commandLink style="padding: .3em 1em;" 
+                                               id="editbutton"
+                                             
+                                               oncomplete="PF('editgroupmodal').show();">
+<h:graphicImage 
+    value="resources/images/edit.gif" width="15px"></h:graphicImage>
+                                    <p:ajax  listener="#{callBackScroller.psetCurrentCallback(data)}" 
+                                             update="@([id$=editgroupmodal])"
+                                             />
+                                    <p:tooltip for="editbutton" value="Click to edit callback"/>
+                                </p:commandLink>
+
+                            
+                                <p:commandLink 
+                                    id="deletebutton"
+                                    style="padding: .3em 1em;" 
+                                   
+                                    oncomplete="PF('deletegroupmodal').show();"
+                                    >
+                                    <h:graphicImage 
+    value="resources/images/delete.gif" width="15px"></h:graphicImage>
+
+                                    <p:ajax  listener="#{callBackScroller.psetCurrentCallback(data)}" 
+                                             update="@([id$=deletegroupmodal])" />
+       <p:tooltip for="deletebutton" value="Click to delete callback"/>
+
+                                </p:commandLink>
+                            </h:form>
+<!--</p:panelGrid>-->
+
+
+                            <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                             <h:form>
+                                             <p  id="Editcallbackformmessages"  style="color:red;" ></p>
+
+                                           
+
+                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                        <tr >
+                                            <td ><h:outputLabel for="userid" value="User ID" /></td>
+                                            <td><p:inputText style="width: 150px" id="userid" value="#{callBackScroller.currentItem.getUserid()}" 
+                                                            disabled="true"
+                                                    readonly="true">
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputText></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td ><h:outputLabel for="username" value="Code" /></td>
+                                            <td  ><p:inputText
+                                                    disabled="true"
+                                                    readonly="true"
+                                                    style="width: 150px" id="username" value="#{callBackScroller.currentItem.ussd_assigned_code}" 
+                                                    >
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputText></td>
+
+
+
+                                        </tr>
+                                        <tr>
+                                            <td ><h:outputLabel for="paybill" value="Callback" /></td>
+                                            <td  ><p:inputTextarea style="width: 150px" id="paybill" 
+                                                                   value="#{callBackScroller.currentItem.callback_url}"
+                                                                   required="true" placeholder="" 
+                                                                   requiredMessage="Enter Group Description"
+                                                                   validatorMessage="Enter Group Description" >
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputTextarea></td>
+
+
+
+                                        </tr>
+                                          <tr >
+                                    <td style="width: 200px"><h:outputLabel for="status" value="Status" /></td>
+                                    <td>
+                                        <p:selectBooleanCheckbox  id="status" 
+                                                                  value="#{callBackScroller.currentItem.status}"                                                    
+                                                     required="true" 
+                                                     requiredMessage="Enter Group Name" 
+                                                     validatorMessage="Enter Group name" >
+                                            <f:validateLength minimum="3" />
+                                        </p:selectBooleanCheckbox ></td>
+                                </tr>
+                                          <tr >
+                                    <td style="width: 200px"><h:outputLabel for="testbed" value="Testbed" /></td>
+                                    <td>
+                                        <p:selectBooleanCheckbox  id="testbed" 
+                                                                  value="#{callBackScroller.currentItem.testbed}"                                                    
+                                                     required="true" 
+                                                    
+                                                     requiredMessage="Enter Group Name" 
+                                                     validatorMessage="Enter Group name" >
+                                            <f:validateLength minimum="3" />
+                                        </p:selectBooleanCheckbox ></td>
+                                </tr>
+          
+                                            <tr>
+                                               
+                                            <td ><h:outputLabel for="testmobilestextarea" value="Testbed Mobiles" /></td>
+                                            <td  ><p:inputTextarea style="width: 150px" 
+                                                                   id="testmobilestextarea"
+                                                                   value="#{callBackScroller.currentItem.testbednumbers}"
+                                                                   required="true" placeholder="" 
+                                                                   requiredMessage="Enter Group Description" 
+                                                                   >
+                                                     <f:validator validatorId="testbedvalidatorv1"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                                </p:inputTextarea></td>
+
+
+
+                                        </tr>
+                                        
+                                    
+
+
+                                    </table>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="true"
+                                                         id="submitbutton"
+         oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} "
+
+                                                         actionListener="#{callBackScroller.save2()}"
+                                                         value="Save"></p:commandButton>
+                                        <p:commandButton value="Cancel" immediate="true" 
+                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                                    </div>
+                                </h:form>
+                            </p:dialog> 
+
+
+
+
+                            <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                                  <h:form>
+
+                                    <p:outputLabel value="Are you sure you want to delete callBack '#{callBackScroller.currentItem.callback_url}' ? Note: You cannot undo."/>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+
+                                        <p:commandButton  style="margin-right: 10px" ajax="false"  actionListener="#{callBackScroller.deleteCallBack()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+
+                                    </div>
+                                </h:form>
+                            </p:dialog> 
+
+                        </p:column>
+
+
+                    </p:dataTable>
+
+
+
+
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

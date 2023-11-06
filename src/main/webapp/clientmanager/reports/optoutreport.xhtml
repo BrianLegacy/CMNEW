@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body id="body">
+        <ui:composition > 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                <p:panel id="maintab" header="SMPP OUT REPORT" >
+                    
+                    
+                    
+                    
+                    
+                    
+    <h:form>
+        <h:panelGrid columns="9" width="100%" style="margin-left:auto; margin-right:auto;padding:8px">
+            <h:outputText value="Start Date :"/>
+            <p:calendar value="#{oPTOut.reportStartDate}" style="width:200px"/>
+            <h:outputText value="End Date :"/>
+            <p:calendar value="#{oPTOut.reportEndDate}"
+                            style="width:200px"/>
+        
+
+            <h:panelGroup layout="block" rendered="#{oPTOut.reportStartDate ne null and oPTOut.reportEndDate ne null}">
+                <p:commandLink ajax="false" update="table"  
+                                 id="report_gen" 
+                                 action="#{oPTOut.optoutTabularReport}" >
+                <h:graphicImage value="/resources/images/report.png" id="generate_report"
+                                    />
+                </p:commandLink>
+                
+                
+            </h:panelGroup>
+            <h:panelGroup layout="block" rendered="#{oPTOut.reportStartDate ne null and oPTOut.reportEndDate ne null}">
+
+                <h:commandLink id="xlsx_gen" action="#{oPTOut.generateXLSX}">
+                    <h:graphicImage value="/resources/images/icon-xls.gif" id="export_to_xlsx"
+                                    />
+                </h:commandLink>
+               
+            </h:panelGroup>
+        </h:panelGrid>
+        
+        
+    </h:form>
+        
+    
+                    
+                    <p:dataTable id="table" var="optOut" value="#{oPTOut.smsOutReport}">
+                        <p:column headerText="Mobile">
+                            <h:outputText value="#{optOut.destinationAddr}"/>
+                        </p:column>
+                        <p:column headerText="Source Address">
+                            <h:outputText  value="#{optOut.sourceAddr}" />
+                        </p:column>
+
+                        <p:column headerText="Message">
+                            <h:outputText value="#{optOut.messagePayload}" />
+                        </p:column>
+                        <p:column headerText="Time Sent">
+                            <h:outputText value="#{optOut.timeSubmitted}" />
+                        </p:column>
+                        <p:column headerText="Last Update">
+                            <h:outputText value="#{optOut.timeProcessed}" />
+                        </p:column>
+                         <p:column headerText="User">
+                            <h:outputText value="#{optOut.user}" />
+                        </p:column>
+                            <p:column headerText="Status">
+                            <h:outputText value="#{optOut.realStatus}" />
+                        </p:column>
+                        
+                         <p:column headerText="No of SMS">
+                            <h:outputText value="#{optOut.smsCount}" />
+                        </p:column>
+                          <f:facet name="footer">
+                              <p:columnGroup>
+                            <p:column colspan="7">Summary: Total Number of SMS Sent for the period</p:column>
+                            <p:column><h:outputLabel value="#{oPTOut.totaSMS}"/></p:column>
+                              </p:columnGroup>
+                    </f:facet>
+                       
+
+                    </p:dataTable>
+
+
+
+
+                    
+              
+                    
+                    
+                    
+                    
+                    
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body id="body">
+        <ui:composition > 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                <p:panel id="maintab" header="SMS OUT VISUAL REPORT" >
+                    
+                    
+                    
+                    
+                    
+                    
+    <h:form>
+        <h:panelGrid columns="9" width="100%" style="margin-left:auto; margin-right:auto;padding:8px">
+            <h:outputText value="Start Date :"/>
+            <p:calendar value="#{sMSOut.reportStartDate}" style="width:200px"/>
+            <h:outputText value="End Date :"/>
+            <p:calendar value="#{sMSOut.reportEndDate}"
+                            style="width:200px"/>
+            <h:outputText value="User :"/>
+               <p:selectOneMenu id="users" 
+                                                     
+                                value="#{sMSOut.user}">
+                                        <f:ajax   event="change" render="addgroupform" />
+                                        <f:selectItem itemLabel="Select User" itemValue="" />
+                                        <f:selectItems value="#{sMSOut.usernames}" ></f:selectItems>
+                                    </p:selectOneMenu>
+            
+            
+            
+            <p:menuButton value="Details" rendered="false" >
+                
+                <p:menuitem value="Detail" action="#{sMSOut.setSummary(true)}"  ajax="false"/>
+                <p:menuitem value="Summary" action="#{sMSOut.setSummary(false)}" ajax="false" />
+            
+              
+            </p:menuButton>
+
+            <h:panelGroup layout="block" rendered="#{sMSOut.reportStartDate ne null and sMSOut.reportEndDate ne null}">
+                <p:commandLink ajax="false" update="table"  
+                                 id="report_gen" 
+                                 action="#{sMSOut.doNothing()}" >
+                <h:graphicImage value="/resources/images/report.png" id="generate_report"
+                                    />
+                </p:commandLink>
+                
+                
+            </h:panelGroup>
+            <h:panelGroup layout="block" rendered="#{sMSOut.reportStartDate ne null and sMSOut.reportEndDate ne null}">
+
+                <h:commandLink id="xlsx_gen" action="#{sMSOut.generateXLSX}">
+                    <h:graphicImage value="/resources/images/icon-xls.gif" id="export_to_xlsx"
+                                    />
+                </h:commandLink>
+               
+            </h:panelGroup>
+        </h:panelGrid>
+        
+        
+    </h:form>
+        
+                     <!--<h:form rendered="false" id="summary">-->
+       
+        <h:outputLabel value=" #{sMSOut.user} has  #{sMSOut.summarySMS()} messages" 
+                       rendered="false"></h:outputLabel>
+    <!--</h:form>-->
+                    
+                    <p:dataTable id="table" var="smsOut" value="#{sMSOut.smsOutReport}" rendered="false"
+                                 
+                                     rows="12"
+                                 paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             
+                                 >
+                        <p:column headerText="Mobile">
+                            <h:outputText value="#{smsOut.destinationAddr}"/>
+                        </p:column>
+                        <p:column headerText="Source Address">
+                            <h:outputText  value="#{smsOut.sourceAddr}" />
+                        </p:column>
+
+                        <p:column headerText="Message">
+                            <h:outputText value="#{smsOut.messagePayload}" />
+                        </p:column>
+                        <p:column headerText="Time Sent">
+                            <h:outputText value="#{smsOut.timeSubmitted}" />
+                        </p:column>
+                        <p:column headerText="Last Update">
+                            <h:outputText value="#{smsOut.timeProcessed}" style="color: #{data.color}"/>
+                        </p:column>
+                         <p:column headerText="User">
+                            <h:outputText value="#{smsOut.user}" style="color: #{data.color}"/>
+                        </p:column>
+                            <p:column headerText="Status">
+                            <h:outputText value="#{smsOut.realStatus}" style="color: #{data.color}"/>
+                        </p:column>
+                        
+                         <p:column headerText="No of SMS">
+                            <h:outputText value="#{smsOut.smsCount}" style="color: #{data.color}"/>
+                        </p:column>
+                       
+
+                    </p:dataTable>
+
+
+
+
+                    
+                    
+                    
+                    
+                    <h:form>
+                    
+     
+                    <p:dialog height="60" widgetVar="modal"  rendered="#{sMSOut.renderModal}"  id="modal"  width="400">
+            <f:facet name="header">
+                <h:outputText value="Bulk  Report Generator"/>
+            </f:facet>
+            <f:facet name="controls">
+                <h:panelGroup>  
+                    <h:graphicImage value="/resources/images/icons/close.png" id="hidelink1" styleClass="hidelink"/>
+                    <!--<rich:componentControl for="modal" attachTo="hidelink1" operation="hide" event="onclick"/>-->
+                </h:panelGroup>
+            </f:facet>
+            <h:outputText value="This a bulky report. Click Proceed to process full report or Cancel to export upto a maximum of 15000 records only"/>
+
+            <h:panelGrid style="margin-right:auto; margin-left:auto; text-align:center" columns="3">
+               
+                
+                <p:commandButton action="#{sMSOut.closeTheModal()}"  value="Cancel" oncomplete="PF('modal').hide();
+                                   return false;"
+                                   >
+                   
+                     
+                                   </p:commandButton>
+                
+               
+                <p:commandButton ajax="false" actionListener="#{sMSOut.executeReport()}"  value="Proceed" oncomplete="PF('modal').hide();
+                                   return false;"
+                                   ></p:commandButton>
+                  
+            </h:panelGrid>
+        </p:dialog>
+                    </h:form>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

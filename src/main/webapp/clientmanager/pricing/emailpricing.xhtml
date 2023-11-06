@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition > 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  
+            
+                .pgrid-borderless.ui-panelgrid>*>tr,
+.pgrid-borderless.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+}
+                
+/*            .ui-panel-title{
+             margin-left:45% !important;
+}*/
+            </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                <p:panel id="maintab" header="Email Pricing Table" >
+                      
+                        <h:form style="padding: .1em 1em; position: relative;left: 48%; margin-right:5px;">
+                    
+                      
+                          <p:commandLink  
+                              id="addpricingitem"
+                                         actionListener="#{callBackScroller.clearCurrentItem() }"
+                                            
+                                         ajax="true"
+                                                   oncomplete="PF('createpricingmodal').show();"
+                                                    update="@([id$=createpricingmodal])"
+                                                   >
+                                        <h:graphicImage 
+                                            value="/resources/images/icons/plus.png" width="25px"></h:graphicImage>
+                              <p:tooltip for="addpricingitem" value="Click to add new pricing item"/>
+                                    </p:commandLink>
+                        
+                        </h:form>
+                    <br/>
+                    <p:dataTable var="data" value="#{callback.pricing}"
+                                 rows="8"
+                                 id="pricingtable"
+                                 paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 >
+                        <p:column headerText="UserID">
+                            <h:outputText value="#{data.id}"/>
+                        </p:column>
+                        <p:column headerText="Range">
+                            <h:outputText  value="#{data.emails_purchased}" />
+                        </p:column>
+
+                        <p:column headerText="Price">
+                            <h:outputText value="#{data.price}" />
+                        </p:column>
+                        <p:column headerText="Type">
+                            <h:outputText value="#{data.expiry}" />
+                        </p:column>
+
+                        <p:column headerText="Action">
+
+                            <!--<p:panelGrid columns="2">-->
+
+                                <h:form>
+                                    <p:commandLink style="padding: .3em 1em;" 
+                                                   id="editbutton" 
+                                                   oncomplete="PF('editgroupmodal').show();">
+                                        <h:graphicImage 
+                                            value="resources/images/edit.gif" width="15px"></h:graphicImage>
+                                        <p:ajax  listener="#{callBackScroller.psetCurrentPricingItemForEdit(data) }" 
+                                                 update="@([id$=editgroupmodal])"
+                                                 />
+                                         <p:tooltip for="editbutton" value="Click to edit" />
+                                    </p:commandLink>
+
+                               
+                                    <p:commandLink 
+                                        style="padding: .3em 1em;" 
+                                        id="deletebutton"
+                                        oncomplete="PF('deletegroupmodal').show();"
+                                        >
+                                        <h:graphicImage 
+                                            value="resources/images/delete.gif" width="15px"></h:graphicImage>
+
+                                        <p:ajax  listener="#{callBackScroller.pstorePricingid(data) }" 
+                                                 update="@([id$=deletegroupmodal])" />
+                                         <p:tooltip for="deletebutton" value="Click to delete" />
+                                    </p:commandLink>
+                                </h:form>
+                            <!--</p:panelGrid>-->
+
+
+                            <p:dialog header="Edit  Pricing" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                                <h:form>
+                                    <p:messages id="editpricingmessages"/>
+                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                        <tr >
+                                            <td ><h:outputLabel for="userid" value="ID" /></td>
+                                            <td><p:inputText style="width: 150px" 
+                                                             id="userid"
+                                                             value="#{callBackScroller.currentPricingItem.id}" 
+                                                             disabled="true"
+                                                             readonly="true">
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputText></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td ><h:outputLabel for="range" value="Range" /></td>
+                                            <td  >
+                                             <table style="border: none; position: relative;left: -10px;width: 170px " >
+                                                    <tr style="border: none; "  >
+                                                        <td style="border: none; ">  <p:inputText
+                                                                
+                                                                  required="true"
+                                                               requiredMessage="Min range is required"
+                                                               validatorMessage="Only digits allowed in range"
+                                                        style="width: 45px; margin: 0; padding-left: 0; padding-right: 0 "  
+                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_start}" 
+                                                        >
+                                                                <f:validateRegex pattern="\d+" />
+                                                                
+                                                    </p:inputText></td>
+                                                        <td style="border: none; text-align: center">to</td>
+                                                        <td style="border: none; "> <p:inputText
+                                                                 required="true"
+                                                               requiredMessage="Max range is required"
+                                                                validatorMessage="Only digits allowed in range"
+                                                        style="width: 45px; margin: 0; padding-left: 0; padding-right: 0"  
+                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_end}" 
+                                                        >  <f:validateRegex pattern="\d+" />
+                                                    </p:inputText></td>
+                                                        
+                                                    </tr>
+                                                </table> 
+                                            </td>
+
+
+
+                                        </tr>
+                                      
+                                        <tr>
+                                            <td ><h:outputLabel for="type" value="Select Type" /></td>
+                                            <td  >
+                                              <p:selectOneMenu id="types" 
+                                                                required="true"
+                                                               requiredMessage="Type is required" 
+                                                               
+                                                     value="#{callBackScroller.currentPricingItem.expiry}">
+                                        <f:selectItem itemLabel="Select type" itemValue="" />
+                                        <f:selectItems value="#{user.typeCombo}" ></f:selectItems>
+                                    </p:selectOneMenu>
+                                            
+                                            
+                                            
+                                            </td>
+
+
+
+                                        </tr>
+                                        <tr>
+                                            <td ><h:outputLabel for="price" value="Price" /></td>
+                                            <td  ><p:inputText style="width: 150px" id="email" 
+                                                               value="#{callBackScroller.currentPricingItem.price}"
+                                                               required="true" 
+                                                               requiredMessage="Price is required"   >
+                                                    
+                                                </p:inputText></td>
+
+
+
+                                        </tr>
+
+
+                                    </table>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="true"
+ update="@([id$=editpricingmessages])"
+                                                         actionListener="#{callBackScroller.updatePricing()}"  
+                                                          oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} " 
+                                                         value="Save"></p:commandButton>
+                                        <p:commandButton value="Cancel" 
+                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                                    </div>
+                                </h:form>
+                            </p:dialog> 
+
+
+
+
+                            <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                                <h:form>
+
+                                    <p:outputLabel value="Are you sure you want to delete pricing #{callBackScroller.currentPricingItem.emails_purchased}? Note: You cannot undo."/>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+
+                                        <p:commandButton  style="margin-right: 10px" ajax="false"
+                                                          actionListener="#{callBackScroller.deletePricingTable()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+
+                                    </div>
+                                </h:form>
+                            </p:dialog> 
+                               <p:dialog header="Create  Pricing" widgetVar="createpricingmodal" id="createpricingmodal" modal="true">
+                                <h:form>
+                                    
+                                    <p:messages id="createpricingmessages"/>
+                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                     
+
+                                        <tr>
+                                            <td ><h:outputLabel for="range" value="Range" /></td>
+                                            <td  >
+                                                <table style="border: none; position: relative;left: -10px;width: 170px " >
+                                                    <tr style="border: none; "  >
+                                                        <td style="border: none; ">  <p:inputText
+                                                        style="width: 45px; margin: 0; padding-left: 0; padding-right: 0 "  
+                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_start}" 
+                                                        required="true"
+                                                         requiredMessage="min range is required"
+                                                        >
+                                                    </p:inputText></td>
+                                                        <td style="border: none; text-align: center">to</td>
+                                                        <td style="border: none; "> <p:inputText
+                                                        style="width: 45px; margin: 0; padding-left: 0; padding-right: 0"  
+                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_end}" 
+                                                        required="true"
+                                                        requiredMessage="max range is required"
+                                                        >
+                                                    </p:inputText></td>
+                                                        
+                                                    </tr>
+                                                </table>
+                                                
+                                                  
+                                                    
+                                                
+                                            </td>
+
+
+
+                                        </tr>
+                                      
+                                        <tr>
+                                            <td ><h:outputLabel for="type" value="Select Type" /></td>
+                                            <td  >
+                                              <p:selectOneMenu id="types" 
+                                                     value="#{callBackScroller.currentPricingItem.expiry}"
+                                                     
+                                                     required="true"
+                                                     requiredMessage="type is required"
+                                                     >
+                                        <f:selectItem itemLabel="Select type" itemValue="" 
+                                                       
+                                                      />
+                                        <f:selectItems value="#{user.typeCombo}" ></f:selectItems>
+                                    </p:selectOneMenu>
+                                            
+                                            
+                                            
+                                            </td>
+
+
+
+                                        </tr>
+                                        <tr>
+                                            <td ><h:outputLabel for="price" value="Price" /></td>
+                                            <td  ><p:inputText style="width: 150px" id="email"
+                                                               
+                                                               
+                                                               value="#{callBackScroller.currentPricingItem.price}" required="true"
+                                                               placeholder="" requiredMessage="Price is required"   >
+                                                 
+                                                </p:inputText>
+                                                <p:message for="@previous"/>
+                                            </td>
+
+
+
+                                        </tr>
+
+
+                                    </table>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="true"
+                                                         
+                                                         update="@([id$=createpricingmessages])"
+                                                         actionListener="#{callBackScroller.savePricing()}"  
+                            oncomplete="if (!args.validationFailed){PF('createpricingmodal').hide();location.reload();} "
+                            onerror="alert('error')"
+                                                         value="Save"></p:commandButton>
+                                        <p:commandButton value="Cancel" 
+                                                         immediate="true"
+                                                         onclick="PF('createpricingmodal').hide();"></p:commandButton>
+                                    </div>
+                                </h:form>
+                            </p:dialog> 
+
+                        </p:column>
+
+
+                    </p:dataTable>
+
+
+
+
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

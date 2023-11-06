@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition> 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+             
+            <div align="center">
+                <p:panel id="maintab" header="ADD TILL/PAYBILL FORM" >
+                     <h:form id="usersdropdown">
+                            
+                         <table align="center" style="margin-top:15px" >
+                      <tr >
+                                    <td style="width: 200px"><h:outputLabel for="username" value="User" /></td>
+                                    <td>
+                                         <p:selectOneMenu id="users" 
+                                                      valueChangeListener="#{userScroller.finduserId}"
+                                                     value="#{userScroller.userS}">
+                                        <f:ajax   event="change" render="addgroupform" />
+                                        <f:selectItem itemLabel="Select User" itemValue="" />
+                                        <f:selectItems value="#{sMSOut.data}" ></f:selectItems>
+                                    </p:selectOneMenu>
+                                        
+                                    </td>
+                                </tr></table>
+                     </h:form>
+                       
+                        
+                        <h:form id="addgroupform">
+                            
+                            <table align="center" style="margin-top:0px" >
+                             
+                                
+                                <tr>
+                                     <td style="width: 200px"><h:outputLabel for="userid" value="UserId" title="[Select User from drop-down box]"  /></td>
+                                     <td><p:inputText disabled="true" 
+                                                      title="[This field is automatically filled when you select user above.]" 
+                                                      id="userid" value="#{userScroller.paybill.userid}" 
+                                                      
+                                                      required="true"
+                                                      readonly="true"
+                                                     >
+                                        </p:inputText></td>
+                                
+                                
+                                
+                                </tr>
+                                  <tr>
+                                     <td style="width: 200px"><h:outputLabel for="tillnumber"   title="[Enter Shop number in case of Till Number]" value="Till[Shop Number]/Paybill Number" /></td>
+                                     <td><p:inputText id="tillnumber" 
+                                                      required="true" placeholder=""
+                                                      title="[Enter notShop Number in case of Till Number]"
+                                                      value="#{userScroller.paybill.paybillz}" 
+                             
+                             converterMessage="Please Enter Numbers Only" 
+                                                      
+                                                      >
+                                             
+                                             <f:validator validatorId="tillValidator"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                             <!--validator="#
+                                             {tillValidator.validate}"-->
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                
+                                
+                                
+                                </tr>
+                                  <tr>
+                                     <td style="width: 200px"><h:outputLabel for="email" value="Email" /></td>
+                                     <td><p:inputText id="email" 
+                                                      title="[Enter client's email]"
+                                                      required="true" 
+                                                      value="#{userScroller.paybill.email}" 
+                                                      >
+                                                
+                                             <f:validator validatorId="emailValidator"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                             
+                                                      <!--validator="#
+                                                      {emailValidator.validate}"-->
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                
+                                
+                                
+                                </tr>
+                                  <tr>
+                                     <td style="width: 200px"><h:outputLabel for="message" value="Message" /></td>
+                                     
+                                     <td><p:inputTextarea id="message" 
+                                                        title="[Enter message to be sent in auto-response]" 
+                                 required="false" requiredMessage="Message is Required"
+                                 rows="5" cols="22" 
+                                 value="#{userScroller.paybill.message}" >
+                                            <f:validateLength minimum="3" />
+                                        </p:inputTextarea></td>
+                                
+                                
+                                
+                                </tr>
+                               
+                                <tr >  
+                                    
+                                    
+                                    <td></td>
+                                    <td>
+                                        
+                                        <img id="progressbar" src="./images/ajax-loader.gif" style="display:none" />
+                                        <p:commandButton ajax="false"  value="Save" icon="fa fa-save"  
+                                                         actionListener="#{userScroller.addPaybill()}"
+                                                         onclick="document.getElementById('progressbar').style.display = 'block'"  
+                                                         id="savegroupbutton"    >
+                                                                <!--<f:setPropertyActionListener target="#
+                                                                {panelMenuBean.currentPage}" value="#
+                                                                {userScroller.loadViewPaybills()}"/>-->
+                    <!--<f:setPropertyActionListener target="#
+                    {panelMenuBean.currentPage}" value="#
+                    {userScroller.loadViewPaybills()}"/>-->
+                                        </p:commandButton >
+<!--dd-->
+                                    </td>
+                                    <td>
+                                      
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </h:form>
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition> 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+             
+            <div align="center">
+                <p:panel id="maintab" header="Add Callback" >
+                   
+                       
+                        
+                        <h:form id="addgroupform">
+                            
+                            <table align="center" style="margin-top:15px" >
+                                      <tr >
+-                                    <td style="width: 200px"><h:outputLabel for="groupname" value="User" /></td>
+                                    <td>
+                                             <p:selectOneMenu id="users" 
+                                                      valueChangeListener="#{userScroller.finduserId}"
+                                                     value="#{userScroller.userS}">
+                                        <f:ajax   event="change" render="addgroupform" />
+                                        <f:selectItem itemLabel="Select User" itemValue="" />
+                                        <f:selectItems value="#{sMSOut.data}" ></f:selectItems>
+                                    </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td style="width: 200px"><h:outputLabel for="userid" value="UserID" /></td>
+                                    <td><p:inputText id="userid" value="#{userScroller.callback.userid}" 
+                                                     
+                                                     disabled="true"
+                                                     readonly="true"
+                                                     required="true" placeholder="" 
+                                                     requiredMessage="Enter Group Name" 
+                                                     validatorMessage="Enter Group name" >
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                </tr>
+                                  <tr >
+                                    <td style="width: 200px"><h:outputLabel for="code" value="Code" /></td>
+                                    <td><p:inputText id="code" value="#{userScroller.callback.ussd_assigned_code}"                                                    
+                                                     required="true" placeholder="" 
+                                                     requiredMessage="Enter Group Name"  >
+                                            <f:validator validatorId="codeValidator"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                </tr>
+                                   <tr >
+                                    <td style="width: 200px"><h:outputLabel for="callbackurl" value="CallBack Url" /></td>
+                                    <td><p:inputText id="callbackurl" value="#{userScroller.callback.callback_url}"                                                    
+                                                     required="true" placeholder="" 
+                                                     requiredMessage="Enter Group Name" >
+                                              <f:validator validatorId="urlValidator"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                </tr>
+                               
+                               
+                                   <tr >
+                                    <td style="width: 200px"><h:outputLabel for="testbed" value="Testbed" /></td>
+                                    <td>
+                                        <p:selectBooleanCheckbox  id="testbed" 
+                                                                  value="#{userScroller.callback.testbed}"                                                    
+                                                     required="true" 
+                                                     requiredMessage="Enter Group Name" 
+                                                     validatorMessage="Enter Group name" >
+                                            <f:validateLength minimum="3" />
+                                        </p:selectBooleanCheckbox ></td>
+                                </tr>
+                                  <tr >
+                                    <td style="width: 200px"><h:outputLabel for="testbednumbers" value="Testbed Numbers" /></td>
+                                    <td><p:inputText id="testbednumbers" value="#{userScroller.callback.testbednumbers}"                                                    
+                                                     required="true" placeholder="" 
+                                                     requiredMessage="Enter Group Name"  >
+                                             <f:validator validatorId="testbedvalidatorv1"/>
+                                        <f:ajax event="blur" render="msgs" />
+                                            <f:validateLength minimum="3" />
+                                        </p:inputText></td>
+                                </tr>
+                                
+                             
+                               
+                                <tr >  
+                                    
+                                    
+                                    <td></td>
+                                    <td>
+                                        
+                                        <img id="progressbar" src="./images/ajax-loader.gif" style="display:none" />
+                                        <p:commandButton 
+                                            
+                                            actionListener="#{facePainter.setMainContent('clientmanager/paybill/managepaybills.xhtml')}"
+                                            ajax="false"  value="Save" icon="fa fa-save"  action="#{userScroller.callback.addCallBack()}"
+                                                         onclick="document.getElementById('progressbar').style.display = 'block'"  
+                                                         id="savegroupbutton"    >
+                                        </p:commandButton >
+<!--dd-->
+                                    </td>
+                                    <td>
+                                      
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </h:form>
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

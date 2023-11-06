@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+    <property name="hibernate.c3p0.acquire_increment">1</property>
+    <property name="hibernate.c3p0.idle_test_period">1100</property>
+    <property name="hibernate.c3p0.min_size">5</property>
+    <property name="hibernate.c3p0.max_size">99</property>
+    <property name="hibernate.c3p0.max_statements">50</property>
+    <property name="hibernate.c3p0.timeout">1000</property>
+    <property name="hibernate.c3p0.privilegeSpawnedThreads">true</property>
+    <property name="hibernate.c3p0.contextClassLoaderSource">library</property>
+    <!-- seconds -->
+    <property name="hibernate.c3p0.acquireRetryAttempts">1</property>
+    <property name="hibernate.c3p0.acquireRetryDelay">250</property>
+    <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+    <!-- Gateway-->
+    <!--        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">newsms</property>
+        <property name="hibernate.connection.password">NewSms123#</property>-->
+    <!--  New Gatweway-->
+    <!--        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">newsms</property>
+        <property name="hibernate.connection.password">DatabaseMspace54#</property>-->
+    <!--DATACENTER-->
+    <!--        <property name="connection.url">jdbc:mysql://34.90.1.89:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+
+    <property name="hibernate.connection.username">datacenter</property>
+    <property name="hibernate.connection.password">DataCenter2023#</property>-->
+    <!--Live test-->
+    <!--                <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">test</property>
+        <property name="hibernate.connection.password">Mspace54#</property>-->
+    <!--        192.168.1.65 Survey-->
+    <!--                        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://192.168.1.65:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">access</property>
+        <property name="hibernate.connection.password">mysql123</property>-->
+    <!-- Local Conection-->
+    <!--<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>-->
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <!--        <property name="connection.url">jdbc:mysql://127.0.0.1:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">mysql</property>
+        <property name="hibernate.connection.password">mysql123</property>-->
+    <!--Other properties-->
+    <property name="show_sql">true</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <!--entity mapping-->
+    <mapping class="com.mspacepesa.model.Tuserpaybill"/>
+    <mapping class="com.mspacepesa.model.Tc2bReceived"/>
+    <mapping class="com.mspacepesa.model.TSTKPUSH"/>
+  </session-factory>
+</hibernate-configuration>
+<!--GATEWAY CONNECTION
+    <property name="connection.url">jdbc:mysql://10.240.181.14:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">web</property>
+    <property name="hibernate.connection.password">web123</property>
+-->
+<!--DLR CONNECTION
+    <property name="connection.url">jdbc:mysql://10.240.181.14:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">dlr</property>
+    <property name="hibernate.connection.password">dlr123</property>
+-->
+<!--Local CONNECTION
+    <property name="connection.url">jdbc:mysql://127.0.0.1:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">mysql</property>
+    <property name="hibernate.connection.password">mysql123</property>
+-->
+<!-- NEW CONNECTION
+    <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">web</property>
+    <property name="hibernate.connection.password">web123</property>
+-->
+<!-- NEW CONNECTION
+    <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">dlr</property>
+    <property name="hibernate.connection.password">dlr123</property>
+-->
+<!--New Gateway-->
+<!--<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+<property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbPAYMENTS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+<property name="hibernate.connection.username">newsms</property>
+<property name="hibernate.connection.password">DatabaseMspace54#</property>-->

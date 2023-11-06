@@ -1,0 +1,42 @@
+
+<configuration debug="false">
+    <property name="APPLICATION_NAME" value="CLIENT_MANAGER" />
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+       <appender name="CONSOLE_ROOT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS}  ${APPLICATION_NAME}  %-5level - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <logger name="org.mspace" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+     <logger name="ke.co" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.hibernate" level="error" />  
+    <logger name="org.apache.tomcat" level="error" />
+    <logger name="org.primefaces" level="error" />
+       <logger name="com.sun" level="error" />
+       <logger name="com.mchange" level="error" />
+        <logger name="javax.faces" level="error" />
+       
+    
+
+
+    <root level="error">
+        <appender-ref ref="CONSOLE_ROOT"/>
+    </root>
+
+</configuration>
+

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <h:outputScript library="js" name="#{tusercontroller.diftChat}" target="body" />
+
+
+            <style>
+
+                .tabmenubutton
+                {
+                    background:url('./images/tasks.gif') no-repeat !important;
+                    width:20px;
+                    height:20px;
+                }
+                .ui-panelMenu{
+
+                    width:150px ;
+                    border: none !important;
+                    border: 0px;
+
+                }
+
+                .add_user_icon{
+                    border-radius: 0px;
+                    background-image: url("#{resource['images/close.png']}") !important;
+                    width: 15px;
+                    height: 26px;
+                    background-position: -10px -10px;
+                }
+            </style>
+            <h:form>
+                <!--<p:button  icon="add_user_icon"  />-->
+                <p:panelMenu style="border: none !important; " > 
+                    <p:submenu label="Manage User Details" expanded="true">
+                        <p:menuitem  rendered="#{userScroller.amIResellersUser()}" value="Add Group " actionListener="#{userInfo.addgroupuser()}"  ajax="false" icon="fa fa-plus" />
+                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="View Group "  actionListener="#{userInfo.viewgroupuser()}" ajax="false"  icon="fa  fa-list-ul"/>
+                        <p:menuitem value="Add SMS User"   actionListener="#{userInfo.addsmsuser()}" 
+                                    ajax="false" icon="fa fa-plus" style="display: #{userInfo.shortCodeStatus}">
+
+
+
+                        </p:menuitem>
+                        <p:menuitem value="View SMS User"  actionListener="#{userInfo.viewsmsuser()}" ajax="false" icon="fa  fa-group"/>
+                        <p:menuitem value="Add Email User"     actionListener="#{userInfo.addemailuser()}" ajax="false"  icon="fa fa-user-plus"/>
+                        <p:menuitem value="View Email Users"     actionListener="#{userInfo.viewemailuser()}"  ajax="false"  icon="fa  fa-group"/>
+                        <p:menuitem value="View Alphanumerics" id="dobS"    actionListener="#{userInfo.viewalphanumerics()}" ajax="false"  icon="fa fa-keyboard-o"/>
+                    </p:submenu>
+
+                    <p:submenu label="Manage Re-sellers" style="display:#{userScroller.show()}" expanded="true">
+                        <p:menuitem  value="Add Reseller" actionListener="#{userInfo.addReseller()}"  ajax="false" icon="fa fa-user-plus" />
+                        <p:menuitem value="Manage Reseller"  actionListener="#{userInfo.manageReseller()}"  ajax="false"  icon="fa  fa-group"/>
+                    </p:submenu>
+
+                    <p:submenu  label="Pricing Table" expanded="true" style="display:#{userScroller.show()}">
+                        <p:menuitem  value="Email Pricing" actionListener="#{userInfo.pricingTable()}"  ajax="false" icon="fa fa-money" />
+                    </p:submenu>
+
+                    <p:submenu label="MSpacePESA" expanded="true" style="display:#{userScroller.show()}">
+                        <p:menuitem  value="Add Till/Paybill Number" actionListener="#{userInfo.addPaybill()}"  ajax="false" icon="fa fa-plus" />
+                        <p:menuitem  value="View Till/Paybill Number" actionListener="#{userInfo.viewpaybills()}"  ajax="false" icon="fa fa-list-ul" />
+                    </p:submenu>
+
+                    <p:submenu label="Shared USSD" expanded="true" style="display:#{userScroller.show()}">
+                        <p:menuitem  value="Add Callback " actionListener="#{userInfo.addcallback()}"  ajax="false" icon="fa fa-plus" />
+                        <p:menuitem  value="Manage Callbacks" actionListener="#{userInfo.viewcallbacks()}"  ajax="false" icon="fa fa-list-ul" />
+                    </p:submenu>
+                    <p:submenu label="My Account" expanded="true" >
+                        <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"  ajax="false" icon="fa fa-plus" />
+                        <p:menuitem  value="Account Top up" actionListener="#{userInfo.accountTopup()}"  ajax="false" icon="fa fa-list-ul" />
+                        <p:menuitem  value="Send SMS" url="#{userScroller.sendSMS()}"  ajax="false" icon="fa fa-list-ul" />
+
+                    </p:submenu>
+
+                    <p:submenu label="Summary and Reports" expanded="true">
+                        <p:menuitem  value="SMS Out Report" actionListener="#{userInfo.smsoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem rendered="#{userScroller.amIResellersUser()}"  value="Bulky Report" actionListener="#{userInfo.bulkreports()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="SMPP Out Report" actionListener="#{userInfo.smppoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem  value="Single User Visual Report" actionListener="#{userInfo.singleuservisualreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem  value="All Users VIsual Report" actionListener="#{userInfo.alluservisualreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+
+
+
+                    </p:submenu>
+
+
+                </p:panelMenu> 
+
+
+                <!--     <p:submenu label="Go to" expanded="true" style="display: {tusercontroller.goTo}">
+                                             <p:menuitem value="Tasks" style="color: blue;" url="{logon.goToTasks()}" ajax="false" icon="fa fa-external-link"/>
+                                             <p:menuitem value="Send Email" style="color: blue;" url="{logon.goToEmail()}" ajax="false" icon="fa fa-external-link"/>
+                                         </p:submenu>-->
+                <p:dialog header="Insufficient Sms Balance " id="myDialogID2" style="color: red; border-color: red; background-color: papayawhip"
+                          widgetVar="myDialogVar2"  modal="true" width="400px" resizable="false">
+                    <h:panelGrid>
+
+                        <br/>
+                        <h:outputLabel style="white-space: normal; font-size: 14px; align-content: center" value="Kindly top up your sms account to continue enjoying 
+                                       Mpesa-automation service. To top up your account click 'Top-up'"/>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Top-up"  onclick="myfunctiondg()" action="#{userInfo.billing()}" ajax="false" style="align-self: center; color: blue; font-weight: bolder" icon="fa fa-info" >
+                                <script>
+                                    function myfunctiondg() {
+                                        PF('dlg').hide();
+                                    }
+                                </script>
+                            </p:commandButton> 
+
+                            <p:commandButton value="Close"  onclick="myfunctiondg()" ajax="false" icon="fa fa-times" >
+                                <script>
+                                    function myfunctiondg() {
+                                        PF('dlg').hide();
+                                    }
+                                </script>
+                            </p:commandButton> 
+                        </f:facet>  
+                        <br/>
+                    </h:panelGrid>
+                </p:dialog>
+
+            </h:form>
+        </ui:composition>
+
+    </h:body>
+</html>
+

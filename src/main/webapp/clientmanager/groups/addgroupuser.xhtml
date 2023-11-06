@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition> 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+             
+            <div align="center">
+                <p:panel id="maintab" header="Add Group" >
+                   
+                       
+                        
+                        <h:form id="addgroupform">
+                            
+                            <table align="center" style="margin-top:15px" >
+                                <tr >
+                                    <td style="width: 200px"><h:outputLabel for="groupname" value="Group Name" /></td>
+                                    <td><p:inputText id="groupname" value="#{group.groupname}" required="true" 
+                                                     placeholder="" requiredMessage="Enter Group Name"
+                                                      >
+                                            <f:validateLength minimum="3" />
+                                             <f:validator validatorId="groupnamevalidator"/>
+                                            <f:ajax render="msgs" event="blur"/>
+                                        </p:inputText>
+                                    
+                                        <p:message for="groupname"/>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                     <td style="width: 200px"><h:outputLabel for="groupdescription" 
+                                                                             value="Group Description" /></td>
+                                     <td><p:inputText id="groupdescription" value="#{group.description}" 
+                                                      required="true" placeholder=""
+                                                      requiredMessage="Enter Group Description" 
+                                                      validatorMessage="Group Description must contain atleast 3 characters" >
+                                            <f:validateLength minimum="3" />
+                                           
+                                        </p:inputText></td>
+                                
+                                
+                                
+                                </tr>
+                               
+                                <tr >  
+                                    
+                                    
+                                    <td></td>
+                                    <td>
+                                        
+                                        <img id="progressbar" src="./images/ajax-loader.gif" style="display:none" />
+                                        <p:commandButton ajax="false"  value="Save" icon="fa fa-save"  
+                                                         actionListener="#{groupcontroller.saveUserGroup()}"
+                                                         onclick="document.getElementById('progressbar').style.display = 'block'"  
+                                                         id="savegroupbutton"    >
+                                        </p:commandButton >
+<!--dd-->
+                                    </td>
+                                    <td>
+                                      
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </h:form>
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <!-- Database connection settings -->
+    <!-- Use the following if deploying to dlr.mspace.co.ke. If not use 127.0.0.1 as db IP
+    <property name="connection.url">jdbc:mysql://10.240.181.14:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        -->
+    <!-- Gateway-->
+    <!--                <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+       
+         <property name="hibernate.connection.username">newsms</property>
+        <property name="hibernate.connection.password">NewSms123#</property>-->
+    <!--New Gateway-->
+    <!--        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">newsms</property>
+        <property name="hibernate.connection.password">DatabaseMspace54#</property>-->
+    <!--Live test-->
+    <!--        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">test</property>
+        <property name="hibernate.connection.password">Mspace54#</property>-->
+    <!--DATACENTER-->
+    <!--        <property name="connection.url">jdbc:mysql://34.90.1.89:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">datacenter</property>
+    <property name="hibernate.connection.password">DataCenter2023#</property>-->
+    <!--        192.168.1.65 Survey-->
+    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+    <!--<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>-->
+    <!--        <property name="connection.url">jdbc:mysql://192.168.1.65:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">access</property>
+        <property name="hibernate.connection.password">mysql123</property>-->
+    <!--local Connection-->
+    <!--        
+                <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:mysql://127.0.0.1:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+        <property name="hibernate.connection.username">mysql</property>
+        <property name="hibernate.connection.password">mysql123</property>
+        -->
+    <!--
+        
+        <property name="show_sql">false</property>-->
+    <!-- <property name="format_sql">true</property>
+        <property name="use_sql_comments">true</property>
+        Yes...-->
+    <!--<property name="hibernate.hbm2ddl.auto">update</property>-->
+    <!--<property name="show_sql">true</property>-->
+    <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+    <property name="hibernate.c3p0.acquire_increment">1</property>
+    <property name="hibernate.c3p0.idle_test_period">1100</property>
+    <property name="hibernate.c3p0.min_size">5</property>
+    <property name="hibernate.c3p0.max_size">99</property>
+    <property name="hibernate.c3p0.max_statements">50</property>
+    <property name="hibernate.c3p0.timeout">1000</property>
+    <property name="hibernate.c3p0.privilegeSpawnedThreads">true</property>
+    <property name="hibernate.c3p0.contextClassLoaderSource">library</property>
+    <!-- seconds -->
+    <property name="hibernate.c3p0.acquireRetryAttempts">1</property>
+    <property name="hibernate.c3p0.acquireRetryDelay">250</property>
+    <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+    <!--<mapping class="com.mspace1.model.graphvalue" file="" jar="" package="" resource=""/>-->
+    <mapping class="com.mspace1.model.Tuser" file="" jar="" package="" resource=""/>
+    <!--<mapping class="com.mspace1.model.Tuseraddressbook" file="" jar="" package="" resource=""/>-->
+    <mapping class="com.mspace1.model.Tsmsout" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TsmsoutComplete" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.Tusersmsschedule" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.Tusersmsin" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TallowedAlphanumerics" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model2.Talphanumerics" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.Tdist" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.Tinfo" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TexcelIntegration" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.Texcelsmstosend" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TmanageCredits" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TsmsTransactions" file="" jar="" package="" resource=""/>
+    <mapping class="com.mspace1.model.TsavedMessages" file="" jar="" package="" resource=""/>
+    <!--<mapping class="com.mspace1.model.Tbirthday"/>-->
+    <mapping class="com.mspace1.model2.TlargeExport"/>
+    <mapping class="com.mspace1.model2.ToptoutMessage"/>
+    <mapping class="com.mspace1.model2.ReportExport"/>
+  </session-factory>
+</hibernate-configuration>
+<!--GATEWAY CONNECTION
+        <property name="connection.url">jdbc:mysql://10.240.181.14:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">web</property>
+    <property name="hibernate.connection.password">web123</property>
+-->
+<!--DLR CONNECTION
+        <property name="connection.url">jdbc:mysql://10.240.181.14:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">dlr</property>
+    <property name="hibernate.connection.password">dlr123</property>
+-->
+<!--Local CONNECTION
+        <property name="connection.url">jdbc:mysql://127.0.0.1:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">mysql</property>
+    <property name="hibernate.connection.password">mysql123</property>
+-->
+<!-- NEW CONNECTION
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">web</property>
+    <property name="hibernate.connection.password">web123</property>
+-->
+<!-- NEW CONNECTION
+        <property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+    <property name="hibernate.connection.username">dlr</property>
+    <property name="hibernate.connection.password">dlr123</property>
+-->
+<!--New Gateway-->
+<!-- <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+<property name="connection.url">jdbc:mysql://10.164.0.5:3306/dbSMS?zeroDateTimeBehavior=convertToNull&amp;useSSL=false&amp;autoReconnect=true</property>
+<property name="hibernate.connection.username">newsms</property>
+<property name="hibernate.connection.password">DatabaseMspace54#</property>-->

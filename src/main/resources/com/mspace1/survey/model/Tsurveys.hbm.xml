@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 20, 2019 3:42:44 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.mspace1.survey.model.Tsurveys" table="tSurveys" catalog="dbSMSCCamps" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="surveyName" type="string">
+            <column name="surveyName" length="250" not-null="true" />
+        </property>
+        <property name="paybills" type="string">
+            <column name="paybills" length="200" not-null="true">
+                <comment>Paybills/Till nos can be comma separated</comment>
+            </column>
+        </property>
+        <property name="allowedUserIds" type="string">
+            <column name="allowed_user_ids" length="200" not-null="true" />
+        </property>
+        <property name="startMsg" type="string">
+            <column name="startMsg" length="250" not-null="true" />
+        </property>
+        <property name="modemImei" type="string">
+            <column name="modemImei" length="30" not-null="true" />
+        </property>
+        <property name="clientName" type="string">
+            <column name="clientName" length="250" not-null="true" />
+        </property>
+        <property name="clientEmail" type="string">
+            <column name="clientEmail" length="250" not-null="true" />
+        </property>
+        <property name="clientMobile" type="string">
+            <column name="clientMobile" length="15" not-null="true" />
+        </property>
+        <property name="startDate" type="timestamp">
+            <column name="startDate" length="19" not-null="true" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="endDate" length="19" not-null="true" />
+        </property>
+        <property name="active" type="byte">
+            <column name="active" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

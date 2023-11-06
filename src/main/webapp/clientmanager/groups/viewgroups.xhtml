@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition > 
+            <script>
+                function replaceState(){
+                    if(window.history.replaceState){
+                        alert()
+                        window.history.replaceState(null,null,window.location.href)
+                    }
+                }
+                </script>
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                }  </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                <p:panel id="maintab" header="View Group" >
+                    <p:dataTable var="data" value="#{callback.groups}"
+                                 
+                                 rows="15"
+                                 paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 >
+                        <p:column headerText="GroupId">
+                            <h:outputText value="#{data.id}" />
+                        </p:column>
+                        <p:column headerText="Name">
+                            <h:outputText value="#{data.groupname}" />
+                        </p:column>
+
+                        <p:column headerText="Description">
+                            <h:outputText value="#{data.description}" />
+                        </p:column>
+
+                        <p:column headerText="Action">
+                            <h:form id="composition">
+                                
+                             
+                                
+                                <p:commandLink style="padding: .3em 1em;" 
+                                               id="editbutton"
+                                               oncomplete="PF('editgroupmodal').show();">
+<h:graphicImage 
+                                        value="resources/images/edit.gif" width="15px">
+
+                                    </h:graphicImage>
+                                    <p:ajax  listener="#{callBackScroller.setCurrentGroupItem1(data)}" 
+                                             update="composition:editgroupmodal" />
+                                    <p:tooltip for="editbutton" value="Click to edit group"/>
+                                </p:commandLink>
+                                
+
+                                <p:commandLink 
+                                    style="padding: .3em 1em;" 
+                                    id="deletebutton"
+                                    oncomplete="PF('deletegroupmodal').show();">
+<h:graphicImage 
+                                        value="resources/images/delete.gif" width="15px">
+
+                                    </h:graphicImage>
+                                    <p:ajax  listener="#{callBackScroller.setCurrentGroupItem1(data)}" 
+                                             update="composition:deletegroupmodal" />
+                  <p:tooltip for="deletebutton" value="Click to delete group"/>
+
+                                </p:commandLink>
+
+
+                                
+                                
+                                <p:dialog header="Edit Group" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                        <tr >
+                                            <td ><h:outputLabel for="groupname" value="Group Name" /></td>
+                                            <td><p:inputText style="width: 150px" id="groupname" value="#{callBackScroller.currentGroupItem1.groupname}" required="true" placeholder="" 
+                                                             requiredMessage="Enter Group Name"  validatorMessage="Group name must contain atleast 3 characters" >
+                                                    <f:validateLength minimum="3" />
+                                                   
+                                                </p:inputText></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td ><h:outputLabel for="groupdescription" value="Group Description" /></td>
+                                            <td  ><p:inputText style="width: 150px" id="groupdescription" value="#{callBackScroller.currentGroupItem1.description}" 
+                                                               required="true" placeholder="" requiredMessage="Enter Group Description"
+                                                               validatorMessage="Group description must contain atleast 3 characters" >
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputText></td>
+
+
+
+                                        </tr>
+
+
+                                    </table>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="false"  
+                                                         actionListener="#{callBackScroller.saveGroup()}"  
+                                                         oncomplete="PF('deletegroupmodal').hide;alert();" 
+                                                         value="Save"></p:commandButton>
+                                        <p:commandButton value="Cancel" 
+                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                                    </div>
+                                </p:dialog> 
+
+
+
+
+                                <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                                    <p:outputLabel value="Delete `#{callBackScroller.currentGroupItem1.groupname}` group?"/>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="false"  actionListener="#{callBackScroller.deleteGroup(callBackScroller.currentGroupItem1.id)}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+                                    </div>
+
+                                </p:dialog> 
+                            </h:form>
+                        </p:column>
+
+
+                    </p:dataTable>
+
+
+
+
+
+                </p:panel>
+            </div>
+        </ui:composition>
+    </h:body>
+</html> 

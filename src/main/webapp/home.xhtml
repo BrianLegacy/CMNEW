@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:pm="http://primefaces.org/mobile">
+
+    <h:head>
+        <title>::LOGIN</title> 
+        <link href="./images/mspac.ico" rel="icon" type="image/x-icon" />
+        <link href="./files/config/MSpacelogo.png" rel="shortcut icon" type="image/x-icon" />
+        <script>
+            $(document).ready(function hello() {
+            });
+        </script>
+    </h:head>
+
+
+    <h:body style="padding-top:100px;  font: 11px georgia;">
+        <div style="height: 550px">
+            <center>
+                <div id="eaders" >
+                    <div align="center" style="margin-top: -90px"> <a  href="#{logo_client.getUrlLink()}" target="_blank">
+                            <img src="#{logo_client.clnt_logo()}" alt="Mspace"                                  
+
+                                 height="150px"  border="0"  
+                                 longdesc="https://www.mspace.co.ke" />
+                        </a></div>
+                </div>
+
+                <p:panel styleClass="customTitleBar" style="width: 80%; height: auto " id="basic" header="::System Login">
+                    <h:form>
+
+                        <p:ajaxStatus style="display:block;margin-bottom:2em;height:24px;">
+                        </p:ajaxStatus>
+                        <p:ajaxStatus onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()" />
+                        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                            <p:graphicImage name="/images/ajax-loader.gif" />
+                        </p:dialog>
+                        <p:growl id="messa" showDetail="true" />
+                        <h:panelGrid id="grid" columns="4" style="float: inside">
+                            <p:outputLabel  for="username" value=" Username:"  style=" margin-left: -8%" class="fa fa-user"/>
+                            <p:inputText id="username" value="#{tusercontroller.username}" required="true" validatorMessage="username is too short" requiredMessage="username required">
+                                <f:validateLength minimum="4" />
+                            </p:inputText> 
+                            <pe:tooltip for="username" value="Enter your username" showEffect="slideToggle"  
+                                        hideEffect="slideToggle" showDelay="0" myPosition="left center" atPosition="right center"/>  
+                            <p:message for="username" display="message" />
+                            <p:outputLabel for="password" value=" Password:"  style=" margin-left: -8%"  class="fa fa-key"/>
+                            <p:password id="password"  value="#{tusercontroller.password}" required="true" requiredMessage="password required">
+                            </p:password>
+                            <pe:tooltip for="password" value="Enter your password" showEffect="slideToggle"  
+                                        hideEffect="slideToggle" showDelay="0" myPosition="left center" atPosition="right center"/>  
+                            <p:message for="password" display="message" />
+
+                        </h:panelGrid>
+                        <p:panelGrid  rendered="false" >
+                            <h:outputLink  id="reset" value="PasswordReset.jsf" target="_blank" onclick="PF('myDialogVar').show()" style="color: blue;text-decoration: none;"> 
+                                Forgot Password ?
+                            </h:outputLink>
+                        </p:panelGrid>
+
+                        <h:panelGrid style="float: inside" columns="2" cellpadding="2">
+                            <p:selectBooleanCheckbox id="bol" value="#{tusercontroller.termsAgreed}" 
+                                                     required="true">
+                            </p:selectBooleanCheckbox>
+
+                            <h:outputLink id="link" value="Terms.jsf" target="_blank" style="color: blue;"> 
+                                I Agree to the Terms and Conditions
+                            </h:outputLink>
+                        </h:panelGrid>
+
+                        <img id="progressbar" src="./images/ajax-loader.gif" style="display:none" />
+                        <p:commandButton id="submitButton" 
+                                         onclick="document.getElementById('progressbar').style.display = 'block'"  
+                                         ajax="false" 
+                                         action="#{tusercontroller.login()}" icon="fa fa-unlock-alt" value="Login" update="grid,messa" 
+                                         style="margin-left: #{logo_client.loginPos()}px; position: relative; font-weight: bold; font-size: 12px; font-family: georgia; border: #000;"/>
+
+                        <p:button  id="crtBtn" value="Create New Account" 
+                                  style="float: right; display:false; visibility: hidden" 
+                                  icon="fa fa-user-plus" target="_blank" href="signup.jsf"/>
+                    </h:form>
+
+                    <noscript>   <div>   
+                            <h3 style="color: red;">For full functionality of this page it is necessary to enable JavaScript. Here are the 
+                                <a href="http://www.enable-javascript.com" target="_blank"> 
+                                    instructions how to enable JavaScript in your web browser</a></h3>
+                        </div> </noscript>
+
+                </p:panel>
+
+            </center>  
+
+
+        </div>
+
+        <div style="; height: 50px;">
+
+            <p style="text-align: center">&copy; #{logo_client.current_yr()} <a href="http://www.mspace.co.ke"><strong>MSpace Solutions Ltd.</strong></a>&nbsp;</p>
+
+        </div>
+        <h:outputScript  name="js/password.js">
+
+        </h:outputScript>
+    </h:body>
+</html>
+

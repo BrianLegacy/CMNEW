@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
+    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head></h:head>
+    <h:body>
+        <ui:composition > 
+            <style>
+                .ui-growl-item-container.ui-state-highlight {
+                    border-color: red;
+
+                } 
+            
+               .pgid-borderless.ui-panelgrid>*>tr,
+.pgid-borderless.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+}
+            </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+
+            <div align="center">
+                <p:panel id="maintab" header="AVAILABLE USER ALPHANUMERIC" >
+                    
+                    <p:dataTable var="data" value="#{alphaScroller.allAlphas}" id="table"
+                                 rows="15"
+                                 paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                     
+                                 
+                                 >
+                       
+                        <p:column headerText="Username">
+                            <h:outputText value="#{data.username}" />
+                        </p:column>
+
+                        <p:column headerText="Aplhanumerics">
+                            <h:outputText value="#{data.name}" />
+                        </p:column>
+
+                        <p:column headerText="Action">
+                           
+                            <!--<p:panelGrid columns="2"  style="width: 100px; ;" styleClass="pgid-borderless">-->
+                             
+                                 <h:form> 
+                                <p:commandLink style="padding: .3em 1em;" 
+                                               id="editbutton"
+                                               ajax="true"
+                                               >
+<h:graphicImage 
+                                        value="resources/images/edit.gif" width="15px">
+
+                                    </h:graphicImage>
+                                    <p:ajax  listener="#{alphaScroller.psetCurrentAlpha(data)}"
+                                             oncomplete="PF('editgroupmodal').show();"
+                                             update="@([id$=editgroupmodal])" 
+                                             event="click"
+                                             />
+                                    <p:tooltip for="editbutton" value="Click to edit alphanumeric"/>
+                      
+                                </p:commandLink>  
+                                
+                                     <p:commandLink rendered="#{userScroller.amIResellersUser()}" style="padding: .3em 1em;" 
+                                                    id="deletebutton"
+                                               ajax="true"
+                                               >
+<h:graphicImage 
+                                        value="resources/images/delete.gif" width="15px">
+
+                                    </h:graphicImage>
+                                    <p:ajax  listener="#{alphaScroller.psetCurrentAlpha(data)}"
+                                             oncomplete="PF('deletegroupmodal').show();;"
+                                             update="@([id$=deletegroupmodal])" 
+                                             event="click"
+                                             />
+       <p:tooltip for="deletebutton" value="Click to delete alphanumeric"/>
+
+                                </p:commandLink>
+                                
+</h:form>
+                          <!--</p:panelGrid>-->
+                           
+                                
+                                
+                                <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                                     <h:form>
+                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                        <tr >
+                                            <td ><h:outputLabel for="groupname" value="Username" /></td>
+                                            <td><p:inputText style="width: 150px" id="groupname" value="#{alphaScroller.currentItem.username}" required="true" placeholder="" requiredMessage="Enter Group Name"  validatorMessage="Enter Group name" >
+                                                    <f:validateLength minimum="3" />
+                                                </p:inputText></td>
+                                        </tr>
+                                        <tr><td> <h:inputHidden id="alphaId" value="#{alphaScroller.currentItem.id}">
+
+                        </h:inputHidden></td></tr>
+
+                                        <tr>
+                                            <td ><h:outputLabel for="groupdescription" value="Alphanumeric" /></td>
+                                            <td  >
+                                                <p:selectOneMenu  
+                                                    value="#{alphaScroller.currentItem.name}"
+                                                    
+                                         id="org_alphanumeric" 
+                                          required="true" requiredMessage="Aphanumerics Required" 
+                                          >
+                            <f:selectItem itemLabel="Select Sender ID"/>
+                            <f:selectItems  value="#{user.comboAlphanumerics}"  />
+                            
+                        </p:selectOneMenu >
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" ajax="true"  
+                                                          
+                                                         value="Update">
+                                            <p:ajax 
+                                                process="org_alphanumeric"
+                                                listener="#{alphaScroller.saveOrUpdateAlpha}"  
+                                                         oncomplete="PF('editgroupmodal').hide();" 
+                                                         update="@([id$=table])"
+                                                         />
+                                        
+                                        
+                                        </p:commandButton>
+                                        
+                                        
+                                        
+                                        <p:commandButton value="Cancel" 
+                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                                    </div>
+                                     </h:form>
+                                </p:dialog> 
+
+
+
+
+                                <p:dialog header="Delete  Alphanumeric" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                                    <h:form>
+                                    <p:outputLabel value="Are you sure you want to delete `#{alphaScroller.currentItem.name}` group?.
+                                                   You cannot undo this operation."/>
+                                    <br/>
+                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                        <p:commandButton style="margin-right: 10px" 
+                                                         ajax="false"  
+                                                         actionListener="#{alphaScroller.deleteAlphanumeric}"  
+                                                         oncomplete="PF('deletegroupmodal').hide();" 
+                                                         value="Delete"></p:commandButton>
+                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+                                    </div>
+                                    </h:form>
+                                </p:dialog> 
+                           
+                        </p:column>
+<f:facet name="paginatorTopLeft">
+    <h:form>
+                <p:commandButton type="button" icon="pi pi-refresh"/></h:form>
+            </f:facet>
+
+            <f:facet name="paginatorBottomRight">
+                
+                <h:form>
+                    <p:commandButton type="button" icon="pi pi-cloud-upload"/></h:form>
+            </f:facet>
+
+                    </p:dataTable>
+
+
+
+
+
+
+                </p:panel>
+            </div>
+            
+            
+            
+        </ui:composition>
+    </h:body>
+</html> 
