@@ -164,7 +164,7 @@
                         >
 
                         <f:selectItem itemLabel="Select Sender ID"/>
-                        <f:selectItems  value="#{user.comboAlphanumerics}"  />
+                        <f:selectItems  value="#{userController.comboAlphanumerics}"  />
                         <p:ajax event="change" update="showusers:aplhagrid"></p:ajax>
                     </p:selectOneMenu >
                                 
@@ -354,9 +354,9 @@
                                           <tr >
                                             <td ><h:outputLabel for="group" value="Group"  rendered="#{userScroller.showReseller()}"  /></td>
                                             <td> <p:selectOneMenu id="group" 
-                                                     value="#{user.alphanumeric}"  rendered="#{userScroller.showReseller()}">
+                                                     value="#{userController.alphanumeric}"  rendered="#{userScroller.showReseller()}">
                                         <f:selectItem itemLabel="Select Group" itemValue="" />
-                                        <f:selectItems value="#{user.comboGroups}" />
+                                        <f:selectItems value="#{userController.comboGroups}" />
                                     </p:selectOneMenu></td>
                                         </tr>
                                         

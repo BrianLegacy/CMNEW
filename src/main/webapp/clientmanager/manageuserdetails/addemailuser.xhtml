@@ -28,7 +28,7 @@
                             <tr >
                                 <td style="width: 200px"><h:outputLabel for="username" value="Username" /></td>
                                 <td><p:inputText id="username" 
-                                                 value="#{user.username}" 
+                                                 value="#{userController.username}" 
                                                  required="false" 
                                                  placeholder="" 
                                                  requiredMessage="Enter Username"  >
@@ -40,7 +40,7 @@
 
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="password" value="Password" /></td>
-                                <td><p:inputText id="password" value="#{user.password}" 
+                                <td><p:inputText id="password" value="#{userController.password}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage="Enter password"  
@@ -55,7 +55,7 @@
 
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="smscredits" value="Email Credits" /></td>
-                                <td><p:inputText id="smscredits" value="#{user.smsCredits}" 
+                                <td><p:inputText id="smscredits" value="#{userController.smsCredits}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage="Enter credits"  >
@@ -74,7 +74,7 @@
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="useremail" 
                                                                         value="User Email" /></td>
-                                <td><p:inputText id="useremail" value="#{user.userEmail}" 
+                                <td><p:inputText id="useremail" value="#{userController.userEmail}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage="Enter User Email"  
@@ -94,7 +94,7 @@
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="usermobile" 
                                                                         value="User Mobile" /></td>
-                                <td><p:inputText id="usermobile" value="#{user.userMobile}" 
+                                <td><p:inputText id="usermobile" value="#{userController.userMobile}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage="Enter User Mobile"  
@@ -110,7 +110,7 @@
                                                                         value="Enable email alert when credit is over" /></td>
                                 <td>
                                     <p:selectBooleanCheckbox id="enableemailalert"
-                                                             value="#{user.enableEmailAlertWhenCreditOver}"
+                                                             value="#{userController.enableEmailAlertWhenCreditOver}"
                                                              />
                                 </td>
 
@@ -120,7 +120,7 @@
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="alertthreshold" 
                                                                         value="Alert Threshold" /></td>
-                                <td><p:inputText id="alertthreshold" value="#{user.alertThreshold}" 
+                                <td><p:inputText id="alertthreshold" value="#{userController.alertThreshold}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage=""  
@@ -136,7 +136,7 @@
                             <tr>
                                 <td style="width: 200px"><h:outputLabel for="arrears" 
                                                                         value="Arrears" /></td>
-                                <td><p:inputText id="arrears" value="#{user.arrears}" 
+                                <td><p:inputText id="arrears" value="#{userController.arrears}" 
                                                  required="true" 
                                                  placeholder="" 
                                                  requiredMessage=""  
@@ -154,7 +154,7 @@
                                 <td>
 
                                     <img id="progressbar" src="./images/ajax-loader.gif" style="display:none" />
-                                    <p:commandButton ajax="false"  value="Save" icon="fa fa-save"  actionListener="#{user.saveEmailUser()}"
+                                    <p:commandButton ajax="false"  value="Save" icon="fa fa-save"  actionListener="#{userController.saveEmailUser()}"
                                                      onclick="document.getElementById('progressbar').style.display = 'block'"  
                                                      id="savegroupbutton"    >
                                         

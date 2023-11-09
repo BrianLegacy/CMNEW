@@ -508,15 +508,13 @@ private final String user =SessionUtil.getAUTH_KEY();
                 headerCell.setCellStyle(styles.get("header"));
             }
             List<Alpha> alphaList = null;
-            try {
+            
                 JdbcUtil util = new JdbcUtil();
                 Connection conn = util.getConnectionTodbSMS();
 
                 alphaList = getAllAlphanumerics(conn);
                 JdbcUtil.closeConnection(conn);
-            } catch (SQLException e) {
-                JdbcUtil.printSQLException(e);
-            }
+            
             int rowNum = 2;
 
             for (Alpha alpha : alphaList) {

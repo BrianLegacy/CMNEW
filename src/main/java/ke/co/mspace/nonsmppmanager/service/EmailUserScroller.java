@@ -38,7 +38,7 @@ import static ke.co.mspace.nonsmppmanager.model.AuthenticationBean.AUTH_KEY;
 import ke.co.mspace.nonsmppmanager.model.CallBack;
 import ke.co.mspace.nonsmppmanager.model.Facet;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.model.UserProfile;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
@@ -59,10 +59,10 @@ import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 public class EmailUserScroller {
     
     private Paybill paybill;
-    private User user;
+    private UserController user;
     private CallBack callback=new CallBack();
     // Paybill paybill= new Paybill();
-    private User currentItem = new User();
+    private UserController currentItem = new UserController();
     private Paybill currentItem1 = new Paybill();
     private CallBack currentItem2=new CallBack();
     private final JdbcUtil util = new JdbcUtil();
@@ -79,13 +79,13 @@ public class EmailUserScroller {
     
     private Long alphid;
     public String userS;
-    private List<User> getAllEmailUsers;
+    private List<UserController> getAllEmailUsers;
 
     
     
     @PostConstruct
     public void init() {
-        this.user = new User();
+        this.user = new UserController();
         this.paybill = new Paybill();
         this.callback =new CallBack();
     }
@@ -202,7 +202,7 @@ public class EmailUserScroller {
                 getExternalContext().getRequestParameterMap().get("username"));
         currentRow = Integer.parseInt(FacesContext.getCurrentInstance().
                 getExternalContext().getRequestParameterMap().get("row"));
-        for (User item : allUsers) {
+        for (UserController item : allUsers) {
             if (item.getUsername().equals(username)) {
                 //System.out.println("THE REQUESTED NAME: "+item.getUsername());
                 currentItem = item;
@@ -225,14 +225,14 @@ public class EmailUserScroller {
     
     public String userid;
     
-    private ArrayList<User[]> model = null;
+    private ArrayList<UserController[]> model = null;
     
-    private ArrayList<User> selectedCars = new ArrayList<>();
+    private ArrayList<UserController> selectedCars = new ArrayList<>();
     private final ArrayList<Facet> columns = new ArrayList<>();
     private static final int DECIMALS = 1;
     private static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
     
-    private List<User> allUsers = new ArrayList<>();
+    private List<UserController> allUsers = new ArrayList<>();
     private List<Alpha> agentAlphas = new ArrayList<>();
     private List<Alpnumeric> userAlphas = new ArrayList<>();
     
@@ -349,7 +349,7 @@ public class EmailUserScroller {
         this.userPlan = userPlan;
     }
     
-    public List<User> getAllUsers() throws SQLException {
+    public List<UserController> getAllUsers() throws SQLException {
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
@@ -462,7 +462,7 @@ public class EmailUserScroller {
         //System.out.println(sql);
         //System.out.println("888888=" + id);
         if (rs.next()) {
-            User si = new User();
+            UserController si = new UserController();
             si.setId(rs.getLong("id"));
             si.setUsername(rs.getString("username"));
             si.setUserMobile("contact_number");
@@ -474,7 +474,7 @@ public class EmailUserScroller {
         return lname;
     }
     
-    public List<User> getLastUSer() {
+    public List<UserController> getLastUSer() {
         
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
@@ -507,7 +507,7 @@ public class EmailUserScroller {
         return allUsers;
     }
     
-    public List<User> getLasRes() {
+    public List<UserController> getLasRes() {
         
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
@@ -586,9 +586,9 @@ public class EmailUserScroller {
         return list;
     }
     
-    public List<User> getTenRandomUsers() throws SQLException {
+    public List<UserController> getTenRandomUsers() throws SQLException {
         
-        List<User> result = new ArrayList<User>();
+        List<UserController> result = new ArrayList<UserController>();
         int size = getAllUsers().size() - 1;
         for (int i = 0; i < 10; i++) {
             result.add(getAllUsers().get(rand(1, size)));
@@ -601,24 +601,24 @@ public class EmailUserScroller {
         return rand(1, 10000);
     }
     
-    public List<User> createUser(String make, String model,
+    public List<UserController> createUser(String make, String model,
             int count) {
         
-        ArrayList<User> iiList = null;
+        ArrayList<UserController> iiList = null;
         
         try {
             int arrayCount = count;
             
-            User[] demoInventoryItemArrays = new User[arrayCount];
+            UserController[] demoInventoryItemArrays = new UserController[arrayCount];
             
             for (int j = 0; j < demoInventoryItemArrays.length; j++) {
-                User ii = new User();
+                UserController ii = new UserController();
                 
                 demoInventoryItemArrays[j] = ii;
                 
             }
             
-            iiList = new ArrayList<User>(Arrays
+            iiList = new ArrayList<UserController>(Arrays
                     .asList(demoInventoryItemArrays));
             
         } catch (Exception e) {
@@ -669,19 +669,19 @@ public class EmailUserScroller {
 //                table.setRowKey(key);
 //                if (table.isRowAvailable()) {
 //                    getSelectedCars().add(
-//                            (User) table.getRowData());
+//                            (UserController) table.getRowData());
 //                }
 //            }
 //        }
 //        return null;
 //    }
 //    
-    public ArrayList<User> getSelectedCars() {
+    public ArrayList<UserController> getSelectedCars() {
         
         return selectedCars;
     }
     
-    public void setSelectedCars(ArrayList<User> selectedCars) {
+    public void setSelectedCars(ArrayList<UserController> selectedCars) {
         this.selectedCars = selectedCars;
     }
 //    
@@ -699,12 +699,12 @@ public class EmailUserScroller {
 //        
 //    }
     
-    public ArrayList<User[]> getModel() {
+    public ArrayList<UserController[]> getModel() {
         
         if (model == null) {
-            model = new ArrayList<User[]>();
+            model = new ArrayList<UserController[]>();
             for (int i = 0; i < 9; i++) {
-                User[] items = new User[6];
+                UserController[] items = new UserController[6];
                 
                 model.add(items);
             }
@@ -735,12 +735,12 @@ public class EmailUserScroller {
 //        this.order = order;
 //    }
     
-    public User getCurrentItem() {
+    public UserController getCurrentItem() {
         
         return currentItem;
     }
     
-    public void setCurrentItem(User currentItem) {
+    public void setCurrentItem(UserController currentItem) {
         this.currentItem = currentItem;
     }
     
@@ -829,11 +829,11 @@ public class EmailUserScroller {
                     ((AlphaScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("alphaScroller")).addAlphaToList(alpha);
                 }
 
-                //currentItem.setMessage("User alpha saved successfully.");
+                //currentItem.setMessage("UserController alpha saved successfully.");
 //                } else {
 //                    service.updateAlpha(username, alphanumeric, alphaType, conn);
-//                    JsfUtil.addSuccessMessage("User alphanumeric updated successfully");
-//                    //currentItem.setMessage("User alpha updated successfully.");
+//                    JsfUtil.addSuccessMessage("UserController alphanumeric updated successfully");
+//                    //currentItem.setMessage("UserController alpha updated successfully.");
 //                }
                 JdbcUtil.closeConnection(conn);
             } catch (SQLException e) {
@@ -857,7 +857,7 @@ public class EmailUserScroller {
         this.keys = keys;
     }
     
-    public void addUserToList(User user) {
+    public void addUserToList(UserController user) {
         allUsers.add(user);
     }
     
@@ -1074,7 +1074,7 @@ public class EmailUserScroller {
 //                .concat(getFileExtention(item.getFileName()));
 //        
 //        setImagePath(user_id, filedir);
-//        JsfUtil.addSuccessMessage("User logo updated Sucessfully");
+//        JsfUtil.addSuccessMessage("UserController logo updated Sucessfully");
 //        
 //    }
     private String logoLocation = "";
@@ -1143,7 +1143,7 @@ public class EmailUserScroller {
 //        //Call the method that persistsheimage pathto db
 //        setImagePath(user_id, filedir);
 //        
-//        JsfUtil.addSuccessMessage("User logo updated Sucessfully");
+//        JsfUtil.addSuccessMessage("UserController logo updated Sucessfully");
 //        
 //    }
     
@@ -1193,7 +1193,7 @@ public class EmailUserScroller {
     }
 
     //=======================================================================================================
-    public List<User> getAllUserByAgent() {
+    public List<UserController> getAllUserByAgent() {
         
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
@@ -1333,7 +1333,7 @@ public class EmailUserScroller {
         
         synchronized (this) {
             if (allUsers != null && !allUsers.isEmpty()) {
-                try {
+                
                     //String username=currentItem.getUsername();
                     conn = util.getConnectionTodbSMS();
                     LOG.info("getAllAlphas");
@@ -1354,9 +1354,7 @@ public class EmailUserScroller {
 //
                     // System.out.println("Am being executed....yes I was made to be executed");
                     JdbcUtil.closeConnection(conn);
-                } catch (SQLException e) {
-                    JdbcUtil.printSQLException(e);
-                }
+                
             }
         }
         
@@ -1384,7 +1382,7 @@ public class EmailUserScroller {
     }
     
     public void deleteUser() {
-        try {
+       
             
             conn = util.getConnectionTodbSMS();
             
@@ -1396,16 +1394,13 @@ public class EmailUserScroller {
 
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException ex) {
-            JdbcUtil.printSQLException(ex);
-            
-        }
+       
         
     }
     
     
     public void deleteEmailUser() {
-        try {
+        
             
             conn = util.getConnectionTodbSMS();
             
@@ -1417,16 +1412,13 @@ public class EmailUserScroller {
 
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException ex) {
-            JdbcUtil.printSQLException(ex);
-            
-        }
+      
         
     }
     
     
     public void updateUserEmails() {
-        try {
+       
             
             conn = util.getConnectionTodbSMS();
             
@@ -1444,15 +1436,12 @@ public class EmailUserScroller {
 
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException ex) {
-            JdbcUtil.printSQLException(ex);
-            
-        }
+       
         
     }
     
     public void deleteReseller() {
-        try {
+      
             
             conn = util.getConnectionTodbSMS();
             
@@ -1464,16 +1453,13 @@ public class EmailUserScroller {
 
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException ex) {
-            JdbcUtil.printSQLException(ex);
-            
-        }
+       
         
     }
     
     public void addPaybill() {
         String user = this.userS;
-        try {
+        
             this.conn = this.util.getConnectionTodbPAYMENT();
             this.conn2 = this.util.getConnectionTodbSMS();
             UserServiceImpl paybill2 = new UserServiceImpl();
@@ -1486,13 +1472,11 @@ public class EmailUserScroller {
             this.userS = "";
             JdbcUtil.closeConnection(this.conn);
             JdbcUtil.closeConnection(this.conn2);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+       
     }
     
     public void deletePaybill() {
-        try {
+      
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl paybill2 = new UserServiceImpl();
             //System.out.println("CURRENT ITEM"+this.currentItem);
@@ -1500,9 +1484,7 @@ public class EmailUserScroller {
             JsfUtil.addSuccessMessage("Paybill deleted successfully!");
             
             JdbcUtil.closeConnection(this.conn);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+       
     }
     
     
@@ -1548,7 +1530,7 @@ public class EmailUserScroller {
     public List<Alpnumeric> getUserAlphas() throws SQLException {
         synchronized (this) {
             if (userAlphas == null || userAlphas.isEmpty()) {
-                try {
+                
                     conn = util.getConnectionTodbSMS();
                    // LOG.info("getAllUsers");
                     userAlphas = new ArrayList<>();
@@ -1556,21 +1538,16 @@ public class EmailUserScroller {
                     userAlphas = userService.getUserAlphas(conn, userS);
                     //.info("ALL ALPHAS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
-                } catch (SQLException e) {
-                    JdbcUtil.printSQLException(e);
-                }
+             
             } else {
                 userAlphas = null;
-                try {
+              
                     conn = util.getConnectionTodbSMS();
                     //LOG.info("Get " + userS + "'s Alphas");
                     userAlphas = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     userAlphas = userService.getUserAlphas(conn, userS);
-                    JdbcUtil.closeConnection(conn);
-                } catch (SQLException e) {
-                    JdbcUtil.printSQLException(e);
-                }
+                
             }
         }
         

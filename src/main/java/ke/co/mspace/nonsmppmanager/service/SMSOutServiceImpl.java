@@ -220,7 +220,6 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql);
         System.out.println("Testing sql---sms"+(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller+" "+sqlLimit : sql+" "+sqlLimit));
         Statement stmt = conn.createStatement();
-        System.out.println("Evaluation sql "+(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller+" "+sqlLimit : sql+" "+sqlLimit));
         ResultSet rs = stmt.executeQuery(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller+" "+sqlLimit : sql+" "+sqlLimit);
 //        rs.last();
         //check should come here ..if user selects proceed and the rows are 
@@ -235,7 +234,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
       
        
 //        ResultSet rs= smsout.getResultSet();
-        int rows =(Integer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("ListSize");
+//        int rows =(Integer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("ListSize");
 
         //System.out.println("List has "+rows+" Rows ");
         List<SMSOut> result = new ArrayList<>();
@@ -252,6 +251,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 //             
 //        }
         int count=0;
+        System.out.println("aviator ");
         while (rs.next()) {
 
             count++;

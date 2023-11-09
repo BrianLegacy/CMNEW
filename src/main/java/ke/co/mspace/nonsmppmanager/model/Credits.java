@@ -5,6 +5,7 @@
  */
 package ke.co.mspace.nonsmppmanager.model;
 
+import org.mspace.clientmanager.user.UserController;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -33,7 +34,7 @@ static Connection conn;
 
 
     @Override
-    public List<User> getAllUsers(Connection conn, String name) throws SQLException {
+    public List<UserController> getAllUsers(Connection conn, String name) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -43,17 +44,17 @@ static Connection conn;
     }
 
     @Override
-    public List<User> getAllUserPerAgent(Connection conn, String name) throws SQLException {
+    public List<UserController> getAllUserPerAgent(Connection conn, String name) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void persistUser(User user, Connection conn) throws SQLException {
+    public void persistUser(UserController user, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void persistUserAgent(User user, Connection conn) throws SQLException {
+    public void persistUserAgent(UserController user, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -73,12 +74,12 @@ static Connection conn;
     }
 
     @Override
-    public void updateUser(User aThis, Connection conn) throws SQLException {
+    public void updateUser(UserController aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public User loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException {
+    public UserController loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -142,17 +143,17 @@ static Connection conn;
     }
 
     @Override
-    public List<User> getLastCreated(Connection conn, String name) throws SQLException {
+    public List<UserController> getLastCreated(Connection conn, String name) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void deleteUser(User selected, Connection conn) {
+    public void deleteUser(UserController selected, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void deleteReseller(User selected, Connection conn) {
+    public void deleteReseller(UserController selected, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -162,7 +163,7 @@ static Connection conn;
     }
 
     @Override
-    public int UpdateUserMaxContacts(User currentItem, int MaxContacts, Date StartDate, Date EndDate, Connection conn) {
+    public int UpdateUserMaxContacts(UserController currentItem, int MaxContacts, Date StartDate, Date EndDate, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -172,7 +173,7 @@ static Connection conn;
     }
 
 //    @Override
-//    public void persistEmailUser(User user, Connection conn) throws SQLException {
+//    public void persistEmailUser(UserController user, Connection conn) throws SQLException {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 //
@@ -185,12 +186,12 @@ static Connection conn;
 //    }
 //
 //    @Override
-//    public void updateEmailUser(User aThis, Connection conn) {
+//    public void updateEmailUser(UserController aThis, Connection conn) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 //
 //    @Override
-//    public void persistEmailUserAgent(User aThis, Connection conn) {
+//    public void persistEmailUserAgent(UserController aThis, Connection conn) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 //
@@ -198,15 +199,15 @@ static Connection conn;
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 
-    public void persistEmailUser(User user, Connection conn) throws SQLException {
+    public void persistEmailUser(UserController user, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void updateEmailUser(User aThis, Connection conn) throws SQLException {
+    public void updateEmailUser(UserController aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void persistEmailUserAgent(User aThis, Connection conn) {
+    public void persistEmailUserAgent(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -235,17 +236,17 @@ static Connection conn;
     }
 
     @Override
-    public void persistUssdCode(User aThis, Connection conn) {
+    public void persistUssdCode(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<User> getAllEmailUsers(Connection conn, String userS) {
+    public List<UserController> getAllEmailUsers(Connection conn, String userS) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void updateUserWithoutGroup(User aThis, Connection conn) throws SQLException {
+    public void updateUserWithoutGroup(UserController aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

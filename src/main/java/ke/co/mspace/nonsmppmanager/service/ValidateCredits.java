@@ -31,7 +31,7 @@ public class ValidateCredits implements Validator {
 
     @Override
     public void validate(FacesContext fc, UIComponent uic, Object value) throws ValidatorException {
-        try {
+        
             UserScroller us = new UserScroller();
 
             conn = util.getConnectionTodbSMS();
@@ -66,9 +66,7 @@ public class ValidateCredits implements Validator {
 
             JdbcUtil.closeConnection(conn);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ValidateCredits.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
     }
 
 }

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ke.co.mspace.nonsmppmanager.service;
+package org.mspace.clientmanager.credits.services;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import ke.co.mspace.nonsmppmanager.model.EmailCredits;
-import ke.co.mspace.nonsmppmanager.model.SMSCredits;
+import org.mspace.clientmanager.credits.model.SMSCredits;
 
 /**
  *

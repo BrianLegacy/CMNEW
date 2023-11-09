@@ -42,7 +42,13 @@
                                     </p:selectOneMenu>
             
             
+              <p:menuButton value="#{sMPPOut.summaryOrDetail}" rendered="true">
+                
+                <p:menuitem value="Detail" action="#{sMPPOut.setSummary(true)}"  ajax="false"/>
+                <p:menuitem value="Summary" action="#{sMPPOut.setSummary(false)}" ajax="false" />
             
+              
+            </p:menuButton>
             <p:menuButton value="Details" rendered="false">
                 
                 <p:menuitem value="Detail" action="#{sMPPOut.setSummary(true)}"  ajax="false"/>
@@ -50,11 +56,7 @@
             
               
             </p:menuButton>
-            <p:selectOneMenu value="#{sMPPOut.summary}">
-        <f:selectItem itemLabel="Detail" itemValue="true" />
-        <f:selectItem itemLabel="Summary" itemValue="false" />
-    
-    </p:selectOneMenu>
+            
 
             <h:panelGroup layout="block" rendered="#{sMPPOut.reportStartDate ne null and sMPPOut.reportEndDate ne null}">
                 <p:commandLink ajax="false" update="table"  

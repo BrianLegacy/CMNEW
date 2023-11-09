@@ -66,6 +66,7 @@ public class SMPPOut implements Serializable {
     private List<SMPPOut> smsOutReport;
     private String smsOutReport2;
     private String smsOutReport3;
+    private String summaryOrDetail="Summary";
     private static final Logger LOG = Logger.getLogger(SMPPOut.class.getName());
     private boolean renderModal=false;
      private int limit=500;
@@ -90,6 +91,13 @@ public class SMPPOut implements Serializable {
     public String getSmsOutReport2() {
 
         return smsOutReport2;
+    }
+      public String getSummaryOrDetail() {
+        return summaryOrDetail;
+    }
+
+    public void setSummaryOrDetail(String summaryOrDetail) {
+        this.summaryOrDetail = summaryOrDetail;
     }
 
     public void setSmsOutReport2(String smsOutReport2) {
@@ -547,15 +555,13 @@ public class SMPPOut implements Serializable {
     }
         public void executeReport() {
         System.out.println("Execute Report....generate");
-        try {
+       
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
             //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
             LargeFileExport export = new LargeFileExport();
             export.checkSmsList(conn, "SMS OUT REPORT");
-        } catch (SQLException ex) {
-            Logger.getLogger(SMSOut.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      
     }
     boolean summary=false;
 
@@ -565,8 +571,13 @@ public class SMPPOut implements Serializable {
     }
 
     public void setSummary(boolean summary) {
-        System.out.println("automatic"+summary);
         this.summary = summary;
+          if(summary)
+            {
+            setSummaryOrDetail("Detail");
+        }
+       
+        else {setSummaryOrDetail("summary");}
 //        int count=0;
 //        List<SMSOut> summaryList = null;
 //        smsOutReport.forEach((v)->{});

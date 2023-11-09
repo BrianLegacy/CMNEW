@@ -254,15 +254,13 @@
                 /*     */            }
             /* 280 */ List<Paybill> PaybillList = null;
             /*     */ Connection conn;
-            /* 282 */ try {
+            /* 282 */ 
                 JdbcUtil util = new JdbcUtil();
                 /* 283 */ conn = util.getConnectionTodbPAYMENT();
                 /*     */
  /* 285 */ PaybillList = getAllPaybill(conn);
                 /* 286 */ JdbcUtil.closeConnection(conn);
-                /*     */            } catch (SQLException e) {
-                /* 288 */ JdbcUtil.printSQLException(e);
-                /*     */            }
+                /*     */            
             /* 290 */ int rowNum = 2;
             /*     */ /*     */
  /* 292 */ for (Paybill paybill : PaybillList) {

@@ -18,7 +18,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -38,7 +38,7 @@ public class CustomUsernameValidator implements Validator {
             LOG.info("validate");
          
         UserServiceApi service = new UserServiceImpl();
-        User user = service.loadCustomerByUsername(inputValue, conn);
+        UserController user = service.loadCustomerByUsername(inputValue, conn);
         boolean isValid = (user.getUsername()==null);
            
             if (!isValid) {
@@ -62,7 +62,7 @@ public class CustomUsernameValidator implements Validator {
 //            Connection conn = util.getConnectionTodbTASKS();
 //            LOG.info("validate");
 //        UserServiceApi service = new UserServiceImpl();
-//        User user = service.(inputValue, conn);
+//        UserController user = service.(inputValue, conn);
 //        boolean isValid = (user.getUsername()==null);
 //        
 //            if (!isValid) {

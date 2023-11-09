@@ -66,7 +66,7 @@ public class SMSOut implements Serializable {
     private String messageId;
     private String sentby;
     private int esmClass;
-
+        
     private String rule;
     private String user;
     private String submittedby;
@@ -84,9 +84,11 @@ public class SMSOut implements Serializable {
     private String smsOutReport2;
     private String smsOutReport3;
     private int reportSize;
+    private String summaryOrDetail="Summary";
     private boolean renderModal = false;
     private static final Logger LOG = Logger.getLogger(SMSOut.class.getName());
     private int limit=500;
+    
 
     private String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 
@@ -143,6 +145,15 @@ public class SMSOut implements Serializable {
     public void setRid(Long rid) {
         this.rid = rid;
     }
+
+    public String getSummaryOrDetail() {
+        return summaryOrDetail;
+    }
+
+    public void setSummaryOrDetail(String summaryOrDetail) {
+        this.summaryOrDetail = summaryOrDetail;
+    }
+    
 
     public String getSeqNo() {
         return seqNo;
@@ -414,6 +425,12 @@ private int summarysmscount;
     public void setSummary(boolean summary) {
 //        System.out.println("automatic"+summary);
         this.summary = summary;
+        if(summary)
+            {
+            setSummaryOrDetail("Detail");
+        }
+       
+        else {setSummaryOrDetail("summary");}
 //        int count=0;
 //        List<SMSOut> summaryList = null;
 //        smsOutReport.forEach((v)->{});
@@ -439,7 +456,6 @@ private int summarysmscount;
 //            System.out.println("processing began");
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
-            LOG.info("smsOutReport");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -453,9 +469,9 @@ private int summarysmscount;
             String endDate = simpleDateFormat.format(reportEndDate);
          //   System.out.println("Start Date :" + startDate + " End Date : " + endDate);
           //added by horace
-//            System.out.println("calling checker");
+            System.out.println("calling checker");
           int countOfSMS=service.checkIfFileIsLarge(user, startDate, endDate,schsdate,schedate, conn);
-//            System.out.println("Returned count "+countOfSMS);
+            System.out.println("Returned count "+countOfSMS);
             setNumOfSMS(countOfSMS);
 //            System.out.println("The size of the large report is"+countOfSMS);
            if(numOfSMS>limit){
@@ -640,16 +656,14 @@ public void closeTheModal(){
         System.out.println("a hit ");
         setRenderModal(false);
 //        System.out.println("Execute Report....generate");
-        try {
+        
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
             //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
             LargeFileExport export = new LargeFileExport();
             export.checkSmsList(conn, "SMS OUT REPORT");
             
-        } catch (SQLException ex) {
-            Logger.getLogger(SMSOut.class.getName()).log(Level.SEVERE, null, ex);
-        }
+     
          facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
     }
 
@@ -770,7 +784,7 @@ public void closeTheModal(){
 
     public ResultSet getResultSet() {
         ResultSet rs = null;
-        try {
+       
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
             conn = util.getConnectionTodbSMS();
@@ -786,9 +800,7 @@ public void closeTheModal(){
 
             rs = service.getResultSet(user, startDate, endDate, conn);
             //JdbcUtil.closeConnection(conn);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+    
         return rs;
     }
 

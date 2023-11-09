@@ -5,6 +5,8 @@
  */
 package ke.co.mspace.nonsmppmanager.model;
 
+import org.mspace.clientmanager.credits.model.SMSCredits;
+import org.mspace.clientmanager.user.UserController;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,8 +29,8 @@ import static ke.co.mspace.nonsmppmanager.model.AuthenticationBean.AUTH_KEY;
 import ke.co.mspace.nonsmppmanager.service.AlphaScroller;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
-import ke.co.mspace.nonsmppmanager.service.ManageCreditApi;
-import ke.co.mspace.nonsmppmanager.service.ManageCreditImpl;
+import org.mspace.clientmanager.credits.services.ManageCreditApi;
+import org.mspace.clientmanager.credits.services.ManageCreditImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
@@ -94,7 +96,7 @@ public class EmailUser {
     private int emailPlan=1;
     private Connection conn = null;
     final JdbcUtil util = new JdbcUtil();
-    private static final Logger LOG = Logger.getLogger(User.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserController.class.getName());
 
     public EmailUser() {
     }
@@ -129,26 +131,22 @@ public class EmailUser {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         selectItems= new ArrayList();
        Map<String,String> myAlphanumerics = new HashMap<>();
-        try {
+       
             conn = util.getConnectionTodbSMS();
             myAlphanumerics = asi.getAlphanumericsNames(conn);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException e) {
-            JdbcUtil.closeConnection(conn);
-        }
+       
         return myAlphanumerics;
     }
 
     public List<String> getAirComboAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         List<String> myAlphanumerics = new ArrayList<>();
-        try {
+       
             conn = util.getConnectionTodbSMS();
             myAlphanumerics = asi.getAirTelAlphas(conn);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException e) {
-            JdbcUtil.closeConnection(conn);
-        }
+       
         return myAlphanumerics;
     }
 
@@ -156,13 +154,11 @@ public class EmailUser {
     public List<String> getUnusignedAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         List<String> myAlphanumerics = new ArrayList<>();
-        try {
+        
             conn = util.getConnectionTodbSMS();
             myAlphanumerics = asi.getUnusagnedphanumericsNames(conn);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException e) {
-            JdbcUtil.closeConnection(conn);
-        }
+       
         return myAlphanumerics;
     }
 
@@ -533,7 +529,7 @@ public class EmailUser {
             st.executeUpdate(sql);
             //System.out.println("Upating the ");
         } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -664,7 +660,7 @@ public class EmailUser {
             
             creditManager.persistUpdate(credits, conn);//credits.getNumCredits(),0,credits.getNumCredits());
 
-            User newUser = service.loadCustomerByUsername(username, conn);
+            UserController newUser = service.loadCustomerByUsername(username, conn);
             if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("userScroller")) {
                 ((UserScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userScroller")).addUserToList(newUser);
             }
@@ -750,7 +746,7 @@ public class EmailUser {
 //            
 //            creditManager.persistUpdate(credits, conn);//credits.getNumCredits(),0,credits.getNumCredits());
 //
-//            User newUser = service.loadCustomerByUsername(username, conn);
+//            UserController newUser = service.loadCustomerByUsername(username, conn);
 //            if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("userScroller")) {
 //                ((UserScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userScroller")).addUserToList(newUser);
 //            }
@@ -765,7 +761,7 @@ public class EmailUser {
 //                ((AlphaScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("alphaScroller")).addAlphaToList(alpha);
 //            }
 //
-//            JsfUtil.addSuccessMessage(" Email User saved successfully.");
+//            JsfUtil.addSuccessMessage(" Email UserController saved successfully.");
 //            //Added to manage ccredits 
 //            userService.updateCredits(username, credits.getNumCredits(), conn);
 //            this.updateAdminBal();
@@ -807,7 +803,7 @@ public class EmailUser {
             credits.setPrevious_balance(0);
             credits.setNew_balance(smsCredits);
             creditManager.persistUpdate(credits, conn);
-            User newUser = service.loadCustomerByUsername(username, conn);
+            UserController newUser = service.loadCustomerByUsername(username, conn);
             if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("userScroller")) {
                 ((UserScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userScroller")).addUserToList(newUser);
             }
@@ -857,7 +853,7 @@ public class EmailUser {
         try {
             conn = util.getConnectionTodbSMS();
             UserServiceApi userService = new UserServiceImpl();
-            User aUser = userService.loadCustomerByUsername(username, conn);
+            UserController aUser = userService.loadCustomerByUsername(username, conn);
             this.id = aUser.getId();
             this.username = aUser.getUsername();
             this.userEmail = aUser.getUserEmail();

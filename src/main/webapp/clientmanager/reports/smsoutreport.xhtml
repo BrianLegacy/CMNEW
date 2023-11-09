@@ -18,7 +18,7 @@
             <p:growl id="msgs" showDetail="true" life="3000"/>
 
             <div align="center">
-                <p:panel id="maintab" header="SMPP OUT REPORT" >
+                <p:panel id="maintab" header="SMS OUT REPORT" >
                     
                     
                     
@@ -43,18 +43,14 @@
             
             
             
-            <p:menuButton value="Details" rendered="false">
+            <p:menuButton value="#{sMSOut.summaryOrDetail}" rendered="true">
                 
                 <p:menuitem value="Detail" action="#{sMSOut.setSummary(true)}"  ajax="false"/>
                 <p:menuitem value="Summary" action="#{sMSOut.setSummary(false)}" ajax="false" />
             
               
             </p:menuButton>
-             <p:selectOneMenu value="#{sMPPOut.summary}">
-        <f:selectItem itemLabel="Detail" itemValue="true" />
-        <f:selectItem itemLabel="Summary" itemValue="false" />
-    
-    </p:selectOneMenu>
+          
 
             <h:panelGroup layout="block" rendered="#{sMSOut.reportStartDate ne null and sMSOut.reportEndDate ne null}">
                 <p:commandLink ajax="false" update="table"  

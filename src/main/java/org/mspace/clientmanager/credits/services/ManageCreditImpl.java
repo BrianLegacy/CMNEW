@@ -1,4 +1,4 @@
-package ke.co.mspace.nonsmppmanager.service;
+package org.mspace.clientmanager.credits.services;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,8 @@ import javax.faces.context.FacesContext;
 import static ke.co.mspace.nonsmppmanager.model.AuthenticationBean.AUTH_KEY;
 import ke.co.mspace.nonsmppmanager.model.EmailCredits;
 
-import ke.co.mspace.nonsmppmanager.model.SMSCredits;
+import org.mspace.clientmanager.credits.model.SMSCredits;
+import ke.co.mspace.nonsmppmanager.service.AlphaScroller;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**

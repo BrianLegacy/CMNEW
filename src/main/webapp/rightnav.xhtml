@@ -10,11 +10,36 @@
     </h:head>
     <h:body>
         <ui:composition>
+            <script src="https://kit.fontawesome.com/94d660d228.js" crossorigin="anonymous"></script>
             <h:outputScript library="js" name="#{tusercontroller.diftChat}" target="body" />
 
 
             <style>
-
+                .fa-solid{
+                        text-indent:0px;
+     background-image:none;
+                }
+                
+                .fa-dollar-sign{
+                        text-indent:0px;
+     background-image:none;
+                }
+                .ui-icon.fa {
+     text-indent:0px;
+     background-image:none;
+        
+}
+.fa-solid, .fa-regular, .fa-envelope{
+ text-indent:0px;
+     background-image:none;   
+     
+}
+.fa{
+ text-indent:0px;
+     background-image:none; 
+        font-size: 15px
+}
+    
                 .tabmenubutton
                 {
                     background:url('./images/tasks.gif') no-repeat !important;
@@ -38,56 +63,83 @@
                 }
             </style>
             <h:form>
-                <!--<p:button  icon="add_user_icon"  />-->
+            
+              
+              
                 <p:panelMenu style="border: none !important; " > 
+                    
                     <p:submenu label="Manage User Details" expanded="true">
-                        <p:menuitem  rendered="#{userScroller.amIResellersUser()}" value="Add Group " actionListener="#{userInfo.addgroupuser()}"  ajax="false" icon="fa fa-plus" />
-                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="View Group "  actionListener="#{userInfo.viewgroupuser()}" ajax="false"  icon="fa  fa-list-ul"/>
+                        <p:menuitem  rendered="#{userScroller.amIResellersUser()}" value="Add Group "
+                                     actionListener="#{userInfo.addgroupuser()}"
+                                     ajax="false" icon="fa-solid fa-users-viewfinder" />
+                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="View Group "
+                                    actionListener="#{userInfo.viewgroupuser()}" 
+                                    ajax="false"  icon="fa-solid fa-people-group"/>
                         <p:menuitem value="Add SMS User"   actionListener="#{userInfo.addsmsuser()}" 
-                                    ajax="false" icon="fa fa-plus" style="display: #{userInfo.shortCodeStatus}">
+                                    ajax="false" icon="fa fa-user-plus" style="display: #{userInfo.shortCodeStatus}">
 
 
 
                         </p:menuitem>
-                        <p:menuitem value="View SMS User"  actionListener="#{userInfo.viewsmsuser()}" ajax="false" icon="fa  fa-group"/>
-                        <p:menuitem value="Add Email User"     actionListener="#{userInfo.addemailuser()}" ajax="false"  icon="fa fa-user-plus"/>
-                        <p:menuitem value="View Email Users"     actionListener="#{userInfo.viewemailuser()}"  ajax="false"  icon="fa  fa-group"/>
+                        <p:menuitem value="View SMS User"  actionListener="#{userInfo.viewsmsuser()}"
+                                    ajax="false" icon="fa-solid fa-user-group"/>
+                        <p:menuitem value="Add Email User"  
+                                    actionListener="#{userInfo.addemailuser()}" ajax="false" 
+                                    icon="fa fa-user-plus"/>
+                        <p:menuitem value="View Email Users"     actionListener="#{userInfo.viewemailuser()}" 
+                                    ajax="false" icon="fa-solid fa-user-group" >
+                         
+                        </p:menuitem>
                         <p:menuitem value="View Alphanumerics" id="dobS"    actionListener="#{userInfo.viewalphanumerics()}" ajax="false"  icon="fa fa-keyboard-o"/>
                     </p:submenu>
 
                     <p:submenu label="Manage Re-sellers" style="display:#{userScroller.show()}" expanded="true">
                         <p:menuitem  value="Add Reseller" actionListener="#{userInfo.addReseller()}"  ajax="false" icon="fa fa-user-plus" />
-                        <p:menuitem value="Manage Reseller"  actionListener="#{userInfo.manageReseller()}"  ajax="false"  icon="fa  fa-group"/>
+                        <p:menuitem value="Manage Reseller"  
+                                    actionListener="#{userInfo.manageReseller()}" 
+                                    ajax="false"  icon="fa-solid fa-user-group"/>
                     </p:submenu>
 
                     <p:submenu  label="Pricing Table" expanded="true" style="display:#{userScroller.show()}">
-                        <p:menuitem  value="Email Pricing" actionListener="#{userInfo.pricingTable()}"  ajax="false" icon="fa fa-money" />
+                        <p:menuitem  value="Email Pricing Table" actionListener="#{userInfo.pricingTable()}"  ajax="false" 
+                                     icon="fa-solid fa-table" />
                     </p:submenu>
 
                     <p:submenu label="MSpacePESA" expanded="true" style="display:#{userScroller.show()}">
-                        <p:menuitem  value="Add Till/Paybill Number" actionListener="#{userInfo.addPaybill()}"  ajax="false" icon="fa fa-plus" />
-                        <p:menuitem  value="View Till/Paybill Number" actionListener="#{userInfo.viewpaybills()}"  ajax="false" icon="fa fa-list-ul" />
+                        <p:menuitem  value="Add Till/Paybill Number" actionListener="#{userInfo.addPaybill()}"
+                                     ajax="false" icon="fa-solid fa-cash-register" />
+                        <p:menuitem  value="View Till/Paybill Number"
+                                     actionListener="#{userInfo.viewpaybills()}"  ajax="false"
+                                     icon="fa-solid fa-list-check" />
                     </p:submenu>
 
                     <p:submenu label="Shared USSD" expanded="true" style="display:#{userScroller.show()}">
-                        <p:menuitem  value="Add Callback " actionListener="#{userInfo.addcallback()}"  ajax="false" icon="fa fa-plus" />
+                        <p:menuitem  value="Add Callback " actionListener="#{userInfo.addcallback()}" 
+                                     ajax="false" icon="fa-solid fa-arrow-up-right-from-square" />
                         <p:menuitem  value="Manage Callbacks" actionListener="#{userInfo.viewcallbacks()}"  ajax="false" icon="fa fa-list-ul" />
                     </p:submenu>
                     <p:submenu label="My Account" expanded="true" >
-                        <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"  ajax="false" icon="fa fa-plus" />
-                        <p:menuitem  value="Account Top up" actionListener="#{userInfo.accountTopup()}"  ajax="false" icon="fa fa-list-ul" />
-                        <p:menuitem  value="Send SMS" url="#{userScroller.sendSMS()}"  ajax="false" icon="fa fa-list-ul" />
+                        <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"
+                                     ajax="false" icon="fa-regular fa-address-card" />
+                        <p:menuitem  value="Account Top up" actionListener="#{userInfo.accountTopup()}"
+                                     ajax="false" icon="fa fa-money" />
+                        <p:menuitem  value="Send SMS" url="#{userScroller.sendSMS()}"  ajax="false" 
+                                     icon="fa-regular fa-envelope" />
 
                     </p:submenu>
 
                     <p:submenu label="Summary and Reports" expanded="true">
+                          <p:menuitem rendered="#{userScroller.amIResellersUser()}"  value="Bulky Report"
+                                    actionListener="#{userInfo.bulkreports()}"  ajax="false"
+                                    icon="fa-solid fa-folder-open" />
                         <p:menuitem  value="SMS Out Report" actionListener="#{userInfo.smsoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem rendered="#{userScroller.amIResellersUser()}"  value="Bulky Report" actionListener="#{userInfo.bulkreports()}"  ajax="false" icon="fa fa-newspaper-o" />
+                      
                         <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="SMPP Out Report" actionListener="#{userInfo.smppoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem  value="Single User Visual Report" actionListener="#{userInfo.singleuservisualreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem  value="All Users VIsual Report" actionListener="#{userInfo.alluservisualreport()}"  ajax="false" icon="fa fa-newspaper-o" />
+                        <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="fa-solid fa-file-export" />
+                        <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}" 
+                                     ajax="false" icon="fa-solid fa-file-invoice-dollar " />
+                        <p:menuitem  value="Single User Visual Report" actionListener="#{userInfo.singleuservisualreport()}"  ajax="false" icon="fa-solid fa-file-image" />
+                        <p:menuitem  value="All Users VIsual Report" actionListener="#{userInfo.alluservisualreport()}"  ajax="false" icon="fa-solid fa-photo-film" />
 
 
 

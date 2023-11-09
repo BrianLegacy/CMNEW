@@ -15,7 +15,7 @@ import java.util.Map;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Alpnumeric;
 import ke.co.mspace.nonsmppmanager.model.EmailUser;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.model.UserProfile;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
 //import org.richfaces.event.UploadEvent;
@@ -25,25 +25,25 @@ import ke.co.mspace.nonsmppmanager.model.creditRecord;
  * @author Norrey Osako
  */
 public interface EmailUserServiceApi {
-    public void deleteReseller(User selected, Connection conn);
-     public void deleteUser(User selected, Connection conn);
+    public void deleteReseller(UserController selected, Connection conn);
+     public void deleteUser(UserController selected, Connection conn);
      
-     public int UpdateUserMaxContacts(User currentItem,int MaxContacts,Date StartDate,Date EndDate,Connection  conn);
-     public List <User>getLastCreated(Connection conn,String name) throws SQLException;
+     public int UpdateUserMaxContacts(UserController currentItem,int MaxContacts,Date StartDate,Date EndDate,Connection  conn);
+     public List <UserController>getLastCreated(Connection conn,String name) throws SQLException;
     
     List<Alpha> getAgentAlphas(Connection conn,String user);
 
-    List<User> getAllUsers(Connection conn, String name) throws SQLException;
+    List<UserController> getAllUsers(Connection conn, String name) throws SQLException;
     
     List <Alpnumeric> getUserAlphas(Connection conn, String name);
 
     List<creditRecord> getAllUsersCred(Connection conn, String name) throws SQLException;
 
-    List<User> getAllUserPerAgent(Connection conn, String name) throws SQLException;
+    List<UserController> getAllUserPerAgent(Connection conn, String name) throws SQLException;
 
-    void persistUser(User user, Connection conn) throws SQLException;
+    void persistUser(UserController user, Connection conn) throws SQLException;
 
-    void persistUserAgent(User user, Connection conn) throws SQLException;
+    void persistUserAgent(UserController user, Connection conn) throws SQLException;
    
     public Date setEndDate();
 
@@ -51,9 +51,9 @@ public interface EmailUserServiceApi {
 
     public boolean authenticateUser(String username, String password);
 
-    public void updateUser(User aThis, Connection conn) throws SQLException;
+    public void updateUser(UserController aThis, Connection conn) throws SQLException;
 
-    public User loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException;
+    public UserController loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException;
 
     public void generateXSL(Connection conn) throws SQLException;
 
@@ -73,8 +73,8 @@ public interface EmailUserServiceApi {
     public String loadScript(String username,String password);
      public BigInteger smsSumary(String agent);
 
-    public void persistEmailUser(User aThis, Connection conn);
+    public void persistEmailUser(UserController aThis, Connection conn);
 
-    public User loadCallBackByCode(int inputValue, Connection conn);
+    public UserController loadCallBackByCode(int inputValue, Connection conn);
 
 }

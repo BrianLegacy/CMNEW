@@ -73,7 +73,7 @@ public class client_logo implements Serializable {
         try {
             conn = util.getConnectionTodbTask();
             String sql = "select * from tClient";
-
+            System.out.println("testing type");
             PreparedStatement pst = conn.prepareStatement(sql);
           
             final ResultSet rs = pst.executeQuery();

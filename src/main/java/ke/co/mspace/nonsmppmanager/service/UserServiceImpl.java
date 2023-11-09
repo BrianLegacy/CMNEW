@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserServiceApi {
     private static UserProfile loggedInUser;
 
     @Override
-    public List<User> getAllUsers(Connection conn, String name) throws SQLException {
+    public List<UserController> getAllUsers(Connection conn, String name) throws SQLException {
         final Map<Integer, String> groupMap = getGroupMap(conn);
         System.out.println(groupMap);
         names = name;
@@ -85,13 +85,13 @@ public class UserServiceImpl implements UserServiceApi {
         
         System.out.println("rsql "+sql);
 
-        List<User> result = new ArrayList<>();
+        List<UserController> result = new ArrayList<>();
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            User aUser = new User();
+            UserController aUser = new UserController();
             aUser.setId(rs.getLong("id"));
             aUser.setUsername(rs.getString("username"));
             aUser.setPassword(rs.getString("password"));
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserServiceApi {
     
 
     @Override
-    public List<User> getLastCreated(Connection conn, String name) throws SQLException {
+    public List<UserController> getLastCreated(Connection conn, String name) throws SQLException {
         UserScroller us = new UserScroller();
         name = us.lastInsert();
 
@@ -161,13 +161,13 @@ public class UserServiceImpl implements UserServiceApi {
                 + " LEFT JOIN tAllowedAlphanumerics on tUSER.username=tAllowedAlphanumerics.username where tUSER.admin != 1 and tUSER.username='" + name + "' and tUSER.id=" + last + "";
 
         // System.out.println("Name is:::+=======>" + name);
-        List<User> result = new ArrayList<>();
+        List<UserController> result = new ArrayList<>();
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            User aUser = new User();
+            UserController aUser = new UserController();
             aUser.setId(rs.getLong("id"));
             aUser.setUsername(rs.getString("username"));
             aUser.setPassword(rs.getString("password"));
@@ -267,10 +267,10 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     @Override
-    public void persistUser(User user, Connection conn) throws SQLException {
+    public void persistUser(UserController user, Connection conn) throws SQLException {
         System.out.println("User Details"+user.toString());
         UserScroller us = new UserScroller();
-        User userl = new User();
+        UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
         UserServiceApi userService = new UserServiceImpl();
         String agent = ac.currentUSer();
@@ -335,7 +335,7 @@ System.out.println("testing insert sql");
     }
 
     //on creating new resellers user
-    private boolean insertIntoTclient(User user, Connection conn, int resellerId) {
+    private boolean insertIntoTclient(UserController user, Connection conn, int resellerId) {
 
         boolean resellerStatus = (Boolean) FacesContext
                 .getCurrentInstance()
@@ -680,7 +680,7 @@ System.out.println("testing insert sql");
     }
 
     @Override
-    public void updateUser(User user, Connection conn) throws SQLException {
+    public void updateUser(UserController user, Connection conn) throws SQLException {
 
         String sql = "UPDATE tUSER SET "
                 + "username=?, password=?, max_total=?, organization=?, contact_number = ?, email_address=?"
@@ -712,7 +712,7 @@ System.out.println("testing insert sql");
 
     }
     @Override
-     public void updateUserWithoutGroup(User user, Connection conn) throws SQLException {
+     public void updateUserWithoutGroup(UserController user, Connection conn) throws SQLException {
 
         String sql = "UPDATE tUSER SET "
                 + "username=?, password=?, max_total=?, organization=?, contact_number = ?, email_address=?"
@@ -744,10 +744,10 @@ System.out.println("testing insert sql");
     }
 
     @Override
-    public User loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException {
+    public UserController loadCustomerByUsername(String selectedUsername, Connection conn) throws SQLException {
 
         String sql = "SELECT * FROM tUSER WHERE username='" + selectedUsername + "'";
-        User aUser = new User();
+        UserController aUser = new UserController();
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -783,9 +783,9 @@ System.out.println("testing insert sql");
             row.createCell(2).setCellValue("ORGANIZATION");
             row.createCell(3).setCellValue("MOBILE");
             row.createCell(4).setCellValue("EMAIL");
-            List<User> exportUsers = getAllUsers(conn, names);
+            List<UserController> exportUsers = getAllUsers(conn, names);
             int rowNum = 1;
-            for (User aUser : exportUsers) {
+            for (UserController aUser : exportUsers) {
                 row = sheet.createRow(rowNum);
                 row.createCell(0).setCellValue(aUser.getUsername());
                 row.createCell(1).setCellValue(aUser.getSmsCredits());
@@ -818,7 +818,7 @@ System.out.println("testing insert sql");
         pstmt.setInt(1, smsCredits);
         pstmt.setString(2, username);
         int count = pstmt.executeUpdate();
-        //System.out.println("Updating user credits--------->"+new Date()+""+"  User:"+username+" Previous Balance: ");
+        //System.out.println("Updating user credits--------->"+new Date()+""+"  UserController:"+username+" Previous Balance: ");
         //System.out.println("UPDATE CREDITS UPDATE CREDITS : " + count);
     }
 
@@ -932,7 +932,7 @@ System.out.println("testing insert sql");
     }
 
     //Fuction to  insert reseller data into the dbTASK tClient table 
-    public void pesistUserInfo(Connection conn, User user) throws SQLException {
+    public void pesistUserInfo(Connection conn, UserController user) throws SQLException {
 
         String sqlimg = "INSERT INTO dbTASK.tClient (id,clientName,email,systemType,picPath) values(?,?,?,?,?)";
 
@@ -948,7 +948,7 @@ System.out.println("testing insert sql");
         //System.out.println("(save user info to task client )Success.... with ID" + getAutoId(conn));
     }
 
-    public void persistUserAgent(User user, Connection conn) {
+    public void persistUserAgent(UserController user, Connection conn) {
        
         String autogen = "";
 
@@ -986,7 +986,7 @@ System.out.println("testing insert sql");
     }
 
     //================================================================================================
-    public List<User> getAllUserPerAgent(Connection conn, String name) throws SQLException {
+    public List<UserController> getAllUserPerAgent(Connection conn, String name) throws SQLException {
 
         names = name;
         String id = "";
@@ -1004,13 +1004,13 @@ System.out.println("testing insert sql");
                 + "tAllowedAlphanumerics.id as alphaId FROM tUSER LEFT JOIN tAllowedAlphanumerics on tUSER.username=tAllowedAlphanumerics.username where tUSER.admin !='1'"
                 + "and tUSER.agent='" + id + "'";
 
-        List<User> result = new ArrayList<>();
+        List<UserController> result = new ArrayList<>();
         Statement stmt = conn.createStatement();
 
         ResultSet rs = stmt.executeQuery(sql);
         //System.out.println(name);
         while (rs.next()) {
-            User aUser = new User();
+            UserController aUser = new UserController();
             aUser.setId(rs.getLong("id"));
             aUser.setUsername(rs.getString("username"));
             aUser.setPassword(rs.getString("password"));
@@ -1116,7 +1116,7 @@ System.out.println("testing insert sql");
     }
 
     @Override
-    public void deleteUser(User selected, Connection conn) {
+    public void deleteUser(UserController selected, Connection conn) {
         try {
 //          String sql = "UPDATE tUSER set admin= 4 where username =?";
             String sql = "DELETE from tUSER where username =?";
@@ -1126,7 +1126,7 @@ System.out.println("testing insert sql");
             // Bind values to the parameters
             pstmt.setString(1, selected.getUsername());
             //pstmt.setString(2,alphanumeric);
-            //System.out.println("Deleting User  " + selected);
+            //System.out.println("Deleting UserController  " + selected);
 
             // Execute the query
             int count = pstmt.executeUpdate();
@@ -1138,7 +1138,7 @@ System.out.println("testing insert sql");
     }
 
     @Override
-    public void deleteReseller(User selected, Connection conn) {
+    public void deleteReseller(UserController selected, Connection conn) {
         try {
             String sql = "DELETE from tUSER where username =?";
             //System.out.println("The querry" + sql);
@@ -1147,7 +1147,7 @@ System.out.println("testing insert sql");
             // Bind values to the parameters
             pstmt.setString(1, selected.getUsername());
             //pstmt.setString(2,alphanumeric);
-            //System.out.println("Deleting User  " + selected);
+            //System.out.println("Deleting UserController  " + selected);
 
             // Execute the query
             int count = pstmt.executeUpdate();
@@ -1166,7 +1166,7 @@ System.out.println("testing insert sql");
             String sql = "INSERT INTO tUSERPAYBILL(tUSER_id,paybill,default_reply,email,username,sender_id)VALUES(?,?,?,?,?,?)";
 
             PreparedStatement ps = conn.prepareStatement(sql);
-            // System.out.println("User ID : "+paybill.getUserid()+"Username:"+paybill.getName());
+            // System.out.println("UserController ID : "+paybill.getUserid()+"Username:"+paybill.getName());
             ps.setInt(1, paybill.getUserid());
             ps.setInt(2, paybill.getPaybillz());
             ps.setString(3, paybill.getMessage());
@@ -1217,7 +1217,7 @@ System.out.println("testing insert sql");
 
     public void updatePaybill(Paybill paybill, Connection conn) throws SQLException {
         JdbcUtil util = new JdbcUtil();
-        User user = null;
+        UserController user = null;
         conn = util.getConnectionTodbPAYMENT();
         String sql = "UPDATE tUSERPAYBILL set paybill=?, reply=?, email=? where id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -1310,7 +1310,7 @@ System.out.println("testing insert sql");
     }
 
     @Override
-    public int UpdateUserMaxContacts(User currentItem, int MaxContacts, Date StartDate, Date EndDate, Connection conn) {
+    public int UpdateUserMaxContacts(UserController currentItem, int MaxContacts, Date StartDate, Date EndDate, Connection conn) {
         int count = 0;
         PreparedStatement pstmt = null;
         try {
@@ -1523,11 +1523,11 @@ public String formatNumbers(String nums){
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 
-    public void updateEmailUser(User aThis, Connection conn) {
+    public void updateEmailUser(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void persistEmailUserAgent(User aThis, Connection conn) {
+    public void persistEmailUserAgent(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -1565,12 +1565,12 @@ public String formatNumbers(String nums){
     }
 
     @Override
-    public void persistUssdCode(User aThis, Connection conn) {
+    public void persistUssdCode(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<User> getAllEmailUsers(Connection conn, String userS) {
+    public List<UserController> getAllEmailUsers(Connection conn, String userS) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

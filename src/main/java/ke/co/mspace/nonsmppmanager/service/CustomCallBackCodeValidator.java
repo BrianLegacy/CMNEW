@@ -12,7 +12,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -30,7 +30,7 @@ public class CustomCallBackCodeValidator {
             Connection conn = util.getConnectionTodbSMS();
             LOG.info("validate");
         UserServiceImpl service = new UserServiceImpl();
-        User user = service.loadCustomerByUsername(inputValue, conn);
+        UserController user = service.loadCustomerByUsername(inputValue, conn);
         boolean isValid = (user.getUsername()==null);
         
             if (!isValid) {

@@ -24,7 +24,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Facet;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 //import org.richfaces.component.UIScrollableDataTable;
@@ -148,15 +148,15 @@ public void psetCurrentItemForEdit(Paybill data){
         return rand(1, 10000);
     }
 
-    public List<User> createUser(String make, String model, int count) {
-        ArrayList<User> iiList = null;
+    public List<UserController> createUser(String make, String model, int count) {
+        ArrayList<UserController> iiList = null;
         try {
             int arrayCount = count;
 
-            User[] demoInventoryItemArrays = new User[arrayCount];
+            UserController[] demoInventoryItemArrays = new UserController[arrayCount];
 
             for (int j = 0; j < demoInventoryItemArrays.length; j++) {
-                User ii = new User();
+                UserController ii = new UserController();
 
                 demoInventoryItemArrays[j] = ii;
             }

@@ -207,15 +207,13 @@ public class Paybill {
 
     public List<Paybill> listPaybill() {
         List<Paybill> paybills = null;
-        try {
+        
             this.conn = this.util.getConnectionTodbPAYMENT();
 
             PaybillServiceApi paybillService = new PaybillServiceImpl();
             paybills = paybillService.getAllPaybill(this.conn);
             JdbcUtil.closeConnection(this.conn);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+     
 
         return paybills;
     }
@@ -228,7 +226,7 @@ public class Paybill {
     }
 
     public void addPaybill() {
-        try {
+       
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl paybill = new UserServiceImpl();
             paybill.persistPaybill(this, this.conn, this.conn2);
@@ -236,13 +234,11 @@ public class Paybill {
             clearAll();
             JdbcUtil.closeConnection(this.conn);
             JdbcUtil.closeConnection(this.conn2);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+    
     }
 
     public void addTillNumber() {
-        try {
+       
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl paybill = new UserServiceImpl();
             paybill.persistPaybill(this, this.conn, this.conn2);
@@ -250,9 +246,7 @@ public class Paybill {
             clearAll();
             JdbcUtil.closeConnection(this.conn);
             JdbcUtil.closeConnection(this.conn2);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
-        }
+        
     }
 
     public void clearAll() {

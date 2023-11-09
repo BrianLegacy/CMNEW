@@ -24,7 +24,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Facet;
-import ke.co.mspace.nonsmppmanager.model.User;
+import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -127,7 +127,7 @@ public class AlphaScroller {
 
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
-                try {
+              
                     //String username=currentItem.getUsername();
                     conn = util.getConnectionTodbSMS();
                     LOG.info("getAllAlphas");
@@ -136,9 +136,7 @@ public class AlphaScroller {
                     allUsers = service.getAgentAlphas(conn, user);
 
                     JdbcUtil.closeConnection(conn);
-                } catch (SQLException e) {
-                    JdbcUtil.printSQLException(e);
-                }
+                
             }
         }
 
@@ -172,24 +170,24 @@ public class AlphaScroller {
         return rand(1, 10000);
     }
 
-    public List<User> createUser(String make, String model,
+    public List<UserController> createUser(String make, String model,
             int count) {
 
-        ArrayList<User> iiList = null;
+        ArrayList<UserController> iiList = null;
 
         try {
             int arrayCount = count;
 
-            User[] demoInventoryItemArrays = new User[arrayCount];
+            UserController[] demoInventoryItemArrays = new UserController[arrayCount];
 
             for (int j = 0; j < demoInventoryItemArrays.length; j++) {
-                User ii = new User();
+                UserController ii = new UserController();
 
                 demoInventoryItemArrays[j] = ii;
 
             }
 
-            iiList = new ArrayList<User>(Arrays
+            iiList = new ArrayList<UserController>(Arrays
                     .asList(demoInventoryItemArrays));
 
         } catch (Exception e) {
@@ -357,14 +355,14 @@ public class AlphaScroller {
 
                 service.persistAlpha(username, alphanumeric, alphaType, conn);
                 JsfUtil.addSuccessMessage("User alphanumeric saved successfully");
-                //currentItem.setMessage("User alpha saved successfully.");
+                //currentItem.setMessage("UserController alpha saved successfully.");
             } else {
 
                 service.updateAlpha(username, alphanumeric, alphaType, conn);
                 JsfUtil.addSuccessMessage("User alphanumeric updated successfully");
                 allUsers = null;
                 getAllAlphas();
-                //currentItem.setMessage("User alpha updated successfully.");
+                //currentItem.setMessage("UserController alpha updated successfully.");
 
             }
             JdbcUtil.closeConnection(conn);
@@ -394,7 +392,7 @@ public class AlphaScroller {
     }
 
     public void deleteAgentAlphanumeric() {
-        try {
+       
 
             conn = util.getConnectionTodbSMS();
 
@@ -406,10 +404,7 @@ public class AlphaScroller {
             JsfUtil.addSuccessMessage(" Alphanumeric removed successfully.");
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-        } catch (SQLException ex) {
-            JdbcUtil.printSQLException(ex);
-
-        }
+     
 
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ke.co.mspace.nonsmppmanager.model;
+package org.mspace.clientmanager.credits.model;
 
 import java.util.Date;
 

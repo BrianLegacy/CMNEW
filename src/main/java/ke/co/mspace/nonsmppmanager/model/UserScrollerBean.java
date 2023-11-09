@@ -5,6 +5,7 @@
  */
 package ke.co.mspace.nonsmppmanager.model;
 
+import org.mspace.clientmanager.user.UserController;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +22,7 @@ import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
  */
 public class UserScrollerBean {
 
-    private User currentUser = new User();
+    private UserController currentUser = new UserController();
     private Alpha alpha = new Alpha();
     JdbcUtil util = new JdbcUtil();
     Connection conn = null;
@@ -33,11 +34,11 @@ public class UserScrollerBean {
     public UserScrollerBean() {
     }
 
-    public User getCurrentUser() {
+    public UserController getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(UserController currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -49,9 +50,9 @@ public class UserScrollerBean {
         this.alpha = alpha;
     }
 
-    public List<User> getUsers() {
+    public List<UserController> getUsers() {
         UserScroller sc = new UserScroller();
-        List<User> users = null;
+        List<UserController> users = null;
         try {
             conn = util.getConnectionTodbSMS();
             LOG.info("getUsers");

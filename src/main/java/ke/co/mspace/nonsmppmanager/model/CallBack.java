@@ -162,7 +162,7 @@ return true;
     }
     public void addCallBack() {
         if(! checkDulicity(userid, callback_url)){
-        try {
+      
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl callback = new UserServiceImpl();
             callback.persistCallBack(this, conn,ussd_assigned_code);
@@ -171,10 +171,7 @@ return true;
             JdbcUtil.closeConnection(this.conn);
 //                    facePainter.setMainContent("clientmanager/paybill/managepaybills.xhtml");
 
-        } catch (SQLException e) {
-            System.out.println("Error is: " + e.getMessage().toUpperCase());
-            JdbcUtil.printSQLException(e);
-        }
+       
         
         }else{
                FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Duplicity",null );
