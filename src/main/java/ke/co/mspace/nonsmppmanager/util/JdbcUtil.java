@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 public class JdbcUtil {
    
 
-    boolean DATA_CENTER = false;
-    boolean DEBUG = true;
+    boolean DATA_CENTER = true;
+    boolean DEBUG = false;
     boolean GATEWAY = false;
     boolean WEBSITE = false;
 
@@ -261,7 +261,6 @@ if (WEBSITE) {
     }
 
     public Connection getConnectionTodbTask()  {
-        System.out.println("Connecting to db Task");
         {
             Connection conn = null;
             //DataCenterlocalMySQLUser

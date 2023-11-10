@@ -70,12 +70,11 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
     public List<UserController> getAllUsers(Connection conn, String name) throws SQLException {
         final Map<Integer, String> groupMap = getGroupMap(conn);
-        System.out.println(groupMap);
+       
         names = name;
         UserScroller us = new UserScroller();
         String lname = us.lastInsert();
 
-        System.out.println("Default selected ::" + names);
         String sql = "";
 
         sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total,tUSER.max_contacts,"
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserServiceApi {
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears,tUSER.group"
                 + "  FROM tUSER where tUSER.username='" + name + "'";
         
-        System.out.println("rsql "+sql);
+      
 
         List<UserController> result = new ArrayList<>();
 
@@ -125,7 +124,6 @@ public class UserServiceImpl implements UserServiceApi {
             aUser.setMaxContacts(rs.getInt("max_contacts"));
             
             aUser.setGroup(groupMap.get(rs.getInt("group")));
-            System.out.println(aUser.getGroup());
             result.add(aUser);
         }
 
@@ -268,7 +266,6 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public void persistUser(UserController user, Connection conn) throws SQLException {
-        System.out.println("User Details"+user.toString());
         UserScroller us = new UserScroller();
         UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
@@ -276,17 +273,11 @@ public class UserServiceImpl implements UserServiceApi {
         String agent = ac.currentUSer();
         int lResellerId = getNewResellerId(conn);
 
-        //boolean lIsReseller = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("reseller");
-//        String sql = "INSERT INTO tUSER("
-//                + "username, password, max_total, organization, contact_number, email_address, start_date, "
-//                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms) "
-//                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?)";
-System.out.println("testing insert sql");
         String sql = "INSERT INTO tUSER("
                 + "username, password, max_total, organization, contact_number, email_address, start_date, "
                 + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`) "
                 + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?)" ;
-        System.out.println(sql);
+       
         ////////////////////////////////////////////////////////
         //Inserting values
         ////////////////////////////////////////////////////////
@@ -330,7 +321,6 @@ System.out.println("testing insert sql");
             agent = FacesContext.getCurrentInstance().getExternalContext()
                     .getSessionMap().get("user_id").toString();
         }
-        System.out.println("kloguser  "+agent);
         return agent;
     }
 
@@ -670,7 +660,7 @@ System.out.println("testing insert sql");
                         BigInteger.valueOf(rs.getLong("sms_count_today")), BigInteger.valueOf(rs.getLong("sms_count_week")),
                         BigInteger.valueOf(rs.getLong("sms_count_month")), BigInteger.valueOf(rs.getLong("sms_count_total")),
                         rs.getString("contact_number"), rs.getString("email_address"), rs.getBoolean("enable_email_alert"), rs.getInt("alertThreshold"));
-                System.out.println("loaded");
+               
             }
 
         } catch (SQLException ex) {
@@ -818,8 +808,6 @@ System.out.println("testing insert sql");
         pstmt.setInt(1, smsCredits);
         pstmt.setString(2, username);
         int count = pstmt.executeUpdate();
-        //System.out.println("Updating user credits--------->"+new Date()+""+"  UserController:"+username+" Previous Balance: ");
-        //System.out.println("UPDATE CREDITS UPDATE CREDITS : " + count);
     }
 
     @Override
@@ -871,34 +859,6 @@ System.out.println("testing insert sql");
 
     }
 
-//    @Override
-//    public void readXLS(UploadEvent event) throws IOException {
-//        UploadItem item = event.getUploadItem();
-//        String filePath = item.getFileName();
-//        InputStream ExcelFileToRead = new FileInputStream(filePath);
-//        HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
-//        HSSFSheet sheet = wb.getSheetAt(0);
-//        HSSFRow row;
-//        HSSFCell cell;
-//        Iterator rows = sheet.rowIterator();
-//        while (rows.hasNext()) {
-//            row = (HSSFRow) rows.next();
-//            Iterator cells = row.cellIterator();
-//            while (cells.hasNext()) {
-//                cell = (HSSFCell) cells.next();
-//                switch (cell.getCellType()) {
-//                    case HSSFCell.CELL_TYPE_STRING:
-//                        System.out.print(cell.getStringCellValue() + " ");
-//                        break;
-//                    case HSSFCell.CELL_TYPE_NUMERIC:
-//                        System.out.print(cell.getNumericCellValue() + " ");
-//                        break;                    
-//                    default:
-//                        break;
-//                }
-//            }
-//        }
-//    }
 
     @Override
     public Map<String, Object> simpleStatistics() {
@@ -1055,7 +1015,6 @@ System.out.println("testing insert sql");
     private static String manageReseller;
 
     public static String showManageReseller() {
-        System.out.println("kshow "+manageReseller);
         return manageReseller;
     }
 
@@ -1083,7 +1042,6 @@ System.out.println("testing insert sql");
         UserScroller us = new UserScroller();
         JdbcUtil util = new JdbcUtil();
 
-        System.out.println();
         //String sqlReseller = "Select short_code, contactEmail from tSDP where agent_id= '" + user + "'";
         String sqlReseller = "Select short_code, contactEmail from tSDPNew where agent_id= '" + user + "'";
         //System.out.println("*******************" + sqlReseller);
@@ -1120,8 +1078,7 @@ System.out.println("testing insert sql");
         try {
 //          String sql = "UPDATE tUSER set admin= 4 where username =?";
             String sql = "DELETE from tUSER where username =?";
-            System.out.println("The querry" + sql);
-            System.out.println("test");
+           
             PreparedStatement pstmt = conn.prepareStatement(sql);
             // Bind values to the parameters
             pstmt.setString(1, selected.getUsername());
@@ -1173,7 +1130,6 @@ System.out.println("testing insert sql");
             ps.setString(4, paybill.getEmail());
             ps.setString(5, paybill.getName());
             int listSize = getUserAlphas(conn, paybill.getName()).size();
-            System.out.println(" My sender_id list " + listSize);
             ps.setString(6, listSize < 1 ? "" : getUserAlphas(conn, paybill.getName()).get(0).getAlphanumeric());
             int count = ps.executeUpdate();
             ps.close();
@@ -1428,12 +1384,9 @@ public String formatNumbers(String nums){
            
             
             JdbcUtil util = new JdbcUtil();
-             System.out.println("User id is "+callback.getUserid());
-             System.out.println("call back url is "+callback.getCallback_url());
             conn = util.getConnectionTodbUSSD();
             String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
                     + "ussd_assigned_code, status,testbedmobiles,type)VALUES(?,?,?,?,?,?)";
-            System.out.println("tUserId: "+callback.getUserid());
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, callback.getUserid());
             ps.setString(2, callback.getCallback_url());
@@ -1446,7 +1399,6 @@ public String formatNumbers(String nums){
             JsfUtil.addSuccessMessage("CallBack added successfully!");
             conn.close();
         } catch (SQLException ex) {
-            System.out.println("Something went wrong" + ex.getMessage().toUpperCase());
             JsfUtil.addErrorMessage("CallBack add failed!");
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1487,7 +1439,6 @@ public String formatNumbers(String nums){
         Connection conn = util.getConnectionTodbEMAIL();
 
         String sql = "select * from tEMAILPRICING te";
-            System.out.println("sql "+sql);
         PreparedStatement ps = conn.prepareStatement(sql);
         ArrayList<EmailPricingTable> pricingtable = new ArrayList();
         ResultSet rs = ps.executeQuery();
@@ -1505,9 +1456,7 @@ public String formatNumbers(String nums){
              pricing.setSelectType(new SelectItem(rs.getString("expiry")));
              
              pricingtable.add(pricing);
-             System.out.println("called "+pricing);
         }
-            System.out.println("method ended");
         return pricingtable;
     } 
 

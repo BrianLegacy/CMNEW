@@ -147,7 +147,6 @@ public class UserScroller {
 
     public void setpCurrentAlpha(Alpha pCurrentAlpha) {
         this.pCurrentAlpha = pCurrentAlpha;
-        System.out.println("about to set"+pCurrentAlpha);
     }
     
     
@@ -155,13 +154,11 @@ public class UserScroller {
     public void psetCurrentAlphanumeric(String str){
               
         setCurrentAlphanumeric(str);
-        System.out.println("about to set"+currentAlphanumeric);
     }
     
      public void psetCurrentAlphanumericObject(Alpha alpha){
               
          setpCurrentAlpha(alpha);
-        System.out.println("about to set"+alpha);
     }
     public String getCurrentAlphanumeric() {
         return currentAlphanumeric;
@@ -344,8 +341,6 @@ public class UserScroller {
     public void getUserr(ValueChangeEvent event) {
         users = event.getNewValue().toString();
         userS = users;
-        System.out.println(users);
-        System.out.println("userrrrrrrr: " + user + ":::::" + this.UserID() + ":::");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("resellerId", UserID());
         String lastusername = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username").toString();
         
@@ -393,7 +388,7 @@ public class UserScroller {
         try {
             
             boolean agentAvailable = agentLookUp(users);
-            System.out.println(agent);
+           
             
             if (selectedAlpha == "" || users == "") {
                 
@@ -419,7 +414,7 @@ public class UserScroller {
         try {
             
             boolean agentAvailable = agentLookUp(users);
-            System.out.println(agent);
+           
             
             if (selectedAlpha == "" || users == "") {
                 
@@ -427,7 +422,6 @@ public class UserScroller {
                 //System.out.println("Please select analpha");
             } else {
                 conn = util.getConnectionTodbSMS();
-                LOG.info("saveOrUpdateAlpha - UserScroller");
                 AlphaServiceImpl service = new AlphaServiceImpl();
                 service.updateAgentAlphas(this.UserID(), selectedAlpha, conn);
                 // System.out.println("We are getting this far my friend");
@@ -576,9 +570,7 @@ public class UserScroller {
     
     
     public void removeUserAlpha() throws SQLException {
-        System.out.println("alexa"+currentAlphanumeric);
         if (currentAlphanumeric != null) {
-            System.out.println("Alpah to delete: " + currentAlphanumeric);
             try {
                 conn = util.getConnectionTodbSMS();
                 userAlphas = new ArrayList<>();
@@ -698,12 +690,10 @@ public class UserScroller {
             if (allUsersC == null || allUsersC.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
                     allUsersC = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsersC = userService.getAllUsersCred(conn, userS);
-                    System.out.println("test1: " + allUsersC);
-                    LOG.info("ALL USERS EMPTY | NULL");
+                   
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -712,7 +702,6 @@ public class UserScroller {
                 allUsersC = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
                     allUsersC = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsersC = userService.getAllUsersCred(conn, userS);
@@ -775,7 +764,6 @@ public class UserScroller {
                     .asList(demoInventoryItemArrays));
             
         } catch (Exception e) {
-            System.out.println("!!!!!!createCategory Error: " + e.getMessage());
             e.printStackTrace();
         }
         return iiList;
@@ -889,21 +877,17 @@ public class UserScroller {
 //    }
     
     public void pSetCurrentItem(UserController user){
-        System.out.println("urusov"+user);
     this.currentItem=user;   
         
     }
       public void processAction(ActionEvent ae) throws AbortProcessingException {
-          System.out.println("tada ");
     }
     
     public UserController getCurrentItem() {
-             System.out.println("kalled");
         return currentItem;
     }
     
     public void setCurrentItem(UserController currentItem) {
-        System.out.println("kalled"+currentItem);
         this.currentItem = currentItem;
     }
     
@@ -923,7 +907,6 @@ public class UserScroller {
         }
        
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("lastuser");
-        System.out.println("set user "+user);
         return userS;
     }
     
@@ -932,13 +915,11 @@ public class UserScroller {
     }
     
     public void setCurrentRow(int currentRow) {
-        System.out.println("kalled");
         this.currentRow = currentRow;
     }
     
     public void store() {
         
-        System.out.println("Kiamate primary");
                    AlphaServiceImpl asi = new AlphaServiceImpl();
 
         
@@ -979,7 +960,6 @@ public class UserScroller {
         if (!userS.isEmpty() || userS != null) {
             try {
                 conn = util.getConnectionTodbSMS();
-                LOG.info("saveOrUpdateAlpha - UserScroller");
                 AlphaServiceImpl service = new AlphaServiceImpl();
                 String username = userS;
                 String alphanumeric = event.getNewValue().toString();
@@ -1073,7 +1053,6 @@ public class UserScroller {
     
     public BigInteger dailyTotal() {
         
-        System.out.println("The current user agent id is  " + this.agentID());
         return us.smsSumary(this.agentID());
     }
     
@@ -1141,7 +1120,6 @@ public class UserScroller {
     private String picPath;
     
     public int getUser_id() {
-        System.out.println("(getteer)We getting here ");
         return user_id;
     }
     
@@ -1198,70 +1176,10 @@ public class UserScroller {
         this.getUlploadms();
         
         JsfUtil.addSuccessMessage(this.getUlploadms());
-        System.out.println("---------------------" + this.getUlploadms());
         
     }
 
-    /*This function uploads the  the selected image to
-    the temp foder in the tomcat diectory */
-//    public void uploadImage(UploadEvent evt) throws SQLException, IOException {
-//        System.out.println("The tomcat directory is:" + System.getProperty("catalina.base"));
-//        //This method will be updating the tClient : adding an image path
-//        System.out.println("Here we are :" + userS);
-//        String selectedUser = userS;
-//        
-//        String sql = "SELECT id from tUSER where username='" + selectedUser + "'";
-//        
-//        conn = util.getConnectionTodbSMS();
-//        Statement st = conn.createStatement();
-//        ResultSet rs = st.executeQuery(sql);
-//        
-//        while (rs.next()) {
-//            user_id = rs.getInt(1);
-//        }
-//        
-//        picPath = evt.getUploadItem().getFile().getAbsolutePath();
-//        
-//        File original = new File(picPath);
-//        UploadItem item = evt.getUploadItem();
-//        System.out.println("This is the orginal file name :   " + item.getFileName() + " | content-type: " + item.getContentType());
-//        File toRenameTo = new File(evt.getUploadItem().getFile().getParent() + "/" + item.getFileName());
-//        
-//        if (toRenameTo.exists()) {
-//            System.out.println("File already exists " + toRenameTo.getAbsolutePath());
-//        } else {
-//            System.out.println("Creating file " + item.getFileName());
-//            
-//        }
-//        
-//        System.out.println(toRenameTo.getParent());
-//        
-//        System.out.println(evt.getUploadItem().getFile().getParentFile().getParentFile() + "/webapps/files/config");//username+logo
-//        renameUploadedFile(original, toRenameTo);
-//        
-//        File inConfig = new File(evt.getUploadItem()
-//                .getFile()
-//                .getParentFile()
-//                .getParentFile() + "/webapps/files/config/" + userS.concat("Logo")
-//                        .replace(" ", "")
-//                        .concat(getFileExtention(item.getFileName())));
-//        toRenameTo.renameTo(inConfig);
-//        if (inConfig.exists()) {
-//            System.out.println("File sucessfuly  copied to  :" + inConfig.getName());
-//        }
-//        System.out.println("This will be uploaded to db : " + toRenameTo.getAbsolutePath());
-//        String filedir = "../files/config/" + inConfig.getName();
-//        System.out.println("Path do database is :  " + filedir);
-//        System.out.println("Logo lacated in" + System.getProperty("catalina.home") + "/files/config/" + inConfig.getName());
-//        String url = "";
-//        logoLocation = System.getProperty("catalina.home") + "/files/config/" + selectedUser.concat("Logo")
-//                .replace(" ", "")
-//                .concat(getFileExtention(item.getFileName()));
-//        
-//        setImagePath(user_id, filedir);
-//        JsfUtil.addSuccessMessage("UserController logo updated Sucessfully");
-//        
-//    }
+   
     private String logoLocation = "";
     
     public String getLogoLocation() {
@@ -1273,8 +1191,7 @@ public class UserScroller {
     }
     
     public void uploadResImage(FileUploadEvent event) throws SQLException, IOException {
-         //This method will be updating the tClient : adding an image path
-        System.out.println("Inside reseller set logo");
+     
         String selectedUser = this.current_user;
         
         String sql = "SELECT id from tUSER where username='" + selectedUser + "'";
@@ -1307,7 +1224,6 @@ public class UserScroller {
                     
                     .concat(getFileExtention(uploadedFile.getFileName()));
                     ;
-            System.out.println("path "+absoluteFilePath);
             InputStream input = uploadedFile.getInputstream();
             FileOutputStream output = new FileOutputStream(absoluteFilePath);
 
@@ -1328,7 +1244,6 @@ public class UserScroller {
         String filedir = "../files/config/" + selectedUser.concat("Logo").replace(" ", "")
                     
                     .concat(getFileExtention(uploadedFile.getFileName()));
-        System.out.println("Path do database is :  " + filedir);
         //Call the method that persistsheimage pathto db
         setImagePath(user_id, filedir);
         
@@ -1372,13 +1287,10 @@ public class UserScroller {
 
         if (original_file.exists()) {
             
-            System.out.println("File found");
         } else {
-            System.out.println("File not found");
         }
         boolean success = original_file.renameTo(newfile);
         
-        System.out.println(success);
     }
 
     //=======================================================================================================
@@ -1388,12 +1300,9 @@ public class UserScroller {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUserPerAgent(conn, userS);
-                    System.out.println("My name is:" + userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -1471,7 +1380,7 @@ public class UserScroller {
             AlphaScroller ac = new AlphaScroller();
             String user = ac.currentUSer();
             String sql = "Select max_total,cost_per_sms,max_contacts from tUSER where username='" + user + "' ";
-            System.out.println(sql);
+            
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
@@ -1482,7 +1391,6 @@ public class UserScroller {
         } catch (SQLException ex) {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Original Cost Per SMS:"+available_credits[1]+" Available Credits:"+available_credits[0]);
         return available_credits;
     }
         
@@ -1653,7 +1561,6 @@ public class UserScroller {
             this.conn2 = this.util.getConnectionTodbSMS();
             UserServiceImpl paybill2 = new UserServiceImpl();
             if (this.paybill == null) {
-                System.out.println("THE PAY BILL IS NULL");
             }
             paybill2.persistPaybill(this.paybill, this.conn, this.conn2);
             JsfUtil.addSuccessMessage("Paybill added successfully!");
@@ -1695,10 +1602,8 @@ public class UserScroller {
     }
     
     public void finduserId(ValueChangeEvent event) {
-        System.out.println("kist");
         String uservalue = event.getNewValue().toString();
         
-        System.out.println("user: " + uservalue);
         int id = 0;
         String username = "";
         try {
@@ -1718,7 +1623,6 @@ public class UserScroller {
 
             //System.out.println("THE ID"+this.paybill.getUserid()+"THE USERNAME: "+this.paybill.getName());
         } catch (SQLException ex) {
-            System.out.println("Error getting user id due to ::" + ex);
         }
     }
     public List<Alpnumeric> getUserAlphas() throws SQLException {

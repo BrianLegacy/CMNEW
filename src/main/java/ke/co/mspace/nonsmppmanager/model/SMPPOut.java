@@ -26,6 +26,7 @@ import ke.co.mspace.nonsmppmanager.service.SMSOutServiceApi;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -69,14 +70,15 @@ public class SMPPOut implements Serializable {
     private String summaryOrDetail="Summary";
     private static final Logger LOG = Logger.getLogger(SMPPOut.class.getName());
     private boolean renderModal=false;
+    private int summaryValue;
      private int limit=500;
+     org.slf4j.Logger logger=LoggerFactory.getLogger(SMPPOut.class);
 
     public boolean isRenderModal() {
         return renderModal;
     }
 
     public void setRenderModal(boolean renderModal) {
-        System.out.println("calling render modal with"+renderModal);
         this.renderModal = renderModal;
     }
     public List<SMPPOut> getSmsOutReport() {
@@ -99,6 +101,15 @@ public class SMPPOut implements Serializable {
     public void setSummaryOrDetail(String summaryOrDetail) {
         this.summaryOrDetail = summaryOrDetail;
     }
+
+    public int getSummaryValue() {
+        return summaryValue;
+    }
+
+    public void setSummaryValue(int summaryValue) {
+        this.summaryValue = summaryValue;
+    }
+    
 
     public void setSmsOutReport2(String smsOutReport2) {
         this.smsOutReport2 = smsOutReport2;
@@ -345,14 +356,12 @@ public class SMPPOut implements Serializable {
         try {
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
-            LOG.info("smppOutReport");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
             String endDate = simpleDateFormat.format(reportEndDate);
              //added by horace
                 DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-            System.out.println("Start Date" + reportStartDate + "  End Date" + reportEndDate);
             String schsdate = (outFormat.format(reportStartDate));
             String schedate = (outFormat.format(reportEndDate));
 
@@ -368,27 +377,17 @@ public class SMPPOut implements Serializable {
                service.smppSetSql(user, startDate, endDate, conn);
                
            
-          //end
-//            Map<String, Object> results = service.smppOutReport(user, startDate, endDate, conn,limit);
-//            report = (List) results.get("result");
-//            LOG.log(Level.INFO, "THE STATUS VALUE IS  : {0}", this.status);
-//            String realSMSStatus = service.getRealSMSStatus(String.valueOf(status), conn);
-//            int noSMS = (Integer) results.get("noSMS");
-//            this.setTotaSMS(noSMS);
-//            this.setRealStatus(String.valueOf(status));
-            //horace
+          
                JsfUtil.addSuccessMessage("Can only display/export reports less than 15000 rows. To get full report use the bulk functionality");
            //
             JdbcUtil.closeConnection(conn);
           }
            else{
-               System.out.println("failed");
            
           //end
             Map<String, Object> results = service.smppOutReport(user, startDate, endDate, conn,0);
                 
             report = (List) results.get("result");
-            LOG.log(Level.INFO, "THE STATUS VALUE IS  : {0}", this.status);
             String realSMSStatus = service.getRealSMSStatus(String.valueOf(status), conn);
             int noSMS = (Integer) results.get("noSMS");
             this.setTotaSMS(noSMS);
@@ -408,7 +407,6 @@ public class SMPPOut implements Serializable {
         try {
 
             conn = util.getConnectionTodbSMS();
-            LOG.info("smsOutReport2");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -453,7 +451,6 @@ public class SMPPOut implements Serializable {
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
             conn = util.getConnectionTodbSMS();
-            LOG.info("smsOutReoport3");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -477,10 +474,11 @@ public class SMPPOut implements Serializable {
     }
 
     public void smppTabularReport() {
+        if(!this.summary){
+            setSummaryValue(this.smppSummarySMS());
+            return;
+        }
 
-        //if (user == null || user.equals("")) {
-        //   JsfUtil.addErrorMessage("User not selected.");
-        // } else {
         setSmsOutReport(smppOutReport());
         // }
     }
@@ -501,8 +499,6 @@ public class SMPPOut implements Serializable {
                 Connection conn = null;
                 JdbcUtil util = new JdbcUtil();
                 conn = util.getConnectionTodbSMS();
-
-                LOG.info("generateXLSX");
 
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -529,7 +525,6 @@ public class SMPPOut implements Serializable {
                 Connection conn = null;
                 final JdbcUtil util = new JdbcUtil();
                 conn = util.getConnectionTodbSMS();
-                LOG.info("getSMPPUsernames");
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 output = service.getSMPPUsernames(conn);
                 JdbcUtil.closeConnection(conn);
@@ -554,8 +549,6 @@ public class SMPPOut implements Serializable {
         return ret;
     }
         public void executeReport() {
-        System.out.println("Execute Report....generate");
-       
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
             //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
@@ -578,15 +571,7 @@ public class SMPPOut implements Serializable {
         }
        
         else {setSummaryOrDetail("summary");}
-//        int count=0;
-//        List<SMSOut> summaryList = null;
-//        smsOutReport.forEach((v)->{});
-//        for(SMSOut list:smsOutReport){
-//           String source= list.getSourceAddr();
-//            for(SMSOut l:smsOutReport){
-////               
-//            }
-//        }
+
     }
     
 public  int smppSummarySMS(){
@@ -595,24 +580,18 @@ public  int smppSummarySMS(){
         try {
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
-            LOG.info("smsOutReport");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
             String endDate = simpleDateFormat.format(reportEndDate);
              //added by horace
                 DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-            System.out.println("Start Date" + reportStartDate + "  End Date" + reportEndDate);
             String schsdate = (outFormat.format(reportStartDate));
             String schedate = (outFormat.format(reportEndDate));
 
             schsdate = schsdate + " 00:00:01";
             schedate = schedate + " 23:59:59";
         
-           
-               System.out.println("failed");
-           
-          //end
             Map<String, Object> results = service.smppgetSummarySms(user, startDate, endDate, conn,0);
             
             summarycount = (Integer) results.get("noSMS");

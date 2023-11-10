@@ -20,7 +20,6 @@ public class factoryclose implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        System.out.println("Starting up!");
     }
 
     @Override
@@ -38,6 +37,6 @@ public class factoryclose implements ServletContextListener {
             factory.close();
 
         }
-        System.out.println("Factory instance  of connection pool closed ");
+        
     }
 }

@@ -24,8 +24,7 @@ public class SecurityUtil {
     
    
     public static boolean compare(String encryptedPassword, String plainPassword){
-        System.out.println("encrypt :"+encrypt(plainPassword));
-         System.out.println("db :"+encryptedPassword);
+      
        if(encryptedPassword.equals(encrypt(plainPassword))){
          
            return true;

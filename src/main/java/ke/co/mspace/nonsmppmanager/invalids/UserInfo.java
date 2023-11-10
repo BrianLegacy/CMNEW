@@ -165,7 +165,6 @@ public class UserInfo implements Serializable {
     }
 
     public void smsreceived() {
-        System.out.println("received clicked.....................");
         facePainter.setMainContent("sms/smsin.xhtml");
     }
 
@@ -192,7 +191,6 @@ public class UserInfo implements Serializable {
     }
 
     public void messagetemplate() {
-       System.out.println("Templates loading");
 
         facePainter.setMainContent("sms/messagetemplates.xhtml");
     }

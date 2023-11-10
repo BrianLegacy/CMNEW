@@ -43,10 +43,10 @@
             
             
             
-            <p:menuButton value="#{sMSOut.summaryOrDetail}" rendered="true">
+            <p:menuButton value="#{sMSOut.summaryOrDetail}"  >
                 
-                <p:menuitem value="Detail" action="#{sMSOut.setSummary(true)}"  ajax="false"/>
-                <p:menuitem value="Summary" action="#{sMSOut.setSummary(false)}" ajax="false" />
+                <p:menuitem update="maintab" value="Detail" action="#{sMSOut.setSummary(true)}"  />
+                <p:menuitem update="maintab" value="Summary" action="#{sMSOut.setSummary(false)}" />
             
               
             </p:menuButton>
@@ -77,8 +77,8 @@
         
                      <!--<h:form rendered="false" id="summary">-->
        
-        <h:outputLabel value=" #{sMSOut.user} has  #{sMSOut.summarySMS()} messages" 
-                       rendered="#{ (sMSOut.summarySMS()==0  ? false : true) and !sMSOut.summary}"></h:outputLabel>
+                     <h:outputLabel value=" #{sMSOut.user} has  #{sMSOut.summaryValue} messages" 
+                                    rendered="#{ (sMSOut.summaryValue==0  ? false : true) and !sMSOut.summary}"></h:outputLabel>
     <!--</h:form>-->
                     
                     <p:dataTable id="table" var="smsOut" value="#{sMSOut.smsOutReport}" rendered="#{sMSOut.summary}"

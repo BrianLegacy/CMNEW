@@ -158,8 +158,6 @@ public class tusercontroller implements Serializable {
     
 
     public String login() {
-        System.out.println("fxn");
-        logger.info("logger");
         HttpSession httpsession = getsession.getSession();
         if (termsAgreed) {
             tuserinterface dao;
@@ -171,7 +169,7 @@ public class tusercontroller implements Serializable {
             try {
                 HttpSession session = getsession.getSession();
                 result = dao.getUserJDBC(this.username, this.password);
-                System.out.println(result);
+              
                 if (result != null) {
                     if (result.getContractNum() == null || result.getContractNum().equalsIgnoreCase("activated")) {
 
@@ -199,7 +197,6 @@ public class tusercontroller implements Serializable {
                           
                             session.setAttribute("non.smpp.manager",user1 );
                             session.setAttribute("loggedInUser", user1);
-  System.out.println("arrived here user1"+user1+"clietname "+client_name+"user ttpe "+user_type());
 
 
                             

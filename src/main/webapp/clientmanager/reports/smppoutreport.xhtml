@@ -42,10 +42,10 @@
                                     </p:selectOneMenu>
             
             
-              <p:menuButton value="#{sMPPOut.summaryOrDetail}" rendered="true">
+              <p:menuButton value="#{sMPPOut.summaryOrDetail}" >
                 
-                <p:menuitem value="Detail" action="#{sMPPOut.setSummary(true)}"  ajax="false"/>
-                <p:menuitem value="Summary" action="#{sMPPOut.setSummary(false)}" ajax="false" />
+                <p:menuitem update="maintab"  value="Detail" action="#{sMPPOut.setSummary(true)}"  />
+                <p:menuitem update="maintab"  value="Summary" action="#{sMPPOut.setSummary(false)}"  />
             
               
             </p:menuButton>
@@ -83,8 +83,8 @@
         
                      <!--<h:form rendered="false" id="summary">-->
        
-        <h:outputLabel value=" #{sMPPOut.user} has  #{sMPPOut.smppSummarySMS()} messages" 
-                       rendered="#{ sMPPOut.smppSummarySMS()==0 ? false : true}"></h:outputLabel>
+                     <h:outputLabel value=" #{sMPPOut.user} has  #{sMPPOut.summaryValue} messages" 
+                                    rendered="#{ sMPPOut.summaryValue==0 ? false : true}"></h:outputLabel>
     <!--</h:form>-->
                     
                     <p:dataTable id="table" var="sMPPOut" value="#{sMPPOut.smsOutReport}" rendered="#{sMPPOut.summary}"
