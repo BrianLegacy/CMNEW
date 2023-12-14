@@ -1,5 +1,7 @@
 package ke.co.mspace.nonsmppmanager.util;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -8,6 +10,16 @@ import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 
 public class JsfUtil {
+    public static void printTimeDiff(LocalDateTime t1, LocalDateTime t2){
+        Duration duration = Duration.between(t1, t2);
+
+        // Extract hours, minutes, and seconds from the duration
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes() % 60;
+        long seconds = duration.getSeconds() % 60; // Corrected line
+
+        System.out.println("Time between two LocalDateTime objects: " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.");
+    }
 
     public static SelectItem[] getSelectItems(List<?> entities, boolean selectOne) {
         int size = selectOne ? entities.size() + 1 : entities.size();

@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 public class JdbcUtil {
    
 
-    boolean DATA_CENTER = true;
-    boolean DEBUG = false;
+    boolean DATA_CENTER = false;
+    boolean DEBUG = true;
     boolean GATEWAY = false;
     boolean WEBSITE = false;
 
@@ -54,7 +54,7 @@ public class JdbcUtil {
 
     private final String dataCenterTestHost = "34.90.1.89";//second datacenter test server
 //          private final String dataCenterTestHost = "192.168.10.44";
-    private final String localMySQLHost = "127.0.0.1";
+    private final String localMySQLHost = "192.168.3.148";
     private final String testMySQLHost = "10.164.0.5";
     private final String testMySQLHost64 = "192.168.1.51";
 //    private final String clientManagerMySQLHost = "34.90.100.104";

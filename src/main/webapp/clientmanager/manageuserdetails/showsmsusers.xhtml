@@ -27,12 +27,27 @@
                                 <td>   
 
                                     <p:selectOneMenu id="users" 
-                                                     valueChangeListener="#{userScroller.usersValueChangeListener}"
-                                                     value="#{userScroller.userS}">
-                                        <f:ajax   event="change" render="showusers table" />
-                                        <f:selectItem itemLabel="Select User" itemValue="" />
-                                        <f:selectItems value="#{sMSOut.data}" ></f:selectItems>
-                                    </p:selectOneMenu>
+                 valueChangeListener="#{userScroller.usersValueChangeListener}"
+                 value="#{userScroller.userS}">
+    <f:ajax event="change" render="showusers table" />
+    <f:selectItem itemLabel="Select User" itemValue="" />
+    <f:selectItems value="#{sMSOut.data}" var="user" itemLabel="#{user.name}" itemValue="#{user.id}" />
+
+    <script>
+        $(document).ready(function() {
+            var maxLength = 15; // Adjust as needed
+            var menu = $('#users');
+
+            menu.find('option').each(function() {
+                var text = $(this).text();
+                if (text.length > maxLength) {
+                    $(this).text(text.substring(0, maxLength) + '...');
+                }
+            });
+        });
+    </script>
+</p:selectOneMenu>
+
 
 
 

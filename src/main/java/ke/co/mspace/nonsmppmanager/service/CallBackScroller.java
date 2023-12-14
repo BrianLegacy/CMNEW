@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,9 @@ public class CallBackScroller {
     }
 
     public void setCurrentGroupItem1(Group currentGroupItem1) {
+        LocalDateTime start=LocalDateTime.now();
         this.currentGroupItem1 = currentGroupItem1;
+        JsfUtil.printTimeDiff(start, LocalDateTime.now());
     }
 
     
