@@ -660,7 +660,7 @@ public class UserServiceImpl implements UserServiceApi {
                         BigInteger.valueOf(rs.getLong("sms_count_today")), BigInteger.valueOf(rs.getLong("sms_count_week")),
                         BigInteger.valueOf(rs.getLong("sms_count_month")), BigInteger.valueOf(rs.getLong("sms_count_total")),
                         rs.getString("contact_number"), rs.getString("email_address"), rs.getBoolean("enable_email_alert"), rs.getInt("alertThreshold"));
-               
+                loggedInUser.setMaxContacts(rs.getLong("max_contacts"));
             }
 
         } catch (SQLException ex) {

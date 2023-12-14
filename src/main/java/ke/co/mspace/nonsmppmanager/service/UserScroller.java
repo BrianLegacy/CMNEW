@@ -58,6 +58,7 @@ import ke.co.mspace.nonsmppmanager.model.creditRecord;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -76,7 +77,7 @@ import org.primefaces.model.UploadedFile;
 @ManagedBean
 @ViewScoped
 public class UserScroller {
-    
+   public static int maxUsernameLength=20;
     private Paybill paybill;
     private UserController user;
     
@@ -113,7 +114,9 @@ public class UserScroller {
     public UploadedFile getFile() {
         return file;
     }
-
+   public String abbreviate(String str){
+      return  StringUtils.abbreviate(str,maxUsernameLength);
+    }
     public void setFile(UploadedFile file) {
         this.file = file;
     }
@@ -359,8 +362,9 @@ public class UserScroller {
         
     }
      public void usersValueChangeListener(ValueChangeEvent event) {
-      
             userS= event.getNewValue().toString();
+                     System.out.println("new change "+userS);
+
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("resellerId", Integer.parseInt(UserID()));
         String lastusername = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username").toString();
           

@@ -18,7 +18,7 @@
             <p:growl id="msgs" showDetail="true" life="3000"/>
 
             <div align="center">
-                <p:panel id="maintab" header="View SMS Users" >
+                <p:panel id="maintab" header="AVAILABLE SMS USERS::Current SMS balance:: #{userScroller.userProfile.maxTotal}" >
                     <h:form id="showusers">
                         <table align="center" style="margin-top:15px" >
                             <tr>
@@ -33,19 +33,7 @@
     <f:selectItem itemLabel="Select User" itemValue="" />
     <f:selectItems value="#{sMSOut.data}" var="user" itemLabel="#{user.name}" itemValue="#{user.id}" />
 
-    <script>
-        $(document).ready(function() {
-            var maxLength = 15; // Adjust as needed
-            var menu = $('#users');
-
-            menu.find('option').each(function() {
-                var text = $(this).text();
-                if (text.length > maxLength) {
-                    $(this).text(text.substring(0, maxLength) + '...');
-                }
-            });
-        });
-    </script>
+  
 </p:selectOneMenu>
 
 

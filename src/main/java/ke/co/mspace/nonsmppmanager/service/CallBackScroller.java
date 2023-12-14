@@ -66,6 +66,7 @@ public class CallBackScroller {
     public void setCurrentGroupItem1(Group currentGroupItem1) {
         LocalDateTime start=LocalDateTime.now();
         this.currentGroupItem1 = currentGroupItem1;
+        System.out.println(currentGroupItem1);
         JsfUtil.printTimeDiff(start, LocalDateTime.now());
     }
 

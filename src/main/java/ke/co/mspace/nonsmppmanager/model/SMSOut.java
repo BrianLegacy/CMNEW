@@ -32,6 +32,7 @@ import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.slf4j.LoggerFactory;
 
@@ -716,7 +717,9 @@ public void closeTheModal(){
             String fetchForReseller = "SELECT username from dbSMS.tUSER where agent = '" + user_id + "' and admin ='3'";
          rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
            while (rs.next()) {
-                dataTT.add(new SelectItem(rs.getString(1)));
+ String originalUsername = rs.getString(1);
+                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
+                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
             }
         } catch (SQLException err) {
             err.getMessage();  }
@@ -732,7 +735,11 @@ public List<SelectItem> getEmailUsers() {
             String fetchForReseller = "SELECT username from dbSMS.tUSER where  admin ='3' and agent ='email' ";
             rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             while (rs.next()) {
-                dataTT.add(new SelectItem(rs.getString(1)));
+//                dataTT.add(new SelectItem(rs.getString(1)));
+                
+                  String originalUsername = rs.getString(1);
+                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
+                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
             }
         } catch (SQLException err) {
             err.getMessage();
@@ -819,7 +826,9 @@ public List<SelectItem> getEmailUsers() {
             //rs = UserServiceImpl.isReseller().equalsIgnoreCase("none") ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             while (rs.next()) {
-                dataTT.add(new SelectItem(rs.getString(1)));
+                        String originalUsername = rs.getString(1);
+                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
+                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
             }
         } catch (SQLException err) {
             err.getMessage();

@@ -150,7 +150,7 @@ public class UserProfile implements Serializable {
         return maxContacts;
     }
 
-    public void setMaxContacts(long maxTotal) {
+    public void setMaxContacts(long maxContacts) {
         this.maxContacts = maxContacts;
     }
 

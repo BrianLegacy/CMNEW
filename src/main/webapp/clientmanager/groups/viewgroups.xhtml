@@ -52,14 +52,13 @@
                                 
                                 <p:commandLink style="padding: .3em 1em;" 
                                                id="editbutton"
-                                               oncomplete="PF('editgroupmodal').show();"
-                                               update="composition:editgroupmodal" 
+                                              
                                                >
 <h:graphicImage 
                                         value="resources/images/edit.gif" width="15px">
 
                                     </h:graphicImage>
-                                    <p:ajax  listener="#{callBackScroller.setCurrentGroupItem1(data)}" 
+                                    <p:ajax  oncomplete="PF('editgroupmodal').show();" update="composition:editgroupmodal"   listener="#{callBackScroller.setCurrentGroupItem1(data)}" 
                                              />
                                     <p:tooltip for="editbutton" value="Click to edit group"/>
                                 </p:commandLink>

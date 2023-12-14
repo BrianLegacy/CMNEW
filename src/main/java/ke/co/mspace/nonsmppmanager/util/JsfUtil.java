@@ -1,5 +1,6 @@
 package ke.co.mspace.nonsmppmanager.util;
 
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,8 +9,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
+import org.apache.commons.lang3.StringUtils;
 
 public class JsfUtil {
+ 
     public static void printTimeDiff(LocalDateTime t1, LocalDateTime t2){
         Duration duration = Duration.between(t1, t2);
 
