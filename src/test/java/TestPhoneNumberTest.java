@@ -12,18 +12,3 @@ import java.util.Locale;
  *
  * @author Samson
  */
-public class TestPhoneNumber {
-
-    public static void main(String[] args) {
-        new TestPhoneNumber().runPhoneNumber();
-    }
-
-    public void runPhoneNumber() {
-        PhoneNumber num = new PhoneNumber();
-        num.setCountryCode(254);
-        num.setNationalNumber(731893456);
-        PhoneNumberToCarrierMapper mapper = PhoneNumberToCarrierMapper.getInstance();
-        System.out.println("Carrier is :" + mapper.getNameForValidNumber(num, Locale.US));
-    }
-
-}
