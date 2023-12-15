@@ -340,7 +340,7 @@ public class AlphaScroller {
         try {
 
             conn = util.getConnectionTodbSMS();
-            LOG.info("saveOrUpdateAlpha");
+//            LOG.info("saveOrUpdateAlpha");
             AlphaServiceImpl service = new AlphaServiceImpl();
             String username = currentItem.getUsername();
             String alphanumeric = currentItem.getName();

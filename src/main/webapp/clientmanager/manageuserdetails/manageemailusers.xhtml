@@ -233,7 +233,7 @@
                         
  </h:form> 
   
-          <p:dialog header="Edit SMS Credits" widgetVar="editsmscredits"  id="editsmscredits"  modal="true" >
+          <p:dialog header="Edit Email Credits" widgetVar="editsmscredits"  id="editsmscredits"  modal="true" >
               <h:form>     
                                 <table align="center" style="margin-top:15px; width: 400px; border-color: white">
                                     
@@ -242,7 +242,7 @@
                                         <td><p:inputText value="#{userScroller.currentItem.username}" readonly="true"></p:inputText></td>
                                     </tr>
                                       <tr>
-                                        <td><p:outputLabel value="Available SMS Credits:"></p:outputLabel></td>
+                                        <td><p:outputLabel value="Available Email Credits:"></p:outputLabel></td>
                                         <td><p:inputText value="#{userScroller.currentItem.maxContacts}" readonly="true"></p:inputText></td>
                                     </tr>
                                      <tr>
@@ -257,7 +257,7 @@
                                         </td>
                                     </tr>
                                      <tr>
-                                        <td><p:outputLabel value="SMS Credit Value :"></p:outputLabel></td>
+                                        <td><p:outputLabel value="Email Credit Value :"></p:outputLabel></td>
                                         <td><p:inputText value="#{userScroller.currentItem.creditsToManage}" ></p:inputText></td>
                                     </tr>
                                     <tr>
@@ -286,7 +286,7 @@
                               
                                 </p:dialog>            
                     
-  <p:dialog header="Edit SMS User" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+  <p:dialog header="Edit Email User" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
       <h:form>
                                     <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
                                         <tr >
@@ -378,9 +378,9 @@
                                     </h:form>
                                 </p:dialog> 
 
-  <p:dialog header="Delete  SMS User" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+  <p:dialog header="Delete  Email User" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
                                     <h:form>
-                                    <p:outputLabel value="Are you sure you want to delete `#{userScroller.currentItem.username}` sms user?"/>
+                                    <p:outputLabel value="Are you sure you want to delete `#{userScroller.currentItem.username}` email user?"/>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
                                         <p:commandButton style="margin-right: 10px" ajax="false" 

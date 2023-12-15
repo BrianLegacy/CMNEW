@@ -196,6 +196,7 @@ return true;
     }
 
     public ArrayList<CallBack> getcallback() throws SQLException {
+//        System.out.println("get kallbak kalled");
         UserServiceImpl callback = new UserServiceImpl();
 //        System.out.println("Selected User: " + selectedUser);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);

@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @author Norrey Osako
  */
 @ManagedBean
-//@ViewScoped
+@ViewScoped
 public class UserController {
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -166,7 +167,7 @@ public class UserController {
         myAlphanumerics = asi.getAlphanumericsNames(conn);
         JdbcUtil.closeConnection(conn);
 
-        logger.debug("returned " + myAlphanumerics.size() + " alphanumerics");
+//        logger.debug("returned " + myAlphanumerics.size() + " alphanumerics");
         return myAlphanumerics;
     }
 
@@ -563,20 +564,13 @@ public class UserController {
 
         AlphaScroller ac = new AlphaScroller();
         UserScroller us = new UserScroller();
-        // int credit=mci.getAgentAvailableCredits();
-        // System.out.println("Available Credits::::" + ac.currentUSer() + ":::");
-
         try {
             String agent = ac.currentUSer();
             conn = util.getConnectionTodbSMS();
-            //========================>
-            //System.out.println("Getting here or not"+us.availableCredits(conn));
-            int current = Math.round(us.availableCredits(conn)[0]);
-            LOG.info("manageCredit");
+            int current = Math.round(us.availableCredits(conn)[2]);
             SMSCredits smsCredit = new SMSCredits();
             ManageCreditApi creditManager = new ManageCreditImpl();
             UserServiceApi userService = new UserServiceImpl();
-
             smsCredit.setUsername(username);
             smsCredit.setActionTime(new Date());
 
@@ -584,11 +578,14 @@ public class UserController {
 
                 case "add":
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("credit_type", "add");
+                 
                     final int previous_balance = maxContacts;
                     this.maxContacts = maxContacts + creditsToManage;
                     final int new_balance = maxContacts;
                     int newBalace;
                     //if((curent>0) && (creditsToManage<=current) && (currennt!=-1))
+              
+                       System.out.println("maxcontacts"+current);
                     if (current < creditsToManage && current != -1) {
                         JsfUtil.addErrorMessage("You have insufficient Email balance.Your balance is: " + current + " Email");
                         // System.out.println(" The Operation is invalid ");
@@ -605,7 +602,9 @@ public class UserController {
                         newBalace = adminv == '1' ? -1 : current - creditsToManage;
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", newBalace);
                         userService.updateEmailCredits(username, maxContacts, conn);
-                        userService.updateAgentCredits(agent, current, creditsToManage, current - creditsToManage, conn);
+                        
+                        UserServiceImpl.updateEmailAgentCredits(agent, current, creditsToManage, current - creditsToManage, conn);
+                     
                         //=======================
 
                         JsfUtil.addSuccessMessage("You have successfully Added " + creditsToManage + " Email Credits to " + username + " On " + new Date());
@@ -646,7 +645,7 @@ public class UserController {
 
                     break;
             }
-            this.updateAdminBal();
+            updateEmailAdminBal();
             JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
             JdbcUtil.closeConnection(conn);
@@ -657,6 +656,21 @@ public class UserController {
     public void updateAdminBal() {
         AlphaScroller ac = new AlphaScroller();
         String sql = "UPDATE tUSER set max_total = '-1' where admin=1";
+        JdbcUtil util = new JdbcUtil();
+        try {
+            Connection con = util.getConnectionTodbSMS();
+            Statement st = con.createStatement();
+            //System.out.println(sql);
+            st.executeUpdate(sql);
+            //System.out.println("Upating the ");
+        } catch (SQLException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+        public static void updateEmailAdminBal() {
+        AlphaScroller ac = new AlphaScroller();
+        String sql = "UPDATE tUSER set max_contacts = '-1' where admin=1";
         JdbcUtil util = new JdbcUtil();
         try {
             Connection con = util.getConnectionTodbSMS();

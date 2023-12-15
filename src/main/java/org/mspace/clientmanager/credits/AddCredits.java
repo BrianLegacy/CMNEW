@@ -33,27 +33,22 @@ public class AddCredits implements ManageCreditsOperations{
                     creditRequestObject.smsCredits = creditRequestObject.smsCredits + creditRequestObject.creditsToManage;
                     final int new_balance = creditRequestObject.smsCredits;
                     int newBalace;
-                    //if((curent>0) && (creditsToManage<=current) && (currennt!=-1))
                     if (creditRequestObject.current < creditRequestObject.creditsToManage &&
                             creditRequestObject.current != -1) {
 
                         JsfUtil.addErrorMessage("You have insufficient SMS balance.Your balance is: "
                                 + creditRequestObject.current + " SMS");
-                        // System.out.println(" The Operation is invalid ");
                     } else {
              try {
                  String updateUser = ("User Update::: " + new Date() + " User: "
                          +creditRequestObject.username + " Previous Balance: " +
                          previous_balance + " Credit Allocated: " + creditRequestObject.creditsToManage + " New Balance: " + new_balance);
-                 //System.out.println(updateUser);
-                 //System.out.println("Sms credits to manage :" + creditsToManage + "New balance: " + new_balance + "prevoius Balance: " + previous_balance);
-                 smsCredit.setUsername(creditRequestObject.username);
+                  smsCredit.setUsername(creditRequestObject.username);
                  smsCredit.setActionTime(new Date());
                  smsCredit.setActionType(creditRequestObject.adminv == '1' ? '1' : '3');
                  smsCredit.setNumCredits(creditRequestObject.creditsToManage);
                  smsCredit.setNew_balance(new_balance);
                  smsCredit.setPrevious_balance(previous_balance);
-                 //creditManager.persistUpdate(smsCredit, conn);
                  creditManager.persistUpdate2(smsCredit, creditRequestObject.connection, creditRequestObject.creditsToManage, creditRequestObject.current, creditRequestObject.current - creditRequestObject.creditsToManage);
                  newBalace = creditRequestObject.adminv == '1' ? -1 : creditRequestObject.current - creditRequestObject.creditsToManage;
                  FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", newBalace);

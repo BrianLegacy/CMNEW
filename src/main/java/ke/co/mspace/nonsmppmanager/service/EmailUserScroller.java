@@ -358,7 +358,6 @@ public class EmailUserScroller {
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);

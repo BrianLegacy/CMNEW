@@ -826,6 +826,23 @@ public class UserServiceImpl implements UserServiceApi {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+        public static void updateEmailAgentCredits(String agent, int current, int toDeduct, int newBalace, Connection conn) {
+        try {
+            Date dt = new Date();
+            AlphaScroller as = new AlphaScroller();
+            agent = as.currentUSer();
+            String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, current - toDeduct);
+            pstmt.setString(2, agent);
+            int count = pstmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @Override
     public void alterAgentCredits(String agent, int currentagentcredits, int currrentusercreds, int alter, Connection conn) {

@@ -504,11 +504,11 @@ public class UserScroller {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -517,11 +517,11 @@ public class UserScroller {
                 allUsers = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -629,11 +629,11 @@ public class UserScroller {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -642,11 +642,11 @@ public class UserScroller {
                 allUsers = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -662,11 +662,11 @@ public class UserScroller {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -675,11 +675,11 @@ public class UserScroller {
                 allUsers = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-                    LOG.info("getAllUsers");
+//                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -709,7 +709,7 @@ public class UserScroller {
                     allUsersC = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsersC = userService.getAllUsersCred(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+//                    LOG.info("ALL USERS EMPTY | NULL");
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -934,7 +934,7 @@ public class UserScroller {
         
         try {
             conn = util.getConnectionTodbSMS();
-            LOG.info("storeUsers - UserScroller");
+//            LOG.info("storeUsers - UserScroller");
             allUsers.set(currentRow, currentItem);
             UserServiceApi service = new UserServiceImpl();
             AlphaServiceApi alphaService = new AlphaServiceImpl();
@@ -1319,7 +1319,7 @@ public class UserScroller {
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUserPerAgent(conn, userS);
-                    LOG.info("ALL USERS EMPTY | NULL");
+                    
                     JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
                     JdbcUtil.printSQLException(e);
@@ -1391,6 +1391,8 @@ public class UserScroller {
             while (rs.next()) {
                 available_credits[0] = rs.getInt(1);
                 available_credits[1]=rs.getFloat(2);
+                 available_credits[2]=rs.getInt(3);
+                 System.out.println("available kredot"+available_credits[2]);
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
