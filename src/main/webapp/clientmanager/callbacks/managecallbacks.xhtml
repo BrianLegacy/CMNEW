@@ -75,7 +75,7 @@ $(Editcallbackformmessagesid).text('abc');
         
         </script>
                 <p:panel id="maintab" header="AVAILABLE CALLBACKS" >
-                    <p:dataTable var="data" value="#{callback.getcallback()}"
+                    <p:dataTable var="data" value="#{callback.callbacks}"
                                    rows="14"
                                  paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -225,12 +225,14 @@ $(Editcallbackformmessagesid).text('abc');
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"
-                                                         id="submitbutton"
-         oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} "
+                                      <p:commandButton style="margin-right: 10px" ajax="true"
+                 id="submitbutton"
+                 oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} "
+                 value="Save">
+    <f:actionListener binding="#{callBackScroller.save2()}" />
+    <f:actionListener binding="#{callback.fetchcallback()}" />
+</p:commandButton>
 
-                                                         actionListener="#{callBackScroller.save2()}"
-                                                         value="Save"></p:commandButton>
                                         <p:commandButton value="Cancel" immediate="true" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -247,7 +249,12 @@ $(Editcallbackformmessagesid).text('abc');
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
 
-                                        <p:commandButton  style="margin-right: 10px" ajax="false"  actionListener="#{callBackScroller.deleteCallBack()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton  style="margin-right: 10px" ajax="false"    oncomplete="PF('deletegroupmodal').hide();" value="Delete">
+                                            
+                                            <f:actionListener binding="#{callBackScroller.deleteCallBack()}"/>
+                                            <f:actionListener binding="#{callback.fetchcallback()}"/>
+                                            
+                                        </p:commandButton>
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
 
                                     </div>

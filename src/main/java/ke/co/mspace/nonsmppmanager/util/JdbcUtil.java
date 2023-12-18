@@ -35,7 +35,7 @@ public class JdbcUtil {
 
     public String dataCenterTestUser = "datacenter";//second datacenter test server
 //    public String dataCenterTestUser = "dashboard";
-    public String localMySQLUser = "mysql";
+    public String localMySQLUser = "datacenter";
 //    public String clientManagerMySQLUser = "clientmanager
     public String clientManagerMySQLUser = "clientmanager";
     public String websiteUser = "dlr";
@@ -45,7 +45,7 @@ public class JdbcUtil {
 
     public String dataCenterTestPassword = "DataCenter2023#";//second datacenter test server
 //     public String dataCenterTestPassword = "Dashboard@2023#";
-    public String localMySQLPassword = "mysql123";
+    public String localMySQLPassword = "DataCenter2023#";
     public String testMySQLPassword = "Mspace54#";
     public String testMySQLPassword64 = "mysql123";
 //    public String clientManagerMySQLPassword = "DatabaseMspace54#";
@@ -54,7 +54,7 @@ public class JdbcUtil {
 
     private final String dataCenterTestHost = "34.90.1.89";//second datacenter test server
 //          private final String dataCenterTestHost = "192.168.10.44";
-    private final String localMySQLHost = "127.0.0.1";
+    private final String localMySQLHost = "34.90.1.89";
     private final String testMySQLHost = "10.164.0.5";
     private final String testMySQLHost64 = "192.168.1.51";
 //    private final String clientManagerMySQLHost = "34.90.100.104";

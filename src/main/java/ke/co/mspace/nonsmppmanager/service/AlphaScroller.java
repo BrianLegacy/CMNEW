@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -97,9 +98,13 @@ public class AlphaScroller {
 //        SortField[] fields = {new SortField("make", true)};
 //        order.setFields(fields);
     }
-
-    public List<Alpha> getAllAlphas() {
-        synchronized (this) {
+    @PostConstruct
+    public void init(){
+        fetchAlphas();
+    }
+    public void fetchAlphas(){
+        System.out.println("fetching alphas");
+           synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
@@ -114,6 +119,10 @@ public class AlphaScroller {
                 }
             }
         }
+    }
+
+    public List<Alpha> getAllAlphas() {
+     
 
         return allUsers;
     }

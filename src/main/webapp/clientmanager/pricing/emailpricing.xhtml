@@ -48,7 +48,7 @@
                         
                         </h:form>
                     <br/>
-                    <p:dataTable var="data" value="#{callback.pricing}"
+                    <p:dataTable var="data" value="#{callback.pricingtable}"
                                  rows="8"
                                  id="pricingtable"
                                  paginator="true" paginatorPosition="bottom"
@@ -187,11 +187,14 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"
- update="@([id$=editpricingmessages])"
-                                                         actionListener="#{callBackScroller.updatePricing()}"  
-                                                          oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} " 
-                                                         value="Save"></p:commandButton>
+                                       <p:commandButton style="margin-right: 10px" ajax="true"
+                 update="@([id$=editpricingmessages])"
+                 oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} "
+                 value="Save">
+    <f:actionListener binding="#{callBackScroller.updatePricing()}" />
+    <f:actionListener binding="#{callback.fetchPricing()}"/>
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -208,8 +211,13 @@
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
 
-                                        <p:commandButton  style="margin-right: 10px" ajax="false"
-                                                          actionListener="#{callBackScroller.deletePricingTable()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Delete">
+    <f:actionListener binding="#{callBackScroller.deletePricingTable()}" />
+    <f:actionListener binding="#{callback.fetchPricing()}"/>
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
 
                                     </div>
@@ -297,13 +305,15 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"
-                                                         
-                                                         update="@([id$=createpricingmessages])"
-                                                         actionListener="#{callBackScroller.savePricing()}"  
-                            oncomplete="if (!args.validationFailed){PF('createpricingmodal').hide();location.reload();} "
-                            onerror="alert('error')"
-                                                         value="Save"></p:commandButton>
+                                      <p:commandButton style="margin-right: 10px" ajax="true"
+                 update="@([id$=createpricingmessages])"
+                 oncomplete="if (!args.validationFailed){PF('createpricingmodal').hide();location.reload();} "
+                 onerror="alert('error')"
+                 value="Save">
+    <f:actionListener binding="#{callBackScroller.savePricing()}" />
+    <f:actionListener binding="#{callback.fetchPricing()}"/>
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" 
                                                          immediate="true"
                                                          onclick="PF('createpricingmodal').hide();"></p:commandButton>

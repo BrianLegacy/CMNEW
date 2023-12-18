@@ -344,7 +344,7 @@ return user;
                 Connection conn = null;
          try {
             conn = util.getConnectionTodbSMS();
-            String sql = "update tUSER   set loggedIn=0, loggedInTime='" + ourJavaTimestampObject + "' where username =? and id= ?";
+            String sql = "update tUSER   set logged_in=0, logged_in_time='" + ourJavaTimestampObject + "' where username =? and id= ?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, user);

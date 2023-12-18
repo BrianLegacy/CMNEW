@@ -108,10 +108,15 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false"  
-                                                         actionListener="#{callBackScroller.saveGroup()}"  
-                                                         oncomplete="PF('deletegroupmodal').hide;alert();" 
-                                                         value="Save"></p:commandButton>
+                                       <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();alert();" 
+                 value="Save">
+    <f:actionListener binding="#{callBackScroller.saveGroup()}" />
+    <f:actionListener binding="#{callback.fetchGroups()}" />
+    
+    
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -124,7 +129,12 @@
                                     <p:outputLabel value="Delete `#{callBackScroller.currentGroupItem1.groupname}` group?"/>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false"  actionListener="#{callBackScroller.deleteGroup(callBackScroller.currentGroupItem1.id)}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+<p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Delete">
+    <f:actionListener binding="#{callBackScroller.deleteGroup(callBackScroller.currentGroupItem1.id)}" />
+    <f:actionListener binding="#{callback.fetchGroups()}"/>
+</p:commandButton>
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
                                     </div>
 

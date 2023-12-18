@@ -272,12 +272,15 @@
                                         <td></td>
                                         <td >
                                             
-                                            <p:commandButton value="execute" 
-                                                             ajax="true"
-                                                             actionListener="#{userScroller.currentItem.manageEmailCredit()}"
-                                                             update="showusers:table, msgs"
-                                                              oncomplete="if (#{facesContext.maximumSeverity==null})  PF('editsmscredits').hide();"
-                                                              /></td>
+                                           <p:commandButton value="execute" 
+                 ajax="true"
+                 update="showusers:table, msgs"
+                 oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editsmscredits').hide();"
+>
+    <f:actionListener binding="#{userScroller.currentItem.manageEmailCredit()}" />
+    <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+</p:commandButton>
+</td>
                                         
                                     </tr>
                                    
@@ -368,10 +371,14 @@
 
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false"  
-                                                         actionListener="#{userScroller.store}"  
-                                                         oncomplete="PF('deletegroupmodal').hide();" 
-                                                         value="Save"></p:commandButton>
+                                 <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Save">
+    <f:actionListener binding="#{userScroller.store()}" />
+    <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+</p:commandButton>
+
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>

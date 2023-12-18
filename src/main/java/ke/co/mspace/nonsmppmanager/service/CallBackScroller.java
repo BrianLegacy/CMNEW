@@ -304,6 +304,7 @@ public class CallBackScroller {
 
     
     public void deleteCallBack() {
+        System.out.println("reached here");
 //        String code="";
         String code="";
         Map smap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
@@ -535,7 +536,7 @@ public class CallBackScroller {
             conn.close();
             JsfUtil.addSuccessMessage("Pricing updated successfully");
 //                this.= null;
-                getAllPricings();
+//                getAllPricings();
             JdbcUtil.closeConnection(this.conn);
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
