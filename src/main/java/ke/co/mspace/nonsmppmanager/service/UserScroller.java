@@ -142,6 +142,7 @@ public class UserScroller {
         this.user = new UserController();
         this.paybill = new Paybill();
         this.callback =new CallBack();
+        fetchAllUsers();
     }
 
     public Alpha getpCurrentAlpha() {
@@ -364,11 +365,12 @@ public class UserScroller {
      public void usersValueChangeListener(ValueChangeEvent event) {
             userS= event.getNewValue().toString();
                      System.out.println("new change "+userS);
+                    
 
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("resellerId", Integer.parseInt(UserID()));
         String lastusername = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username").toString();
           
-            
+             fetchAllUsers();
             
         
     }
@@ -500,11 +502,17 @@ public class UserScroller {
     
     public List<UserController> getAllUsers() throws SQLException {
 //        this
+        
+//        fetchAllUsers();
+        return allUsers;
+    }
+    
+    public void fetchAllUsers(){
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-//                    LOG.info("getAllUsers");
+                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
@@ -517,7 +525,7 @@ public class UserScroller {
                 allUsers = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-//                    LOG.info("getAllUsers");
+                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
@@ -528,8 +536,6 @@ public class UserScroller {
                 }
             }
         }
-        
-        return allUsers;
     }
     
     
