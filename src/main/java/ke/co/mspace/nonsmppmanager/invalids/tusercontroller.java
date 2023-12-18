@@ -184,6 +184,7 @@ public class tusercontroller implements Serializable {
                             session.setAttribute("taskAdmin", result.getTaskadmin());
                             session.setAttribute("id", result.getId());
                             session.setAttribute("user_id", result.getId());
+                            System.out.println("setting agent as "+result.getAgent());
                             session.setAttribute("agent", result.getAgent());
                             session.setAttribute("max_total", result.getMaxTotal());
                             session.setAttribute("max_daily", result.getMaxDaily());

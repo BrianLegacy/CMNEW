@@ -101,16 +101,32 @@ public class logo_client implements Serializable {
      * @return
      */
     public String clnt_logo() {
-
+        System.out.println("home page settingkserter");
         session.setAttribute("resellerId", 0);
+        char adminv;
+           if((getsession.getSession().getAttribute("temporaladmin"))!=null ){
+                 System.out.println("temporal admin not null");
+       adminv=(char) getsession.getSession().getAttribute("temporaladmin");
+      
+        long loggedInId=(long)getsession.getSession().getAttribute("id");
+        String retriedImagePath=clnt.clnt_logo2((int)loggedInId);
+         session.setAttribute("logopath", retriedImagePath);
+          System.out.println("home page logged in id  "+loggedInId);
+               System.out.println("homepage clientlogopath "+retriedImagePath);
+         return retriedImagePath;
+
+         }
+                     
 
         logopath = clnt.clnt_logo();
         a = logopath;
 
         if (a == null || a.isEmpty()) {
+            System.out.println("home page a is null");
             a = "../files/config/MSpacelogo.png";
         }
-
+        
+  System.out.println("home page a not is null");
         session.setAttribute("logopath", a);
 
         return a;

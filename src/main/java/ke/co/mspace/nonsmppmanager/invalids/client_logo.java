@@ -116,7 +116,7 @@ public class client_logo implements Serializable {
      *
      * @return
      */
-    public String clnt_logo() {
+        public String clnt_logo() {
         Session session1 = null;
         
         
@@ -161,24 +161,71 @@ public class client_logo implements Serializable {
       
         return logopath;
     }
+    public String clnt_logo_mod() {
+        Session session1 = null;
+        
+//        
+//         if((getsession.getSession().getAttribute("temporaladmin"))!=null ){
+//       int adminKind= Character.getNumericValue((char) getsession.getSession().getAttribute("temporaladmin") );
+//             String agent= (String) getsession.getSession().getAttribute("agent") ;
+//             if(!agent.isEmpty()){
+//                  return (String)  getsession.getSession().getAttribute("logopath2");
+//             }
+//       if(adminKind==3){
+//           return (String)  getsession.getSession().getAttribute("logopath2");
+//       }
+//         }
+//        if from  is resseler get path from session
+         Connection conn = null;
+        boolean result = false;
+        try {
+            conn = util.getConnectionTodbTask();
+            String sql = "select * from tClient";
+
+            PreparedStatement pst = conn.prepareStatement(sql);
+          
+            final ResultSet rs = pst.executeQuery();
+            if(rs.next()){
+                tclient=new Tclient();
+            tclient.setId(rs.getInt("id"));
+             tclient.setClientName(rs.getString("clientName"));
+               tclient.setPicPath(rs.getString("picPath"));
+               tclient.setEmail(rs.getString("email"));
+               tclient.setSystemType(rs.getString("systemType"));
+              logopath = tclient.getPicPath();
+            String lsystem_type = tclient.getSystemType();
+            userType = lsystem_type.equalsIgnoreCase("integrated") ? "none" : "show";
+            }
+            JdbcUtil.closeConnection(conn);
+
+        } catch (SQLException e) {
+              logopath = "../files/config/MSpacelogo.png";
+//            e.printStackTrace();
+            JdbcUtil.closeConnection(conn);
+        }
+      
+        return logopath;
+    }
 
     public String clnt_logo2(int id) {
+        
+       
 
         //String smsserver = "http://dlr.mspace.co.ke:8080";
-        String smsserver = "https://mspace.co.ke";
+//        String smsserver = "https://mspace.co.ke";
         ///String smsserver = "http://smsgateway.mspace.co.ke:8080";
         Session session1 = null;
         String reseller_logopath = "";
           Connection conn = null;
         boolean result = false;
         try {
-            conn = util.getConnectionTodbPAYMENT();
-            String sql = "select * from tClient where id =?";
+            conn = util.getConnectionTodbTask();
+            String sql = "select * from tClient where id ="+id;
 
             PreparedStatement pst = conn.prepareStatement(sql);
           
             final ResultSet rs = pst.executeQuery();
-            pst.setLong(1, id);
+//            pst.setLong(1, id);
             if(rs.next()){
                 tclient=new Tclient();
             tclient.setId(rs.getInt("id"));
@@ -190,7 +237,9 @@ public class client_logo implements Serializable {
      String str = tclient.getPicPath();
                 String newstr = str.substring(2);
 
-                reseller_logopath = smsserver.concat(newstr);
+//                reseller_logopath = smsserver.concat(newstr);
+                                reseller_logopath = str;
+
             } else {
                 reseller_logopath = clnt_logo();
             }

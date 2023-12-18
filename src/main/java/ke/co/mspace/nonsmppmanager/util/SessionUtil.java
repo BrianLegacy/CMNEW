@@ -37,6 +37,9 @@ public class SessionUtil {
     public static boolean isReseller() {
         return getAdmin() == '5';
     }
+     public static boolean isIAdmin() {
+        return getAdmin() == '1';
+    }
 
     public static String getReseller() {
         if (isReseller()) {

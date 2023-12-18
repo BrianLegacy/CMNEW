@@ -118,7 +118,7 @@
                                      ajax="false" icon="fa-solid fa-arrow-up-right-from-square" />
                         <p:menuitem  value="Manage Callbacks" actionListener="#{userInfo.viewcallbacks()}"  ajax="false" icon="fa fa-list-ul" />
                     </p:submenu>
-                    <p:submenu label="My Account" expanded="true" >
+                    <p:submenu rendered="#{userScroller.amIAdmin()}" label="My Account" expanded="true" >
                         <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"
                                      ajax="false" icon="fa-regular fa-address-card" />
                         <p:menuitem  value="Account Top up" actionListener="#{userInfo.accountTopup()}"

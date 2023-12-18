@@ -1195,7 +1195,7 @@ public class UserScroller {
     }
     
     public void uploadResImage(FileUploadEvent event) throws SQLException, IOException {
-     
+        System.out.println("method called");
         String selectedUser = this.current_user;
         
         String sql = "SELECT id from tUSER where username='" + selectedUser + "'";
@@ -1209,10 +1209,10 @@ public class UserScroller {
         }
         util.closeConnection(conn);
              UploadedFile uploadedFile = event.getFile();
+ System.out.println("method called id "+user_id);
+        String directory = System.getProperty("catalina.home") + "/webapps/files/config"; // Replace with your actual directory path
 
-        String directory = System.getProperty("catalina.home") + "/files/config"; // Replace with your actual directory path
-
-  
+   System.out.println("method called dir "+directory);
   
   
         try {
@@ -1245,12 +1245,12 @@ public class UserScroller {
             e.printStackTrace();
         }
         
-        String filedir = "../files/config/" + selectedUser.concat("Logo").replace(" ", "")
+        String filedir = "/files/config/" + selectedUser.concat("Logo").replace(" ", "")
                     
                     .concat(getFileExtention(uploadedFile.getFileName()));
         //Call the method that persistsheimage pathto db
         setImagePath(user_id, filedir);
-        
+         System.out.println("method called file dir"+filedir);
         JsfUtil.addSuccessMessage("User logo updated Sucessfully");
         
     }
@@ -1264,7 +1264,7 @@ public class UserScroller {
     column with the path from the temp folder*/
     public void setImagePath(int id, String picPath) throws SQLException {
         String sqlUpdate = "UPDATE dbTASK.tClient  set picPath= ? where id='" + id + "' ";
-        conn = util.getConnectionTodbPAYMENT();
+        conn = util.getConnectionTodbTask();
         PreparedStatement pstm = conn.prepareStatement(sqlUpdate);
         //System.out.println("The update querry ====>" + sqlUpdate);
         //System.out.println("image to be inserted is ====>" + picPath);
@@ -1683,6 +1683,10 @@ public class UserScroller {
     }
       public  boolean amIResellersUser(){
         return  !SessionUtil.isReseller();
+        
+     }
+       public  boolean amIAdmin(){
+        return  !SessionUtil.isIAdmin();
         
      }
           public boolean amIReseller(){

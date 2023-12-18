@@ -13,6 +13,8 @@ import javax.enterprise.context.Dependent;
 
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -24,7 +26,7 @@ import javax.servlet.http.HttpSession;
 
 
 @ManagedBean(name = "sessionmanager")
-@ViewScoped
+@SessionScoped
 public class sessionmanager implements Serializable {
 
     HttpSession session = getsession.getSession();
@@ -115,10 +117,40 @@ public class sessionmanager implements Serializable {
 
         return resId > 0 ? resPayBill : "778827";
     }
+    
+      client_logo clnt = new client_logo();
 
     public String getLogoPath() {
+        
+           System.out.println("home page settingkserter");
+        session.setAttribute("resellerId", 0);
+        char adminv;
+       
+        
+        
+           if((org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin"))!=null ){
+                 System.out.println("temporal admin not null");
+       adminv=(char) org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin");
+       if(adminv=='1'){
+            return clnt.clnt_logo_mod();
+        }
+        long loggedInId=(long)org.mspace.clientmanager.util.getsession.getSession().getAttribute("id");
+        String retriedImagePath=clnt.clnt_logo2((int)loggedInId);
+         session.setAttribute("clientlogopath", retriedImagePath);
+          System.out.println("home page logged in id  "+loggedInId);
+               System.out.println("homepage clientlogopath "+retriedImagePath);
+         return retriedImagePath;
+
+         }
+        
+        
+        
+        
+        
         HttpSession session = getsession.getSession();
-        company_logopath = (String) session.getAttribute("logopath");
+        company_logopath = (String) session.getAttribute("clientlogopath");
+
+//                company_logopath =client_logo.clnt_logo();
 
         //String path = new File("").getAbsolutePath();
         //String paath = session.getServletContext().getRealPath("/");
