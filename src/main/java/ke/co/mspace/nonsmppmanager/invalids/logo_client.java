@@ -195,6 +195,7 @@ public class logo_client implements Serializable {
         if(session.getAttribute("agent")!=null && !((String) session.getAttribute("agent")).equalsIgnoreCase("") ){
             reselId=Integer.parseInt((String) session.getAttribute("agent"));
         }
+        System.out.println("link label "+reselId);
         linkLabel = reselId != 0 ? "Licenced to " + getResellerName(reselId) + "" : "MSpace Solutions Ltd. ";
 
         link = reselId != 0 ? "" : "https://www.mspace.co.ke";

@@ -29,7 +29,7 @@
                                     <p:selectOneMenu id="users" 
                  valueChangeListener="#{userScroller.usersValueChangeListener}"
                  value="#{userScroller.userS}">
-    <f:ajax event="change" render="showusers table" />
+    <f:ajax event="change" render="showusers zz" />
     <f:selectItem itemLabel="Select User" itemValue="" />
     <f:selectItems value="#{sMSOut.data}" var="user" itemLabel="#{user.name}" itemValue="#{user.id}" />
 
@@ -279,12 +279,15 @@
                                         <td></td>
                                         <td >
                                             
-                                            <p:commandButton value="execute" 
-                                                             ajax="true"
-                                                             actionListener="#{userScroller.currentItem.manageCredit()}"
-                                                             update="showusers:table, msgs"
-                                                              oncomplete="if (#{facesContext.maximumSeverity==null})  PF('editsmscredits').hide();"
-                                                              /></td>
+                                           <p:commandButton value="execute" 
+                 ajax="true"
+                 update="showusers:table, msgs"
+                 oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editsmscredits').hide();"
+>
+                                               <f:actionListener binding="#{userScroller.currentItem.manageCredit()}" />
+                                               <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+</p:commandButton>
+</td>
                                         
                                     </tr>
                                    
@@ -388,10 +391,13 @@
 
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false"  
-                                                         actionListener="#{userScroller.store}"  
-                                                         oncomplete="PF('deletegroupmodal').hide();" 
-                                                         value="Save"></p:commandButton>
+                                       <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Save">
+                                           <f:actionListener binding="#{userScroller.store()}" />
+                                           <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -403,8 +409,13 @@
                                     <p:outputLabel value="Are you sure you want to delete `#{userScroller.currentItem.username}` sms user?"/>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false" 
-                                                         actionListener="#{userScroller.deleteUser()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                      <p:commandButton style="margin-right: 10px" ajax="false" 
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Delete">
+    <f:actionListener binding="#{userScroller.deleteUser()}" />
+     <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
                                     </div>
                                         </h:form>
@@ -447,7 +458,9 @@
                                         
                                           >
                     
-                        <p:ajax listener="#{userScroller.removeUserAlpha}" oncomplete="PF('delAlpha').hide();" update="msgs,showusers:table,showusers:aplhagrid"/>
+                        <p:ajax listener="#{userScroller.removeUserAlpha}" 
+                                oncomplete="PF('delAlpha').hide();"
+                                update="msgs,showusers:aplhagrid"/>
                     </p:commandButton>
                     <p:commandButton value="Cancel" onclick="PF('delAlpha').hide();" />
                 </h:panelGrid>

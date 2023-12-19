@@ -100,6 +100,7 @@ public class client_logo implements Serializable {
 
     public String getLink() {
         Tclient client = getSystemType();
+        System.out.println("system getLink "+(client.getSystemType().equalsIgnoreCase("integrated") ? "#" : "https://www.mspace.co.ke"));
         return client.getSystemType().equalsIgnoreCase("integrated") ? "#" : "https://www.mspace.co.ke";
     }
 

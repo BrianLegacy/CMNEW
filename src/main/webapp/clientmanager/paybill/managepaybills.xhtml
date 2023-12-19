@@ -134,11 +134,13 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="false"
+                     <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Save">
+    <f:actionListener binding="#{ppaybilscroller.saveOrPaybill()}" />
+    <f:actionListener binding="#{ppaybill.fetchPaybill()}"/>
+</p:commandButton>
 
-                                                         actionListener="#{ppaybilscroller.saveOrPaybill()}"  
-                                                         oncomplete="PF('deletegroupmodal').hide();" 
-                                                         value="Save"></p:commandButton>
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -155,8 +157,13 @@
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
 
-                                        <p:commandButton  style="margin-right: 10px" ajax="false"
-                                                          actionListener="#{ppaybilscroller.deletePaybill()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                  <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Delete">
+    <f:actionListener binding="#{ppaybilscroller.deletePaybill()}" />
+    <f:actionListener binding="#{ppaybill.fetchPaybill()}" />
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
 
                                     </div>

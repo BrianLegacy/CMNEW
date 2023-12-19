@@ -142,6 +142,7 @@ public class UserScroller {
         this.user = new UserController();
         this.paybill = new Paybill();
         this.callback =new CallBack();
+        fetchAllUsers();
     }
 
     public Alpha getpCurrentAlpha() {
@@ -364,11 +365,14 @@ public class UserScroller {
      public void usersValueChangeListener(ValueChangeEvent event) {
             userS= event.getNewValue().toString();
                      System.out.println("new change "+userS);
+                    
 
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("resellerId", Integer.parseInt(UserID()));
         String lastusername = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username").toString();
           
-            
+             fetchAllUsers();
+             fetchUserAlphas();
+             fetchAgentAlphas();
             
         
     }
@@ -435,6 +439,8 @@ public class UserScroller {
         } catch (SQLException ex) {
             Logger.getLogger(UserScroller.class.getName()).log(Level.SEVERE, null, ex);
         }
+//        fetchUserAlphas();
+        fetchAgentAlphas();
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     String agent;
@@ -500,11 +506,17 @@ public class UserScroller {
     
     public List<UserController> getAllUsers() throws SQLException {
 //        this
+        
+//        fetchAllUsers();
+        return allUsers;
+    }
+    
+    public void fetchAllUsers(){
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
                     conn = util.getConnectionTodbSMS();
-//                    LOG.info("getAllUsers");
+                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
@@ -517,7 +529,7 @@ public class UserScroller {
                 allUsers = null;
                 try {
                     conn = util.getConnectionTodbSMS();
-//                    LOG.info("getAllUsers");
+                    LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
@@ -528,8 +540,6 @@ public class UserScroller {
                 }
             }
         }
-        
-        return allUsers;
     }
     
     
@@ -590,7 +600,7 @@ public class UserScroller {
                 e.printStackTrace();
             }
         }
-        
+        fetchUserAlphas();
     }
     
     public String lastInsert() throws SQLException {
@@ -1001,6 +1011,8 @@ public class UserScroller {
         } else {
             JsfUtil.addErrorMessage("Select user to assign Sender ID");
         }
+//        fetchAgentAlphas();
+fetchUserAlphas();
         
     }
     
@@ -1433,7 +1445,13 @@ public class UserScroller {
 
     ///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public List<Alpha> getAgentAlphas() {
+
         
+        return agentAlphas;
+    }
+    
+    public void fetchAgentAlphas(){
+                
         synchronized (this) {
             if (allUsers != null && !allUsers.isEmpty()) {
                
@@ -1445,8 +1463,6 @@ public class UserScroller {
               
             }
         }
-        
-        return agentAlphas;
     }
     
       public void pgetAgentAlphas(AjaxBehaviorEvent abe) throws AbortProcessingException {
@@ -1632,7 +1648,14 @@ public class UserScroller {
         }
     }
     public List<Alpnumeric> getUserAlphas() throws SQLException {
-        synchronized (this) {
+      
+        
+        return userAlphas;
+    }
+    
+    public void fetchUserAlphas(){
+        System.out.println("fetching alphas");
+          synchronized (this) {
             if (userAlphas == null || userAlphas.isEmpty()) {
                 
                     conn = util.getConnectionTodbSMS();
@@ -1655,8 +1678,6 @@ public class UserScroller {
                
             }
         }
-        
-        return userAlphas;
     }
     
     public String loadViewPaybills() {

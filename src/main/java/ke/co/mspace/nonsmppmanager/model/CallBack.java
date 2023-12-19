@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -194,23 +197,69 @@ return true;
     public void setSelectedUser(String selectedUser) {
         this.selectedUser = selectedUser;
     }
+    
+    @PostConstruct
+            public void init(){
 
-    public ArrayList<CallBack> getcallback() throws SQLException {
-//        System.out.println("get kallbak kalled");
+           fetchcallback();
+            }
+    
+ArrayList<CallBack> callbacks;
+
+    public ArrayList<CallBack> getCallbacks()  throws SQLException{
+        return callbacks;
+//return fetchcallback();
+    }
+
+    public void setCallbacks(ArrayList<CallBack> callbacks) {
+        this.callbacks = callbacks;
+    }
+
+    public void fetchcallback()  {
+        System.out.println("get kallbak kalled");
         UserServiceImpl callback = new UserServiceImpl();
 //        System.out.println("Selected User: " + selectedUser);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);
       
-        return UserServiceImpl.getCallBack();
+        try {
+            callbacks= UserServiceImpl.getCallBack();
+        } catch (SQLException ex) {
+            Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    ArrayList<Group> groups;
+
+    public void setGroups(ArrayList<Group> groups) {
+        this.groups = groups;
+    }
+    
+    
+    
        public ArrayList<Group> getGroups() throws SQLException {
      
-        return UserServiceImpl.getGroups(util.getConnectionTodbSMS());
+        return  groups;
+    }
+       
+       public void fetchGroups(){
+           groups=UserServiceImpl.getGroups(util.getConnectionTodbSMS());
+       }
+      ArrayList<EmailPricingTable> pricingtable;
+
+    public ArrayList<EmailPricingTable> getPricingtable() {
+        return pricingtable;
+    }
+
+    public void setPricingtable(ArrayList<EmailPricingTable> pricingtable) {
+        this.pricingtable = pricingtable;
     }
       
-      public ArrayList<EmailPricingTable> getPricing() throws SQLException {
-           
-        return UserServiceImpl.getPricingTable();
+      public void fetchPricing()  {
+           ArrayList<EmailPricingTable> _pricingtable=null;
+        try {
+          pricingtable=  UserServiceImpl.getPricingTable();
+        } catch (SQLException ex) {
+            Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public Set<Integer> getKeys() {

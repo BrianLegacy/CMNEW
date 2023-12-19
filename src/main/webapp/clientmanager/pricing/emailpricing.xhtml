@@ -35,7 +35,7 @@
                       
                           <p:commandLink  
                               id="addpricingitem"
-                                         actionListener="#{callBackScroller.clearCurrentItem() }"
+                              actionListener="#{pricingService.clearCurrentItem() }"
                                             
                                          ajax="true"
                                                    oncomplete="PF('createpricingmodal').show();"
@@ -48,7 +48,7 @@
                         
                         </h:form>
                     <br/>
-                    <p:dataTable var="data" value="#{callback.pricing}"
+                    <p:dataTable var="data" value="#{pricingService.pricingtable}"
                                  rows="8"
                                  id="pricingtable"
                                  paginator="true" paginatorPosition="bottom"
@@ -79,7 +79,7 @@
                                                    oncomplete="PF('editgroupmodal').show();">
                                         <h:graphicImage 
                                             value="resources/images/edit.gif" width="15px"></h:graphicImage>
-                                        <p:ajax  listener="#{callBackScroller.psetCurrentPricingItemForEdit(data) }" 
+                                        <p:ajax  listener="#{pricingService.psetCurrentPricingItemForEdit(data) }" 
                                                  update="@([id$=editgroupmodal])"
                                                  />
                                          <p:tooltip for="editbutton" value="Click to edit" />
@@ -94,7 +94,7 @@
                                         <h:graphicImage 
                                             value="resources/images/delete.gif" width="15px"></h:graphicImage>
 
-                                        <p:ajax  listener="#{callBackScroller.pstorePricingid(data) }" 
+                                        <p:ajax  listener="#{pricingService.pstorePricingid(data) }" 
                                                  update="@([id$=deletegroupmodal])" />
                                          <p:tooltip for="deletebutton" value="Click to delete" />
                                     </p:commandLink>
@@ -110,7 +110,7 @@
                                             <td ><h:outputLabel for="userid" value="ID" /></td>
                                             <td><p:inputText style="width: 150px" 
                                                              id="userid"
-                                                             value="#{callBackScroller.currentPricingItem.id}" 
+                                                             value="#{pricingService.currentPricingItem.id}" 
                                                              disabled="true"
                                                              readonly="true">
                                                     <f:validateLength minimum="3" />
@@ -118,7 +118,7 @@
                                         </tr>
 
                                         <tr>
-                                            <td ><h:outputLabel for="range" value="Range" /></td>
+                                            <td ><h:outputLabel  value="Range" /></td>
                                             <td  >
                                              <table style="border: none; position: relative;left: -10px;width: 170px " >
                                                     <tr style="border: none; "  >
@@ -128,7 +128,7 @@
                                                                requiredMessage="Min range is required"
                                                                validatorMessage="Only digits allowed in range"
                                                         style="width: 45px; margin: 0; padding-left: 0; padding-right: 0 "  
-                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_start}" 
+                                                        value="#{pricingService.currentPricingItem.emails_purchased_start}" 
                                                         >
                                                                 <f:validateRegex pattern="\d+" />
                                                                 
@@ -139,7 +139,7 @@
                                                                requiredMessage="Max range is required"
                                                                 validatorMessage="Only digits allowed in range"
                                                         style="width: 45px; margin: 0; padding-left: 0; padding-right: 0"  
-                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_end}" 
+                                                        value="#{pricingService.currentPricingItem.emails_purchased_end}" 
                                                         >  <f:validateRegex pattern="\d+" />
                                                     </p:inputText></td>
                                                         
@@ -152,15 +152,15 @@
                                         </tr>
                                       
                                         <tr>
-                                            <td ><h:outputLabel for="type" value="Select Type" /></td>
+                                            <td ><h:outputLabel  value="Select Type" /></td>
                                             <td  >
                                               <p:selectOneMenu id="types" 
                                                                 required="true"
                                                                requiredMessage="Type is required" 
                                                                
-                                                     value="#{callBackScroller.currentPricingItem.expiry}">
+                                                     value="#{pricingService.currentPricingItem.expiry}">
                                         <f:selectItem itemLabel="Select type" itemValue="" />
-                                        <f:selectItems value="#{userController.typeCombo}" ></f:selectItems>
+                                        <f:selectItems value="#{pricingService.typeCombo}" ></f:selectItems>
                                     </p:selectOneMenu>
                                             
                                             
@@ -171,9 +171,9 @@
 
                                         </tr>
                                         <tr>
-                                            <td ><h:outputLabel for="price" value="Price" /></td>
+                                            <td ><h:outputLabel  value="Price" /></td>
                                             <td  ><p:inputText style="width: 150px" id="email" 
-                                                               value="#{callBackScroller.currentPricingItem.price}"
+                                                               value="#{pricingService.currentPricingItem.price}"
                                                                required="true" 
                                                                requiredMessage="Price is required"   >
                                                     
@@ -187,11 +187,13 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"
- update="@([id$=editpricingmessages])"
-                                                         actionListener="#{callBackScroller.updatePricing()}"  
-                                                          oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload();} " 
-                                                         value="Save"></p:commandButton>
+                                       <p:commandButton style="margin-right: 10px" ajax="false"
+                 oncomplete="{PF('editgroupmodal').hide();} "
+                 value="Save">
+    <f:actionListener binding="#{pricingService.updatePricing()}" />
+    <f:actionListener binding="#{pricingService.fetchPricing()}"/>
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
@@ -204,12 +206,17 @@
                             <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
                                 <h:form>
 
-                                    <p:outputLabel value="Are you sure you want to delete pricing #{callBackScroller.currentPricingItem.emails_purchased}? Note: You cannot undo."/>
+                                    <p:outputLabel value="Are you sure you want to delete pricing #{pricingService.currentPricingItem.emails_purchased}? Note: You cannot undo."/>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
 
-                                        <p:commandButton  style="margin-right: 10px" ajax="false"
-                                                          actionListener="#{callBackScroller.deletePricingTable()}"  oncomplete="PF('deletegroupmodal').hide();" value="Delete"></p:commandButton>
+                                        <p:commandButton style="margin-right: 10px" ajax="false"  
+                 oncomplete="PF('deletegroupmodal').hide();" 
+                 value="Delete">
+    <f:actionListener binding="#{pricingService.deletePricingTable()}" />
+    <f:actionListener binding="#{pricingService.fetchPricing()}"/>
+</p:commandButton>
+
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
 
                                     </div>
@@ -223,13 +230,13 @@
                                      
 
                                         <tr>
-                                            <td ><h:outputLabel for="range" value="Range" /></td>
+                                            <td ><h:outputLabel  value="Range" /></td>
                                             <td  >
                                                 <table style="border: none; position: relative;left: -10px;width: 170px " >
                                                     <tr style="border: none; "  >
                                                         <td style="border: none; ">  <p:inputText
                                                         style="width: 45px; margin: 0; padding-left: 0; padding-right: 0 "  
-                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_start}" 
+                                                        value="#{pricingService.currentPricingItem.emails_purchased_start}" 
                                                         required="true"
                                                          requiredMessage="min range is required"
                                                         >
@@ -237,7 +244,7 @@
                                                         <td style="border: none; text-align: center">to</td>
                                                         <td style="border: none; "> <p:inputText
                                                         style="width: 45px; margin: 0; padding-left: 0; padding-right: 0"  
-                                                        value="#{callBackScroller.currentPricingItem.emails_purchased_end}" 
+                                                        value="#{pricingService.currentPricingItem.emails_purchased_end}" 
                                                         required="true"
                                                         requiredMessage="max range is required"
                                                         >
@@ -256,10 +263,10 @@
                                         </tr>
                                       
                                         <tr>
-                                            <td ><h:outputLabel for="type" value="Select Type" /></td>
+                                            <td ><h:outputLabel  value="Select Type" /></td>
                                             <td  >
                                               <p:selectOneMenu id="types" 
-                                                     value="#{callBackScroller.currentPricingItem.expiry}"
+                                                     value="#{pricingService.currentPricingItem.expiry}"
                                                      
                                                      required="true"
                                                      requiredMessage="type is required"
@@ -267,7 +274,7 @@
                                         <f:selectItem itemLabel="Select type" itemValue="" 
                                                        
                                                       />
-                                        <f:selectItems value="#{userController.typeCombo}" ></f:selectItems>
+                                        <f:selectItems value="#{pricingService.typeCombo}" ></f:selectItems>
                                     </p:selectOneMenu>
                                             
                                             
@@ -278,11 +285,11 @@
 
                                         </tr>
                                         <tr>
-                                            <td ><h:outputLabel for="price" value="Price" /></td>
+                                            <td ><h:outputLabel  value="Price" /></td>
                                             <td  ><p:inputText style="width: 150px" id="email"
                                                                
                                                                
-                                                               value="#{callBackScroller.currentPricingItem.price}" required="true"
+                                                               value="#{pricingService.currentPricingItem.price}" required="true"
                                                                placeholder="" requiredMessage="Price is required"   >
                                                  
                                                 </p:inputText>
@@ -297,13 +304,17 @@
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"
-                                                         
-                                                         update="@([id$=createpricingmessages])"
-                                                         actionListener="#{callBackScroller.savePricing()}"  
-                            oncomplete="if (!args.validationFailed){PF('createpricingmodal').hide();location.reload();} "
-                            onerror="alert('error')"
-                                                         value="Save"></p:commandButton>
+                                      <p:commandButton style="margin-right: 10px" ajax="false"
+                
+                 oncomplete="{PF('createpricingmodal').hide()} "
+                 value="Save">
+    <f:actionListener binding="#{pricingService.savePricing()}" />
+    <f:actionListener binding="#{pricingService.fetchPricing()}"/>
+</p:commandButton>
+                                        
+                                        
+                                        
+
                                         <p:commandButton value="Cancel" 
                                                          immediate="true"
                                                          onclick="PF('createpricingmodal').hide();"></p:commandButton>

@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -287,18 +290,35 @@ public class Paybill {
             System.out.println("Error " + ex + "occurred");
         }
     }
+    
+ArrayList<Paybill> paybill;
 
-    public ArrayList<Paybill> getpaybill() throws SQLException {
-        UserServiceImpl paybill = new UserServiceImpl();
-        System.out.println("Selected User: " + selectedUser);
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);
+    public void setPaybill(ArrayList<Paybill> paybill) {
+        this.paybill = paybill;
+    }
+
+    public ArrayList<Paybill> getpaybill()  {
+        return paybill;
+
+    }
+    @PostConstruct
+    public void init(){
+        fetchPaybill();
+    }
+   public void fetchPaybill(){
+        try {
+            UserServiceImpl paybill = new UserServiceImpl();
+            System.out.println("Selected User: " + selectedUser);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);
 //        if (selectedUser.isEmpty()) {
 //            return new ArrayList<>();
 //        } else {
-            return UserServiceImpl.getPayBill();
-        //}
-
-    }
+this.paybill= UserServiceImpl.getPayBill();
+//}
+        } catch (SQLException ex) {
+            Logger.getLogger(Paybill.class.getName()).log(Level.SEVERE, null, ex);
+        }
+   }
 
     public void fetchCurrentRow(ActionEvent event) {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("username");
