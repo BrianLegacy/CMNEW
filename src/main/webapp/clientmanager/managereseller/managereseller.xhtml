@@ -32,7 +32,8 @@
                                                      
                                                      >
                                         
-                                        <f:ajax listener="#{userScroller.pgetAgentAlphas}"  event="change" render="showusers table" />
+                                        <f:ajax listener="#{userScroller.pgetAgentAlphas}"  event="change" 
+                                                render="table aplhagrid" />
                                         <f:selectItem itemLabel="Select User" itemValue="" />
                                         <f:selectItems value="#{sMSOut.dataR}" >
                                         
@@ -475,7 +476,10 @@
                                         
                                           >
                     
-                        <p:ajax listener="#{alphaScroller.deleteAgentAlphanumeric}" oncomplete="PF('delAlpha').hide();" update="msgs,showusers:table,showusers:aplhagrid"/>
+                        <p:ajax listener="#{alphaScroller.deleteAgentAlphanumeric}"
+                                />
+                        <p:ajax listener="#{userScroller.fetchAgentAlphas()}" oncomplete="PF('delAlpha').hide();" 
+                                update="msgs,showusers:aplhagrid"/>
                     </p:commandButton>
                     <p:commandButton value="Cancel" onclick="PF('delAlpha').hide();" />
                 </h:panelGrid>

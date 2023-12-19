@@ -29,7 +29,7 @@
                                     <p:selectOneMenu id="users" 
                  valueChangeListener="#{userScroller.usersValueChangeListener}"
                  value="#{userScroller.userS}">
-    <f:ajax event="change" render="showusers table" />
+    <f:ajax event="change" render="showusers zz" />
     <f:selectItem itemLabel="Select User" itemValue="" />
     <f:selectItems value="#{sMSOut.data}" var="user" itemLabel="#{user.name}" itemValue="#{user.id}" />
 
@@ -458,7 +458,9 @@
                                         
                                           >
                     
-                        <p:ajax listener="#{userScroller.removeUserAlpha}" oncomplete="PF('delAlpha').hide();" update="msgs,showusers:table,showusers:aplhagrid"/>
+                        <p:ajax listener="#{userScroller.removeUserAlpha}" 
+                                oncomplete="PF('delAlpha').hide();"
+                                update="msgs,showusers:aplhagrid"/>
                     </p:commandButton>
                     <p:commandButton value="Cancel" onclick="PF('delAlpha').hide();" />
                 </h:panelGrid>

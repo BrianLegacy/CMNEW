@@ -371,6 +371,8 @@ public class UserScroller {
         String lastusername = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username").toString();
           
              fetchAllUsers();
+             fetchUserAlphas();
+             fetchAgentAlphas();
             
         
     }
@@ -437,6 +439,8 @@ public class UserScroller {
         } catch (SQLException ex) {
             Logger.getLogger(UserScroller.class.getName()).log(Level.SEVERE, null, ex);
         }
+//        fetchUserAlphas();
+        fetchAgentAlphas();
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     String agent;
@@ -596,7 +600,7 @@ public class UserScroller {
                 e.printStackTrace();
             }
         }
-        
+        fetchUserAlphas();
     }
     
     public String lastInsert() throws SQLException {
@@ -1007,6 +1011,8 @@ public class UserScroller {
         } else {
             JsfUtil.addErrorMessage("Select user to assign Sender ID");
         }
+//        fetchAgentAlphas();
+fetchUserAlphas();
         
     }
     
@@ -1439,7 +1445,13 @@ public class UserScroller {
 
     ///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public List<Alpha> getAgentAlphas() {
+
         
+        return agentAlphas;
+    }
+    
+    public void fetchAgentAlphas(){
+                
         synchronized (this) {
             if (allUsers != null && !allUsers.isEmpty()) {
                
@@ -1451,8 +1463,6 @@ public class UserScroller {
               
             }
         }
-        
-        return agentAlphas;
     }
     
       public void pgetAgentAlphas(AjaxBehaviorEvent abe) throws AbortProcessingException {
@@ -1638,7 +1648,14 @@ public class UserScroller {
         }
     }
     public List<Alpnumeric> getUserAlphas() throws SQLException {
-        synchronized (this) {
+      
+        
+        return userAlphas;
+    }
+    
+    public void fetchUserAlphas(){
+        System.out.println("fetching alphas");
+          synchronized (this) {
             if (userAlphas == null || userAlphas.isEmpty()) {
                 
                     conn = util.getConnectionTodbSMS();
@@ -1661,8 +1678,6 @@ public class UserScroller {
                
             }
         }
-        
-        return userAlphas;
     }
     
     public String loadViewPaybills() {

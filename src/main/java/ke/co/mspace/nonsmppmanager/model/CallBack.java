@@ -202,8 +202,6 @@ return true;
             public void init(){
 
            fetchcallback();
-           fetchPricing();
-           fetchGroups();
             }
     
 ArrayList<CallBack> callbacks;

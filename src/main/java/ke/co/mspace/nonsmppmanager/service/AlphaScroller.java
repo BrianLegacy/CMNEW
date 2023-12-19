@@ -413,7 +413,8 @@ public class AlphaScroller {
             JsfUtil.addSuccessMessage(" Alphanumeric removed successfully.");
             //allUsers.remove(currentItem);
             JdbcUtil.closeConnection(conn);
-     
+//     fetchAlphas();
+    
 
     }
 
