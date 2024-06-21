@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:head>
+
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:panel header="SMS API" style="text-align: center " >
+                <h:form id="form">
+                    <p:growl id="messages" showDetail="true" />
+
+                    <p:commandButton value="Generate API Key" onclick="PF('createDialog').show();" type="button" 
+                                     style="margin-bottom: 1rem;
+                                     padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+                                     background-image: url('#{resource['images/addapi.png']}');
+                                     background-size: 1.5rem 1.5rem;
+                                     background-repeat: no-repeat;
+                                     background-position:  0.5rem center;" />
+
+                    <p:dialog header="Create New SMS API Key" widgetVar="createDialog" modal="true" resizable="false">
+
+                        <h:panelGrid columns="2" style="paddign: 1rem;">
+                            <h:outputLabel for="userId" value="User:" />
+                            <p:selectOneMenu id="userId" value="#{smsApiBean.newKey.userId}" required="true">
+                                <f:selectItems value="#{smsApiBean.users}" var="user" itemLabel="#{user.label}" itemValue="#{user.value}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputLabel for="name" value="Name :" />
+                            <p:inputText id="name" value="#{smsApiBean.newKey.name}" />
+                        </h:panelGrid>
+                        <p:commandButton value="Create" style="margin: 1rem" actionListener="#{smsApiBean.createKey}" update=":form:messages :form:dataTable" oncomplete="PF('createDialog').hide();" />
+                    </p:dialog>
+
+                    <p:dataTable id="dataTable" var="key" value="#{smsApiBean.keys}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10, 15, 25"
+                                 pageLinks="3"
+                                 paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 scrollable="true"
+                                 resizableColumns="true" selectionMode ="single" 
+
+                                 >
+                        <p:column headerText="ID" style="width:50px">
+                            <h:outputText value="#{key.id}" />
+                        </p:column>
+                        <p:column headerText="User Name" style="width:100px">
+                            <h:outputText value="#{key.username}" />
+                        </p:column>
+                        <p:column headerText="Name" style="width:100px">
+                            <h:outputText value="#{key.name}" />
+                        </p:column>
+                        <p:column headerText="API Key" style="width:auto">
+                            <h:outputText value="#{smsApiBean.maskApiKey(key.apiKey)}" />
+                        </p:column>
+                        <p:column headerText="Expiry Date" style="width:150px">
+                            <h:outputText value="#{key.expiryDate}" />
+                        </p:column>
+                        <p:column headerText="Actions" style="text-align:center; width:250px">
+                            <p:commandButton icon="fa fa-power-off" title="Activate" 
+                                             rendered="#{key.status eq 0}" action="#{smsApiBean.showActivateDialog(key.id)}" />
+
+                            <p:commandButton icon="fa fa-toggle-on" title="Deactivate" 
+                                             rendered="#{key.status eq 1}" action="#{smsApiBean.showDeactivateDialog(key.id)}" />
+
+                            <p:commandButton icon="fa fa-refresh" action="#{smsApiBean.showUpdateDialog(key.id)}"/>
+
+
+                            <p:commandButton icon="fa fa-trash" action="#{smsApiBean.showDeleteDialog(key.id)}"/>
+                        </p:column>
+
+
+                    </p:dataTable>
+
+                </h:form>
+                <h:form> 
+                    <p:confirmDialog message="This will permanently delete this key!"
+                                     header="Initiating destroy process" severity="alert"
+                                     widgetVar="cd">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p:commandButton 
+                                value="Delete"
+                                title="Click to delete this key"
+                                action="#{smsApiBean.confirmDelete}" 
+                                immediate="true"
+                                update =":form:dataTable :form:messages"
+                                />                          
+                            <p:commandButton value="cancel" onclick="PF('cd').hide();"/>
+                        </div>
+                    </p:confirmDialog>
+                </h:form>
+                <h:form> 
+                    <p:confirmDialog message="Are you sure you want to regenerate this Api Key"
+                                     header="Regenerate Api Key" severity="alert"
+                                     widgetVar="confirmRegenerate">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p:commandButton 
+                                value="Re-generate"
+                                action="#{smsApiBean.confirmUpdate}" 
+                                immediate="true"
+                                update =":form:dataTable :form:messages"
+                                />                          
+                            <p:commandButton value="cancel" onclick="PF('confirmRegenerate').hide();" />
+                        </div>
+                    </p:confirmDialog>
+                </h:form>
+                <h:form> 
+                    <p:confirmDialog message="Are you sure you want to activate this Api Key"
+                                     header="Activate Key" severity="alert"
+                                     widgetVar="confirmActivate">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p:commandButton 
+                                value="Activate"
+                                action="#{smsApiBean.confirmActivate}" 
+                                immediate="true"
+                                update =":form:dataTable :form:messages"
+                                />                          
+                            <p:commandButton value="cancel" onclick="PF('confirmActivate').hide();"/>
+                        </div>
+                    </p:confirmDialog>
+                </h:form>
+                <h:form> 
+                    <p:confirmDialog message="Are you sure you want to deactivate this Api Key"
+                                     header="Deactivate Key" severity="alert"
+                                     widgetVar="confirmDeactivate">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p:commandButton 
+                                value="Deactivate"
+                                action="#{smsApiBean.confirmDeactivate}" 
+                                immediate="true"
+                                update =":form:dataTable :form:messages"
+                                />                          
+                            <p:commandButton value="cancel" onclick="PF('confirmDeactivate').hide();"/>
+                        </div>
+                    </p:confirmDialog>
+                </h:form>
+
+
+                <!-- Copy API Key Dialog -->
+                <h:form id="apiKeyForm">
+                    <p:dialog id="apiKeyDialog" header="Copy API Key" widgetVar="apiKeyDialog" modal="true" showEffect="fade" hideEffect="fade">
+                        <h:panelGrid columns="2" style="padding: 1rem;">
+                            <p class="m-0">Once closed you will not see the key again</p> 
+                            <f:facet name="footer" style ="display: flex; justify-content: space-between;">
+                                <p:commandButton value="Copy Key" 
+                                                 onclick="copyToClipboard('#{smsApiBean.selectedApiKey}');" 
+                                                 update=":form:messages" style="margin-top: 1rem;"/>
+                                <p:commandButton value="Close" onclick="PF('apiKeyDialog').hide();" 
+                                                 type="button" style="margin-top: 1rem;"/>
+                            </f:facet>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>       
+
+            </p:panel>
+            <script>
+                function copyToClipboard(text) {
+
+
+                    navigator.clipboard.writeText(text).then(() => {
+                        console.log("Copied the API Key successfully.");
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                    console.log(copyText.value);
+
+                }
+            </script>
+        </ui:composition>
+    </h:body>
+</html>

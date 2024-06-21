@@ -9,7 +9,7 @@
         <script>
             function showloading() {
                 document.getElementById('progressbar').style.display = 'block';
-                
+
             }
 
         </script>
@@ -18,20 +18,17 @@
     <h:body>
         <ui:composition>         
             <h:form>
-                <!--<div align="center">
-                    <p:panel closable="true" rendered="{tusercontroller.notifyOption()}"  style="width: 50%">
-                        <h:outputText escape="false"   value="{tusercontroller.notifyvalue}" style="font-size:12px;" />
-                    </p:panel>
-                </div>-->
+
                 <div id="container" style="  height: 1%;  position:relative; " >
 
                     <div  class="" id="left" style="">
                         <br/>
                         <h:outputText value="#{sessionmanager.getsessionname()}" style="float:left;text-align: left;"></h:outputText>  
-                        <!--rendered="{menuView1.systemType}"--><br/> <br/>
+                        <br/> <br/>
                         <p:commandButton id="dynaButton" rendered="#{menuView1.systemType}"  value="Switch to" type="button" icon="fa fa-sign-in"  style="float: left;font: 12px georgia;text-align: left; font-weight: bolder;"/>
                         <p:menu overlay="true" model="#{menuView1.model}" trigger="dynaButton" my="left top" at="left bottom">
-                        </p:menu>                       </div>
+                        </p:menu>                       
+                    </div>
                     <div id="center" style="position: relative;left: -100px; margin-left: 80% width: 200px;  " >
                         <a  href="#{sessionmanager.getUrl()}" target="_blank">
                             <img src="#{sessionmanager.getLogoPath()}" alt="#{sessionmanager.getClientname()}"  
@@ -40,8 +37,8 @@
                                  style="margin-bottom: 10%"
                                  longdesc="#{sessionmanager.getUrl()}" />
                         </a>
-                       
-                       
+
+
                     </div>
                     <div id="right">
                         <br/>
@@ -49,10 +46,10 @@
                                          style="float: right;" icon="fa fa-power-off"/>
                     </div>
                 </div>
-               
+
             </h:form>
 
-          
+
         </ui:composition>
 
     </h:body>

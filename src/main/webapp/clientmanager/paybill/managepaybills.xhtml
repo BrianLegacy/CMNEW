@@ -13,173 +13,248 @@
                 .ui-growl-item-container.ui-state-highlight {
                     border-color: red;
 
-                }  </style>
+                }
+                .formgrid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                    margin: 20px;
+                }
+                .field {
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 15px;
+                }
+                .field-full {
+                    grid-column: span 3;
+                }
+                .field-two-thirds {
+                    grid-column: span 2;
+                }
+                .align-center {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            </style>
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
 
             <div align="center">
-                <p:panel id="maintab" header="AVAILABLE PAYBILLS/TILL NUMBERS" >
-                    <p:dataTable var="data" value="#{ppaybill.getpaybill()}"
-                                   rows="10"
-                                 paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                                 >
-                        <p:column headerText="UserID">
-                            <h:outputText value="#{data.userid}"/>
-                        </p:column>
-                        <p:column headerText="Username">
-                            <h:outputText  value="#{data.name}" />
-                        </p:column>
+                <h:form>
+                    <p:panel id="maintab" header="AVAILABLE PAYBILLS/TILL NUMBERS" >
+                        <p:commandButton value="Add Till/Paybill" onclick="PF('createDialog').show();" 
+                                         style="margin-bottom: 1rem;
+                                         padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+                                         background-image: url('#{resource['images/addpaybill.png']}');
+                                         background-size: 1.5rem 1.5rem;
+                                         background-repeat: no-repeat;
+                                         background-position:  0.5rem center;" />
 
-                        <p:column headerText="SenderID">
-                            <h:outputText value="#{data.sender_id}" />
-                        </p:column>
-                        <p:column headerText="Paybill/Till/Shop number">
-                            <h:outputText value="#{data.paybillz}" />
-                        </p:column>
-                        <p:column headerText="Message">
-                            <h:outputText value="#{data.default_message}" />
-                        </p:column>
-                        <p:column headerText="Email">
-                            <h:outputText  value="#{data.email}" />
-                        </p:column>
-                        <p:column headerText="Action">
+                        <p:dataTable var="data" value="#{ppaybill.getpaybill()}"
+                                     rows="10"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     >
+                            <p:column headerText="UserID">
+                                <h:outputText value="#{data.userid}"/>
+                            </p:column>
+                            <p:column headerText="Username">
+                                <h:outputText  value="#{data.name}" />
+                            </p:column>
 
-                            <!--<p:panelGrid columns="2">-->
+                            <p:column headerText="SenderID">
+                                <h:outputText value="#{data.sender_id}" />
+                            </p:column>
+                            <p:column headerText="Paybill/Till/Shop number">
+                                <h:outputText value="#{data.paybillz}" />
+                            </p:column>
+                            <p:column headerText="Message">
+                                <h:outputText value="#{data.default_message}" />
+                            </p:column>
+                            <p:column headerText="Email">
+                                <h:outputText  value="#{data.email}" />
+                            </p:column>
+                            <p:column headerText="Action">
 
-                            <h:form>
-                                <p:commandLink style="padding: .3em 1em;" 
-                                               id="editbutton"
-                                               oncomplete="PF('editgroupmodal').show();">
-<h:graphicImage 
-    value="resources/images/edit.gif" width="15px"></h:graphicImage>
-                                    <p:ajax  listener="#{ppaybilscroller.psetCurrentItemForEdit(data)}" 
-                                             update="@([id$=editgroupmodal])"
-                                             />
-                                    <p:tooltip for="editbutton" value="Click to edit paybill/tillnumber"/>
-                                </p:commandLink>
+                                <!--<p:panelGrid columns="2">-->
+                                    <p:commandButton style="padding: .3em 1em;" 
+                                                     id="editbutton"
+                                                     oncomplete="PF('editgroupmodal').show();"
+                                                     icon="fa fa-pencil-square-o"
+                                                     >
+                                        <p:ajax listener="#{ppaybilscroller.psetCurrentItemForEdit(data)}" 
+                                                update="@([id$=editgroupmodal])" />
+                                        <p:tooltip for="editbutton" value="Click to edit paybill/tillnumber"/>
+                                    </p:commandButton>
 
-                           
-                                <p:commandLink 
-                                    style="padding: .3em 1em;" 
-                                    id="deletebutton"
-                                    oncomplete="PF('deletegroupmodal').show();"
-                                    >
-                                    <h:graphicImage 
-    value="resources/images/delete.gif" width="15px"></h:graphicImage>
+                                    <p:commandButton style="padding: .3em 1em;" 
+                                                     id="deletebutton"
+                                                     oncomplete="PF('deletegroupmodal').show();"
+                                                     icon="fa fa-trash"
+                                                     >
+                                        <p:ajax listener="#{ppaybilscroller.psetCurrentItem(data)}" 
+                                                update="@([id$=deletegroupmodal])" />
+                                        <p:tooltip for="deletebutton" value="Click to delete paybill/tillnumber"/>
+                                    </p:commandButton>
+                                <!--</p:panelGrid>-->
 
-                                    <p:ajax  listener="#{ppaybilscroller.psetCurrentItem(data)}" 
-                                             update="@([id$=deletegroupmodal])" />
-                                      <p:tooltip for="deletebutton" value="Click to delete paybill/tillnumber"/>
-                                </p:commandLink>
-                            </h:form>
-<!--</p:panelGrid>-->
-
-
-                            <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                                <h:form>
-                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                        <tr >
-                                            <td ><h:outputLabel for="userid" value="User ID" /></td>
-                                            <td><p:inputText style="width: 150px" id="userid" value="#{ppaybilscroller.currentItem.userid}" 
-                                                            disabled="true"
-                                                    readonly="true">
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
-                                        </tr>
-
-                                        <tr>
-                                            <td ><h:outputLabel for="username" value="Username" /></td>
-                                            <td  ><p:inputText
-                                                    disabled="true"
-                                                    readonly="true"
-                                                    style="width: 150px" id="username" value="#{ppaybilscroller.currentItem.name}" 
-                                                    >
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
+                            </p:column>
 
 
+                        </p:dataTable>
 
-                                        </tr>
-                                        <tr>
-                                            <td ><h:outputLabel for="paybill" value="Paybill/Till" /></td>
-                                            <td  ><p:inputText style="width: 150px" id="paybill" value="#{ppaybilscroller.currentItem.paybillz}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
+                    </p:panel>
+                </h:form>
 
+                <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                    <h:form>
+                        <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                            <tr >
+                                <td ><h:outputLabel for="userid" value="User ID" /></td>
+                                <td><p:inputText style="width: 150px" id="userid" value="#{ppaybilscroller.currentItem.userid}" 
+                                                 disabled="true"
+                                                 readonly="true">
+                                        <f:validateLength minimum="3" />
+                                    </p:inputText></td>
+                            </tr>
 
-
-                                        </tr>
-                                        <tr>
-                                            <td ><h:outputLabel for="message" value="Message" /></td>
-                                            <td  ><p:inputText style="width: 150px" id="message" value="#{ppaybilscroller.currentItem.default_message}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
+                            <tr>
+                                <td ><h:outputLabel for="username" value="Username" /></td>
+                                <td  ><p:inputText
+                                        disabled="true"
+                                        readonly="true"
+                                        style="width: 150px" id="username" value="#{ppaybilscroller.currentItem.name}" 
+                                        >
+                                        <f:validateLength minimum="3" />
+                                    </p:inputText></td>
 
 
 
-                                        </tr>
-                                        <tr>
-                                            <td ><h:outputLabel for="email" value="Email" /></td>
-                                            <td  ><p:inputText style="width: 150px" id="email" value="#{ppaybilscroller.currentItem.email}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
+                            </tr>
+                            <tr>
+                                <td ><h:outputLabel for="paybill" value="Paybill/Till" /></td>
+                                <td  ><p:inputText style="width: 150px" id="paybill" value="#{ppaybilscroller.currentItem.paybillz}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
+                                        <f:validateLength minimum="3" />
+                                    </p:inputText></td>
 
 
 
-                                        </tr>
-
-
-                                    </table>
-                                    <br/>
-                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                     <p:commandButton style="margin-right: 10px" ajax="false"  
-                 oncomplete="PF('deletegroupmodal').hide();" 
-                 value="Save">
-    <f:actionListener binding="#{ppaybilscroller.saveOrPaybill()}" />
-    <f:actionListener binding="#{ppaybill.fetchPaybill()}"/>
-</p:commandButton>
-
-                                        <p:commandButton value="Cancel" 
-                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
-                                    </div>
-                                </h:form>
-                            </p:dialog> 
+                            </tr>
+                            <tr>
+                                <td ><h:outputLabel for="message" value="Message" /></td>
+                                <td  ><p:inputText style="width: 150px" id="message" value="#{ppaybilscroller.currentItem.default_message}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
+                                        <f:validateLength minimum="3" />
+                                    </p:inputText></td>
 
 
 
-
-                            <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
-                                <h:form>
-
-                                    <p:outputLabel value="Are you sure you want to delete paybill #{ppaybilscroller.currentItem.paybillz}? Note: You cannot undo."/>
-                                    <br/>
-                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-
-                  <p:commandButton style="margin-right: 10px" ajax="false"  
-                 oncomplete="PF('deletegroupmodal').hide();" 
-                 value="Delete">
-    <f:actionListener binding="#{ppaybilscroller.deletePaybill()}" />
-    <f:actionListener binding="#{ppaybill.fetchPaybill()}" />
-</p:commandButton>
-
-                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
-
-                                    </div>
-                                </h:form>
-                            </p:dialog> 
-
-                        </p:column>
+                            </tr>
+                            <tr>
+                                <td ><h:outputLabel for="email" value="Email" /></td>
+                                <td  ><p:inputText style="width: 150px" id="email" value="#{ppaybilscroller.currentItem.email}" required="true" placeholder="" requiredMessage="Enter Group Description"  validatorMessage="Enter Group Description" >
+                                        <f:validateLength minimum="3" />
+                                    </p:inputText></td>
 
 
-                    </p:dataTable>
+
+                            </tr>
+
+
+                        </table>
+                        <br/>
+                        <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                            <p:commandButton style="margin-right: 10px" ajax="false"  
+                                             oncomplete="PF('deletegroupmodal').hide();" 
+                                             value="Save">
+                                <f:actionListener binding="#{ppaybilscroller.saveOrPaybill()}" />
+                                <f:actionListener binding="#{ppaybill.fetchPaybill()}"/>
+                            </p:commandButton>
+
+                            <p:commandButton value="Cancel" 
+                                             onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                        </div>
+                    </h:form>
+                </p:dialog> 
 
 
 
 
+                <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                    <h:form>
 
-                </p:panel>
+                        <p:outputLabel value="Are you sure you want to delete paybill #{ppaybilscroller.currentItem.paybillz}? Note: You cannot undo."/>
+                        <br/>
+                        <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+
+                            <p:commandButton style="margin-right: 10px" ajax="false"  
+                                             oncomplete="PF('deletegroupmodal').hide();" 
+                                             value="Delete">
+                                <f:actionListener binding="#{ppaybilscroller.deletePaybill()}" />
+                                <f:actionListener binding="#{ppaybill.fetchPaybill()}" />
+                            </p:commandButton>
+
+                            <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+
+                        </div>
+                    </h:form>
+                </p:dialog> 
+
+
+                <p:dialog header="Create New Till/Paybill" widgetVar="createDialog" id="createPaybillDialog" modal="true" width="900">
+                    <h:form id="createPaybillForm">
+                        <div class="card">
+                            <div class="formgrid">
+                                <div class="field">
+                                    <p:outputLabel for="users" value="User"/>
+                                    <p:selectOneMenu id="users" value="#{userScroller.userS}" valueChangeListener="#{userScroller.finduserId}">
+                                        <f:ajax event="change" render="createPaybillForm"/>
+                                        <f:selectItem itemLabel="Select User" itemValue=""/>
+                                        <f:selectItems value="#{sMSOut.data}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="userid" value="UserId" title="[Select User from drop-down box]"/>
+                                    <p:inputText id="userid" value="#{userScroller.paybill.userid}" disabled="true" readonly="true"
+                                                 required="true" title="[This field is automatically filled when you select user above.]"/>
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="tillnumber" value="Till[Shop Number]/Paybill Number" title="[Enter Shop number in case of Till Number]"/>
+                                    <p:inputText id="tillnumber" value="#{userScroller.paybill.paybillz}" required="true" title="[Enter notShop Number in case of Till Number]"
+                                                 converterMessage="Please Enter Numbers Only">
+                                        <f:validator validatorId="tillValidator"/>
+                                        <f:ajax event="blur" render="msgs"/>
+                                        <f:validateLength minimum="3"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="email" value="Email"/>
+                                    <p:inputText id="email" value="#{userScroller.paybill.email}" required="true" title="[Enter client's email]">
+                                        <f:validator validatorId="emailValidator"/>
+                                        <f:ajax event="blur" render="msgs"/>
+                                        <f:validateLength minimum="3"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="field" >
+                                    <p:outputLabel for="message" value="Message"/>
+                                    <p:inputTextarea id="message" value="#{userScroller.paybill.message}" title="[Enter message to be sent in auto-response]"
+                                                     rows="5" cols="22" required="false" requiredMessage="Message is Required">
+                                        <f:validateLength minimum="3"/>
+                                    </p:inputTextarea>
+                                </div>
+                                <div class="field-full align-center">
+                                    <p:commandButton ajax="false" value="Save" icon="fa fa-save"
+                                                     actionListener="#{userScroller.addPaybill()}"
+                                                     onclick="document.getElementById('progressbar').style.display = 'block'"
+                                                     id="savegroupbutton"/>
+                                    <img id="progressbar" src="./images/ajax-loader.gif" style="display:none"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </p:dialog>
+
             </div>
         </ui:composition>
     </h:body>

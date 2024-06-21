@@ -49,9 +49,7 @@ public class UserRightsDao {
                u.setNewmsgcat(rs.getString("newmsgcat").charAt(0));
                u.setMsgcats(rs.getString("msgcats").charAt(0));
                
-//                System.out.println("this");
             }else{
-//                System.out.println("lUSER is null");
             }
 
             JdbcUtil.closeConnection(conn);

@@ -5,17 +5,10 @@
  */
 package ke.co.mspace.nonsmppmanager.invalids;
 
-import javax.inject.Named;
-import javax.enterprise.context.Dependent;
-
-
-
 
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -84,11 +77,17 @@ public class sessionmanager implements Serializable {
     public String getsessionname() {
 
         String m = "Welcome   ";
-        String username = m + (String) session.getAttribute("username");
         remainigsms = (long) session.getAttribute("max_total");
+        String username =(String) session.getAttribute("username");
+        
+        String message = (m + username +" SMS Balance " + remainigsms);
+        
+        
+        
 
-        return username;
+        return message;
     }
+    
     
       public Boolean showChat() {
 

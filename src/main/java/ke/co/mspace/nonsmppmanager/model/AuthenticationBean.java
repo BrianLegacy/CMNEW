@@ -5,25 +5,18 @@
  */
 package ke.co.mspace.nonsmppmanager.model;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
  *
  * @author Norrey Osako
  */
-public class AuthenticationBean {
+public class AuthenticationBean implements Serializable {
 
     public static final String AUTH_KEY = "non.smpp.manager";
 
@@ -88,26 +81,27 @@ public class AuthenticationBean {
                 .getSessionMap().get(AUTH_KEY) != null;
 
     }
-    
-    Boolean logd_in=false;
+
+    Boolean logd_in = false;
+
     public String login() {
         UserServiceApi userService = new UserServiceImpl();
         if (userService.authenticateUser(username, password)) {
-           
-            logd_in=true;
+
+            logd_in = true;
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(
                     AUTH_KEY, username);
-            
+
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(
                     "loggedInUser", username);
-            
+
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(
                     "user_id", userService.getUserId());
-          
+
             FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "manager/secret.jsf");
-            System.out.println("User "+username+" Logged in sucessfully at "+new Date());
+            System.out.println("User " + username + " Logged in sucessfully at " + new Date());
             return "manager";
-           
+
         } else {
             this.status = "failed";
             setError("Invalid Credentials! Try Again");
@@ -116,14 +110,13 @@ public class AuthenticationBean {
         }
 
     }
-    
 
     public String logout() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
                 .remove(AUTH_KEY);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
                 .remove("conn");
-           FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
                 .remove("myloc");
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.invalidate();

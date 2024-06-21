@@ -1,156 +1,149 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0
-    Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:pe="http://primefaces.org/ui/extensions"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
-        <ui:composition > 
+        <ui:composition>
             <script>
-                function replaceState(){
-                    if(window.history.replaceState){
-                        alert()
-                        window.history.replaceState(null,null,window.location.href)
+                function replaceState() {
+                    if (window.history.replaceState) {
+                        window.history.replaceState(null, null, window.location.href);
                     }
                 }
-                </script>
+            </script>
             <style>
                 .ui-growl-item-container.ui-state-highlight {
                     border-color: red;
-
-                }  </style>
-
-            <p:growl id="msgs" showDetail="true" life="3000"/>
+                }
+            </style>
 
             <div align="center">
-                <p:panel id="maintab" header="View Group" >
-                    <p:dataTable var="data" value="#{groupService.groups}"
-                                 
-                                 rows="15"
-                                 paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                                 >
-                        <p:column headerText="GroupId">
-                            <h:outputText value="#{data.id}" />
-                        </p:column>
-                        <p:column headerText="Name">
-                            <h:outputText value="#{data.groupname}" />
-                        </p:column>
+                <h:form id="form">
+                    <p:growl id="msgs" showDetail="true" life="3000"/>
 
-                        <p:column headerText="Description">
-                            <h:outputText value="#{data.description}" />
-                        </p:column>
+                    <p:panel id="maintab" header="View Group">
+                        <p:commandButton value="Create Group" 
+                                         style="margin-bottom: 1rem; padding: 0.5rem 0.5rem 0.5rem 2.5rem; background-image: url('#{resource['images/addgroup.png']}'); background-size: 1.5rem 1.5rem; background-repeat: no-repeat; background-position: 0.5rem center;" 
+                                         onclick="PF('createGroup').show();" 
+                                         actionListener="#{groupcontroller.resetGroup()}"/>
 
-                        <p:column headerText="Action">
-                            <h:form id="composition">
-                                
-                             
-                                
-                                <p:commandLink style="padding: .3em 1em;" 
-                                               id="editbutton"
-                                              
-                                               >
-<h:graphicImage 
-                                        value="resources/images/edit.gif" width="15px">
+                        <p:dataTable id="groupTable" var="data" value="#{groupcontroller.groups}"
+                                     rows="10"
+                                     rowsPerPageTemplate="10, 15, 25"
+                                     pageLinks="5"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records">
+                            <p:column headerText="GroupId">
+                                <h:outputText value="#{data.id}" />
+                            </p:column>
+                            <p:column headerText="Name">
+                                <h:outputText value="#{data.groupname}" />
+                            </p:column>
+                            <p:column headerText="Description">
+                                <h:outputText value="#{data.description}" />
+                            </p:column>
+                            <p:column headerText="Action">
+                                <p:commandButton style="padding: .3em 1em;"
+                                                 id="editbutton"
+                                                 icon="fa fa-pencil-square-o"
+                                                 oncomplete="PF('editgroupmodal').show();">
+                                    <p:ajax listener="#{groupcontroller.setCurrentGroupItem(data)}" 
+                                            update="update:editgroupmodal"/>
+                                </p:commandButton>
 
-                                    </h:graphicImage>
-                                    <p:ajax  oncomplete="PF('editgroupmodal').show();" update="composition:editgroupmodal"   listener="#{groupService.setCurrentGroupItem1(data)}" 
-                                             />
-                                    <p:tooltip for="editbutton" value="Click to edit group"/>
-                                </p:commandLink>
-                                
+                                <p:commandButton style="padding: .3em 1em;"
+                                                 id="deletebutton"
+                                                 icon="fa fa-trash"
+                                                 oncomplete="PF('deletegroupmodal').show();">
+                                    <p:ajax listener="#{groupcontroller.setCurrentGroupItem(data)}" 
+                                            update="delete:deletegroupmodal"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
 
-                                <p:commandLink 
-                                    style="padding: .3em 1em;" 
-                                    id="deletebutton"
-                                    oncomplete="PF('deletegroupmodal').show();">
-<h:graphicImage 
-                                        value="resources/images/delete.gif" width="15px">
+                <!-- Create Group Dialog -->
+                <h:form id="createGroupForm">
+                    <p:dialog header="Create New Group" widgetVar="createGroup" modal="true" resizable="false">
+                        <h:panelGrid columns="2" style="padding: 1rem;">
+                            <h:outputLabel for="groupname" value="Group Name"/>
+                            <p:inputText id="groupname" value="#{groupcontroller.group.groupname}" required="true" 
+                                         placeholder="" requiredMessage="Enter Group Name">
+                                <f:validateLength minimum="3" />
+                                <f:validator validatorId="groupnamevalidator"/>
+                                <f:ajax render="msgs" event="blur"/>
+                            </p:inputText>
 
-                                    </h:graphicImage>
-                                    <p:ajax  listener="#{groupService.setCurrentGroupItem1(data)}" 
-                                             update="composition:deletegroupmodal" />
-                  <p:tooltip for="deletebutton" value="Click to delete group"/>
+                            <h:outputLabel for="groupdescription" value="Group Description" />
+                            <p:inputText id="groupdescription" value="#{groupcontroller.group.description}" 
+                                         required="true" placeholder=""
+                                         requiredMessage="Enter Group Description"
+                                         validatorMessage="Group Description must contain at least 3 characters">
+                                <f:validateLength minimum="3" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <p:commandButton value="Create" style="margin: 1rem"
+                                         action="#{groupcontroller.saveUserGroup()}"
+                                         onclick="document.getElementById('progressbar').style.display = 'block'"
+                                         update=":form:groupTable :form:msgs"
+                                         oncomplete="PF('createGroup').hide();"/>
+                    </p:dialog>
+                </h:form>
 
-                                </p:commandLink>
+                <!-- Edit Group Dialog -->
+                <h:form id="update">
+                    <p:dialog header="Edit Group" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                        <p:panelGrid columns="2" style="margin-top: 15px; width: 400px;" columnClasses="label, value">
+                            <h:outputLabel for="groupname" value="Group Name" />
+                            <p:inputText style="width: 150px" id="groupname" value="#{groupcontroller.currentGroupItem.groupname}"
+                                         required="true" placeholder="" requiredMessage="Enter Group Name"
+                                         validatorMessage="Group name must contain at least 3 characters">
+                                <f:validateLength minimum="3" />
+                            </p:inputText>
 
-
-                                
-                                
-                                <p:dialog header="Edit Group" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                        <tr >
-                                            <td ><h:outputLabel for="groupname" value="Group Name" /></td>
-                                            <td><p:inputText style="width: 150px" id="groupname" value="#{groupService.currentGroupItem1.groupname}" required="true" placeholder="" 
-                                                             requiredMessage="Enter Group Name"  validatorMessage="Group name must contain atleast 3 characters" >
-                                                    <f:validateLength minimum="3" />
-                                                   
-                                                </p:inputText></td>
-                                        </tr>
-
-                                        <tr>
-                                            <td ><h:outputLabel for="groupdescription" value="Group Description" /></td>
-                                            <td  ><p:inputText style="width: 150px" id="groupdescription" value="#{groupService.currentGroupItem1.description}" 
-                                                               required="true" placeholder="" requiredMessage="Enter Group Description"
-                                                               validatorMessage="Group description must contain atleast 3 characters" >
-                                                    <f:validateLength minimum="3" />
-                                                </p:inputText></td>
-
-
-
-                                        </tr>
-
-
-                                    </table>
-                                    <br/>
-                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                       <p:commandButton style="margin-right: 10px" ajax="false"  
-                 oncomplete="PF('deletegroupmodal').hide();alert();" 
-                 value="Save">
-    <f:actionListener binding="#{groupService.saveGroup()}" />
-    <f:actionListener binding="#{groupService.fetchGroups()}" />
-    
-    
-</p:commandButton>
-
-                                        <p:commandButton value="Cancel" 
-                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
-                                    </div>
-                                </p:dialog> 
-
-
-
-
-                                <p:dialog header="Delete  Group" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
-                                    <p:outputLabel value="Delete `#{groupService.currentGroupItem1.groupname}` group?"/>
-                                    <br/>
-                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-<p:commandButton style="margin-right: 10px" ajax="false"  
-                 oncomplete="PF('deletegroupmodal').hide();" 
-                 value="Delete">
-    <f:actionListener binding="#{groupService.deleteGroup(groupService.currentGroupItem1.id)}" />
-    <f:actionListener binding="#{groupService.fetchGroups()}"/>
-</p:commandButton>
-                                        <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
-                                    </div>
-
-                                </p:dialog> 
-                            </h:form>
-                        </p:column>
+                            <h:outputLabel for="groupdescription" value="Group Description" />
+                            <p:inputText style="width: 150px" id="groupdescription" value="#{groupcontroller.currentGroupItem.description}"
+                                         required="true" placeholder="" requiredMessage="Enter Group Description"
+                                         validatorMessage="Group description must contain at least 3 characters">
+                                <f:validateLength minimum="3" />
+                            </p:inputText>
+                        </p:panelGrid>
+                        <br/>
+                        <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                            <p:commandButton style="margin-right: 10px"
+                                             action="#{groupcontroller.updateUserGroup()}"
+                                             update=":form:groupTable :form:msgs"
+                                             oncomplete="PF('editgroupmodal').hide();"
+                                             value="Save"/>
+                            <p:commandButton value="Cancel" onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                        </div>
+                    </p:dialog>
+                </h:form>
 
 
-                    </p:dataTable>
-
-
-
-
-
-                </p:panel>
+                <!-- Delete Group Dialog -->
+                <h:form id="delete">
+                    <p:dialog header="Delete Group" widgetVar="deletegroupmodal" id="deletegroupmodal" modal="true">
+                        <p:outputLabel value="Delete #{groupcontroller.currentGroupItem.groupname} group?"/>
+                        <br/>
+                        <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                            <p:commandButton style="margin-right: 10px"
+                                             action="#{groupcontroller.deleteUserGroup(groupcontroller.currentGroupItem.id)}"
+                                             immediate="true"
+                                             update=":form:groupTable :form:msgs"
+                                             oncomplete="PF('deletegroupmodal').hide();"
+                                             value="Delete"/>
+                            <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
+                        </div>
+                    </p:dialog>
+                </h:form>
             </div>
         </ui:composition>
     </h:body>
-</html> 
+</html>

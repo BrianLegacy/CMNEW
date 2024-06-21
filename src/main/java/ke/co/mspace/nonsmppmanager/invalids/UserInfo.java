@@ -14,7 +14,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -43,113 +43,111 @@ public class UserInfo implements Serializable {
         return facePainter;
     }
 
-//    public tuseraddressbook getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(tuseraddressbook user) {
-//        this.user = user;
-//    }
 
     public void setFacePainter(FacePainter facePainter) {
         this.facePainter = facePainter;
     }
-             public void viewpaybills(){
+
+    public void viewpaybills() {
         facePainter.setMainContent("clientmanager/paybill/managepaybills.xhtml");
     }
 
-            public void addPaybill() {
+    public void addPaybill() {
         facePainter.setMainContent("clientmanager/paybill/addpaybill.xhtml");
     }
-            public void viewcallbacks() {
+
+    public void viewcallbacks() {
         facePainter.setMainContent("clientmanager/callbacks/managecallbacks.xhtml");
     }
-            public void smsoutreport() {
+
+    public void smsoutreport() {
         facePainter.setMainContent("clientmanager/reports/smsoutreport.xhtml");
     }
-               public void smppoutreport() {
+
+    public void smppoutreport() {
         facePainter.setMainContent("clientmanager/reports/smppoutreport.xhtml");
     }
-             public void optoutreport() {
+
+    public void optoutreport() {
         facePainter.setMainContent("clientmanager/reports/optoutreport.xhtml");
     }
-         public void alluservisualreport() {
+
+    public void alluservisualreport() {
         facePainter.setMainContent("clientmanager/reports/alluservisualreport.xhtml");
     }
-             public void singleuservisualreport() {
+
+    public void singleuservisualreport() {
         facePainter.setMainContent("clientmanager/reports/singleuservisualreport.xhtml");
     }
-            
-         public void credithistoryreport() {
+
+    public void credithistoryreport() {
         facePainter.setMainContent("clientmanager/reports/credithistoryreport.xhtml");
     }
-                public void addcallback() {
-        facePainter.setMainContent("clientmanager/callbacks/addcallback.xhtml");
+
+    public void createSmsApiKey() {
+        facePainter.setMainContent("clientmanager/api/smsapi.xhtml");
     }
-                           public void bulkreports() {
+
+    public void bulkreports() {
         facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
     }
 
     public void smshome() {
         facePainter.setMainContent("clientmanager/groups/addgroupuser.xhtml");
     }
-      public void addReseller() {
-        facePainter.setMainContent("clientmanager/managereseller/addreseller.xhtml");
-    }
-       public void pricingTable() {
+
+    public void pricingTable() {
         facePainter.setMainContent("clientmanager/pricing/emailpricing.xhtml");
     }
-        public void myProfile() {
+
+    public void myProfile() {
         facePainter.setMainContent("clientmanager/myaccount/myprofile.xhtml");
     }
-         public void accountTopup() {
+
+    public void accountTopup() {
         facePainter.setMainContent("clientmanager/myaccount/account_top_up.xhtml");
     }
-          public void sendSMS() throws IOException {
-             
-              int agent=Integer.valueOf((String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("agent"));
-              
-              String url="https://smsgateway.mspace.co.ke/newSMS/reseller.jsf?id="+agent;
-     FacesContext.getCurrentInstance().getExternalContext()
-    .redirect(url);
+
+    public void sendSMS() throws IOException {
+
+        int agent = Integer.valueOf((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("agent"));
+
+        String url = "https://smsgateway.mspace.co.ke/newSMS/reseller.jsf?id=" + agent;
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect(url);
     }
-              public void manageReseller() {
+
+    public void manageReseller() {
         facePainter.setMainContent("clientmanager/managereseller/managereseller.xhtml");
     }
-     public void addsmsuser() {
-          facePainter.setMainContent("clientmanager/manageuserdetails/addsmsuser.xhtml");
+
+
+    public void viewsmsuser() {
+        facePainter.setMainContent("clientmanager/manageuserdetails/showsmsusers.xhtml");
     }
-     public void addemailuser() {
-          facePainter.setMainContent("clientmanager/manageuserdetails/addemailuser.xhtml");
+
+    public void viewalphanumerics() {
+        facePainter.setMainContent("clientmanager/manageuserdetails/managealphanumerics.xhtml");
     }
-      public void viewsmsuser() {
-          facePainter.setMainContent("clientmanager/manageuserdetails/showsmsusers.xhtml");
+
+    public void viewemailuser() {
+        facePainter.setMainContent("clientmanager/manageuserdetails/manageemailusers.xhtml");
     }
-       public void viewalphanumerics() {
-          facePainter.setMainContent("clientmanager/manageuserdetails/managealphanumerics.xhtml");
+
+    public void viewgroupuser() {
+        facePainter.setMainContent("clientmanager/groups/viewgroups.xhtml");
     }
-      
-        public void viewemailuser() {
-          facePainter.setMainContent("clientmanager/manageuserdetails/manageemailusers.xhtml");
-    }
-    
- public void addgroupuser() {
-          facePainter.setMainContent("clientmanager/groups/addgroupuser.xhtml");
-    }
- 
- public void viewgroupuser() {
-          facePainter.setMainContent("clientmanager/groups/viewgroups.xhtml");
-    }
+
     public void newsms() {
         facePainter.setMainContent("sms/newsms.xhtml");
     }
-    
-      public void billingSuccessRedirect() {
+
+    public void billingSuccessRedirect() {
         facePainter.setMainContent("sms/billingsuccess.xhtml");
     }
-      
-       public void billingFailureRedirect() {
-      facePainter.setMainContent("sms/billingsuccess.xhtml");
+
+    public void billingFailureRedirect() {
+        facePainter.setMainContent("sms/billingsuccess.xhtml");
     }
 
     public void newsmsgroup() {
@@ -171,7 +169,7 @@ public class UserInfo implements Serializable {
     public void sentsms() {
         facePainter.setMainContent("sms/sentsms.xhtml");
     }
-    
+
     public void ussd() {
         facePainter.setMainContent("ussd/ussdrprt.xhtml");
     }
@@ -194,7 +192,8 @@ public class UserInfo implements Serializable {
 
         facePainter.setMainContent("sms/messagetemplates.xhtml");
     }
-    public void bulkyReports(){
+
+    public void bulkyReports() {
 
         facePainter.setMainContent("bulkreports/report.xhtml");
     }
@@ -213,7 +212,7 @@ public class UserInfo implements Serializable {
         facePainter.setMainContent("sms/billing.xhtml");
 //  facePainter.setMainContent("sms/billingModal.xhtml");
     }
-    
+
     public void topups() {
 
         facePainter.setMainContent("sms/topups.xhtml");
@@ -234,25 +233,24 @@ public class UserInfo implements Serializable {
 
     //mspacepesa
     public void dashboard() {
-        
+
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/Mspesa_dashboard.xhtml");
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('myDialogVar2').show();");
+           
+            PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 
     public void description() {
         facePainter.setMainContent("MspacePESA/mspesa_description.xhtml");
     }
-    
-      public void processApi() {
+
+    public void processApi() {
         if (maxTotal > 1) {
             facePainter.setMainContent("API/paybilldetails.xhtml");
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('myDialogVar2').show();");
+            PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 
@@ -260,8 +258,7 @@ public class UserInfo implements Serializable {
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/processed.xhtml");
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('myDialogVar2').show();");
+           PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 
@@ -269,8 +266,7 @@ public class UserInfo implements Serializable {
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/unprocessed.xhtml");
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('myDialogVar2').show();");
+            PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 
@@ -279,8 +275,7 @@ public class UserInfo implements Serializable {
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/paybilldetails.xhtml");
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('myDialogVar2').show();");
+            PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 

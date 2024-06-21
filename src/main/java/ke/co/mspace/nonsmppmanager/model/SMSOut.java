@@ -33,7 +33,7 @@ import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -44,8 +44,9 @@ import org.slf4j.LoggerFactory;
 @ViewScoped
 //@SessionScoped
 public class SMSOut implements Serializable {
- public static final String ANSI_BLUE = "\u001B[34m";
- public static final String ANSI_RESET = "\u001B[0m";
+
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
     private Long id;
     private Long rid;
@@ -62,7 +63,7 @@ public class SMSOut implements Serializable {
     private String messageId;
     private String sentby;
     private int esmClass;
-        
+
     private String rule;
     private String user;
     private String submittedby;
@@ -80,13 +81,12 @@ public class SMSOut implements Serializable {
     private String smsOutReport2;
     private String smsOutReport3;
     private int reportSize;
-    private String summaryOrDetail="Summary";
+    private String summaryOrDetail = "Summary";
     private int summaryValue;
     private boolean renderModal = false;
     private static final Logger LOG = Logger.getLogger(SMSOut.class.getName());
-    private int limit=500;
-    org.slf4j.Logger logger=LoggerFactory.getLogger(SMSOut.class);
-    
+    private int limit = 500;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(SMSOut.class);
 
     private String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 
@@ -97,7 +97,7 @@ public class SMSOut implements Serializable {
     public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
-    private final int adnminval =Character.getNumericValue(SessionUtil.getAdmin());
+    private final int adnminval = Character.getNumericValue(SessionUtil.getAdmin());
 
     public List<SMSOut> getSmsOutReport() {
         return smsOutReport;
@@ -119,8 +119,6 @@ public class SMSOut implements Serializable {
         this.summaryValue = summaryValue;
     }
 
-    
-    
     public String getSmsOutReport2() {
 
         return smsOutReport2;
@@ -161,7 +159,6 @@ public class SMSOut implements Serializable {
     public void setSummaryOrDetail(String summaryOrDetail) {
         this.summaryOrDetail = summaryOrDetail;
     }
-    
 
     public String getSeqNo() {
         return seqNo;
@@ -356,7 +353,7 @@ public class SMSOut implements Serializable {
     }
 
     public void setRenderModal(boolean renderModal) {
-       
+
         this.renderModal = renderModal;
     }
 
@@ -412,33 +409,31 @@ public class SMSOut implements Serializable {
     public void setDisplayTimeProcessed(String displayTimeProcessed) {
         this.displayTimeProcessed = displayTimeProcessed;
     }
-    boolean summary=false;
+    boolean summary = false;
 
     public boolean isSummary() {
         return summary;
-        
+
     }
-private int summarysmscount;
+    private int summarysmscount;
 
 //    public int getSummarysmscount() {
 //        List<SMSOut> list = this.summarySMS();
 //        list.g
 //        return (this.summarySMS().get("noSMS"));
 //    }
-
     public void setSummarysmscount(int summarysmscount) {
         this.summarysmscount = summarysmscount;
     }
-    
+
     public void setSummary(boolean summary) {
 //        System.out.println("automatic"+summary);
         this.summary = summary;
-        if(summary)
-            {
+        if (summary) {
             setSummaryOrDetail("Detail");
+        } else {
+            setSummaryOrDetail("summary");
         }
-       
-        else {setSummaryOrDetail("summary");}
 //        int count=0;
 //        List<SMSOut> summaryList = null;
 //        smsOutReport.forEach((v)->{});
@@ -458,6 +453,7 @@ private int summarysmscount;
     public void setNumOfSMS(int numOfSMS) {
         this.numOfSMS = numOfSMS;
     }
+
     public List<SMSOut> smsOutReport() {
         List<SMSOut> report = null;
         try {
@@ -475,47 +471,46 @@ private int summarysmscount;
             schsdate = schsdate + " 00:00:01";
             schedate = schedate + " 23:59:59";
             String endDate = simpleDateFormat.format(reportEndDate);
-         //   System.out.println("Start Date :" + startDate + " End Date : " + endDate);
-          //added by horace
-          int countOfSMS=service.checkIfFileIsLarge(user, startDate, endDate,schsdate,schedate, conn);
-            
+            //   System.out.println("Start Date :" + startDate + " End Date : " + endDate);
+            //added by horace
+            int countOfSMS = service.checkIfFileIsLarge(user, startDate, endDate, schsdate, schedate, conn);
+
             setNumOfSMS(countOfSMS);
 //            System.out.println("The size of the large report is"+countOfSMS);
-           if(numOfSMS>limit){
+            if (numOfSMS > limit) {
 //                           System.out.println(ANSI_BLUE+"CHECKER RETURNED"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString()+ANSI_BLUE);
 
-              renderModal = true;
-               setRenderModal(true);
-               
-               RequestContext context = RequestContext.getCurrentInstance();
-context.execute("PF('modal').show();");
+                renderModal = true;
+                setRenderModal(true);
 
-              service.smsSetSql(user, startDate, endDate, schedate, schedate, conn);
+                //  RequestContext context = RequestContext.getCurrentInstance();
+                PrimeFaces.current().executeScript("PF('modal').show();");
 
-          }
-           else{
-          //end  
-            final Map<String, Object> results = service.userSMSOutReport(user, startDate, endDate,schsdate,schedate, conn,0);
-            report = (List) results.get("result");
-            reportSize = report.size();
-  
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("smsoutReport", report);
-            String realSMSStatus = service.getRealSMSStatus(String.valueOf(status), conn);
-           int noSMS = (Integer) results.get("noSMS");
-            setTotaSMS(noSMS);
-            setRealStatus(realSMSStatus);
-           
-            JdbcUtil.closeConnection(conn);
-           }//end of else
+                service.smsSetSql(user, startDate, endDate, schedate, schedate, conn);
+
+            } else {
+                //end  
+                final Map<String, Object> results = service.userSMSOutReport(user, startDate, endDate, schsdate, schedate, conn, 0);
+                report = (List) results.get("result");
+                reportSize = report.size();
+
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("smsoutReport", report);
+                String realSMSStatus = service.getRealSMSStatus(String.valueOf(status), conn);
+                int noSMS = (Integer) results.get("noSMS");
+                setTotaSMS(noSMS);
+                setRealStatus(realSMSStatus);
+
+                JdbcUtil.closeConnection(conn);
+            }//end of else
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
         }
         return report;
     }
-    
-    public  int summarySMS(){
-         List<SMSOut> report = null;
-         int summarycount=0;
+
+    public int summarySMS() {
+        List<SMSOut> report = null;
+        int summarycount = 0;
         try {
             final JdbcUtil util = new JdbcUtil();
             Connection conn = util.getConnectionTodbSMS();
@@ -531,26 +526,26 @@ context.execute("PF('modal').show();");
             schedate = schedate + " 23:59:59";
             String endDate = simpleDateFormat.format(reportEndDate);
 //            System.out.println("Start Date :" + startDate + " End Date : " + endDate);
-         
-         
-            final Map<String, Object> results = service.getSummarySms(user, startDate, endDate,schsdate,schedate, conn,0);
-summarycount=(Integer) results.get("noSMS");
-           
+
+            final Map<String, Object> results = service.getSummarySms(user, startDate, endDate, schsdate, schedate, conn, 0);
+            summarycount = (Integer) results.get("noSMS");
+
             JdbcUtil.closeConnection(conn);
-           //end of else
+            //end of else
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
         }
         return summarycount;
 
     }
-public void closeTheModal(){
-      
-    setRenderModal(false);
-  
-}
 
-  @ManagedProperty(value = "#{facePainter}")
+    public void closeTheModal() {
+
+        setRenderModal(false);
+
+    }
+
+    @ManagedProperty(value = "#{facePainter}")
     public FacePainter facePainter;
 
     public FacePainter getFacePainter() {
@@ -560,18 +555,18 @@ public void closeTheModal(){
     public void setFacePainter(FacePainter facePainter) {
         this.facePainter = facePainter;
     }
+
     public void executeReport() {
         setRenderModal(false);
 //        System.out.println("Execute Report....generate");
-        
-            final JdbcUtil util = new JdbcUtil();
-            Connection conn = util.getConnectionTodbSMS();
-            //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
-            LargeFileExport export = new LargeFileExport();
-            export.checkSmsList(conn, "SMS OUT REPORT");
-            
-     
-         facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
+
+        final JdbcUtil util = new JdbcUtil();
+        Connection conn = util.getConnectionTodbSMS();
+        //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
+        LargeFileExport export = new LargeFileExport();
+        export.checkSmsList(conn, "SMS OUT REPORT");
+
+        facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
     }
 
     public String smsOutReport2() {
@@ -648,8 +643,8 @@ public void closeTheModal(){
     }
 
     public void testTabularReport() {
-        if(!this.summary){
-            int sum=summarySMS();
+        if (!this.summary) {
+            int sum = summarySMS();
             setSummaryValue(sum);
             return;
         }
@@ -663,8 +658,9 @@ public void closeTheModal(){
     public void testVisualAllReport() {
         setSmsOutReport3(smsOutReport3());
     }
-    public void doNothing(){
-        
+
+    public void doNothing() {
+
     }
 
     public void generateXLSX() {
@@ -688,16 +684,16 @@ public void closeTheModal(){
 
     public ResultSet getResultSet() {
         ResultSet rs = null;
-       
-            Connection conn = null;
-            JdbcUtil util = new JdbcUtil();
-            conn = util.getConnectionTodbSMS();
-            SMSOutServiceApi service = new SMSOutServiceImpl();
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-            String startDate = simpleDateFormat.format(reportStartDate);
-            String endDate = simpleDateFormat.format(reportEndDate);
-            rs = service.getResultSet(user, startDate, endDate, conn);
+        Connection conn = null;
+        JdbcUtil util = new JdbcUtil();
+        conn = util.getConnectionTodbSMS();
+        SMSOutServiceApi service = new SMSOutServiceImpl();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String startDate = simpleDateFormat.format(reportStartDate);
+        String endDate = simpleDateFormat.format(reportEndDate);
+        rs = service.getResultSet(user, startDate, endDate, conn);
         return rs;
     }
 
@@ -713,31 +709,11 @@ public void closeTheModal(){
             con = util.getConnectionTodbSMS();
             stmt = con.createStatement();
             String fetch = "SELECT username from dbSMS.tUSER where admin !='5' and agent !='email' order by username asc";
-          
+
             String fetchForReseller = "SELECT username from dbSMS.tUSER where agent = '" + user_id + "' and admin ='3'";
-         rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
-           while (rs.next()) {
- String originalUsername = rs.getString(1);
-                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
-                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
-            }
-        } catch (SQLException err) {
-            err.getMessage();  }
-        return dataTT;    }
-public List<SelectItem> getEmailUsers() {
-        dataTT = new ArrayList<>();
-        Connection con = null;
-        ResultSet rs = null;
-        Statement stmt = null;
-        try {
-            final JdbcUtil util = new JdbcUtil();    con = util.getConnectionTodbSMS();  stmt = con.createStatement();
-            String fetch = "SELECT username from dbSMS.tUSER where admin !='5' and agent ='email' order by username asc";
-            String fetchForReseller = "SELECT username from dbSMS.tUSER where  admin ='3' and agent ='email' ";
             rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             while (rs.next()) {
-//                dataTT.add(new SelectItem(rs.getString(1)));
-                
-                  String originalUsername = rs.getString(1);
+                String originalUsername = rs.getString(1);
                 String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
                 dataTT.add(new SelectItem(originalUsername, trimmedUsername));
             }
@@ -746,7 +722,32 @@ public List<SelectItem> getEmailUsers() {
         }
         return dataTT;
     }
-    
+
+    public List<SelectItem> getEmailUsers() {
+        dataTT = new ArrayList<>();
+        Connection con = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        try {
+            final JdbcUtil util = new JdbcUtil();
+            con = util.getConnectionTodbSMS();
+            stmt = con.createStatement();
+            String fetch = "SELECT username from dbSMS.tUSER where admin !='5' and agent ='email' order by username asc";
+            String fetchForReseller = "SELECT username from dbSMS.tUSER where  admin ='3' and agent ='email' ";
+            rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
+            while (rs.next()) {
+//                dataTT.add(new SelectItem(rs.getString(1)));
+
+                String originalUsername = rs.getString(1);
+                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
+                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
+            }
+        } catch (SQLException err) {
+            err.getMessage();
+        }
+        return dataTT;
+    }
+
     List<SelectItem> dataCC;
 
     public List<SelectItem> getDataC() {
@@ -826,7 +827,7 @@ public List<SelectItem> getEmailUsers() {
             //rs = UserServiceImpl.isReseller().equalsIgnoreCase("none") ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             while (rs.next()) {
-                        String originalUsername = rs.getString(1);
+                String originalUsername = rs.getString(1);
                 String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
                 dataTT.add(new SelectItem(originalUsername, trimmedUsername));
             }
@@ -835,9 +836,5 @@ public List<SelectItem> getEmailUsers() {
         }
         return dataTT;
     }
-
-
-
-    
 
 }

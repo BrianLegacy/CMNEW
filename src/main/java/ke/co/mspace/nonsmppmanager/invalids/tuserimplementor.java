@@ -6,7 +6,6 @@
 package ke.co.mspace.nonsmppmanager.invalids;
 
 import ke.co.mspace.nonsmppmanager.invalids.Tuser;
-import ke.co.mspace.nonsmppmanager.invalids.Tclient;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,18 +15,12 @@ import org.mspace.clientmanager.util.getsession;
 import org.mspace.clientmanager.security.Encryption;
 import org.mspace.clientmanager.security.Sha256Encryption;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.servlet.HttpMethodConstraintElement;
 import javax.servlet.http.HttpSession;
-import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
@@ -37,12 +30,12 @@ import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
  * @author mspace
  */
 public class tuserimplementor implements tuserinterface {
-    private final JdbcUtil util=new JdbcUtil();
-    Logger logger=LoggerFactory.getLogger(tuserimplementor.class);
- Encryption sha256Encryption=new Sha256Encryption();
+
+    private final JdbcUtil util = new JdbcUtil();
+    Logger logger = LoggerFactory.getLogger(tuserimplementor.class);
+    Encryption sha256Encryption = new Sha256Encryption();
     Calendar calendar = Calendar.getInstance();
     java.sql.Timestamp ourJavaTimestampObject = new java.sql.Timestamp(calendar.getTime().getTime());
-        
 
     @Override
     public void update(Tuser user) {
@@ -96,8 +89,8 @@ public class tuserimplementor implements tuserinterface {
     }
 
     @Override
-    public Tuser getbyid(long id) { 
-        Tuser user=new Tuser();
+    public Tuser getbyid(long id) {
+        Tuser user = new Tuser();
 //        try (Session session = getSessionFactory().openSession()) {
 //            session.beginTransaction();
 //            return (Tuser) session.load(Tuser.class, id);
@@ -105,26 +98,16 @@ public class tuserimplementor implements tuserinterface {
 //            e.printStackTrace();
 //            return null;
 //        }
-return user;
+        return user;
     }
 
     @Override
     public void saveuser(Tuser user) {
-//        Session session = getSessionFactory().openSession();
-//        try {
-//
-//            session.beginTransaction();
-//            session.save(user);
-//            session.getTransaction().commit();
-//        } catch (HibernateException k) {
-//        } finally {
-//            session.close();
-//        }
     }
 
     @Override
     public Tuser getUser(String username, String password) {
-         Tuser u = new Tuser();
+        Tuser u = new Tuser();
 //        HttpSession lhttpsession = getsession.getSession();
 //        Map<String, Tuser> sessionMap = new HashMap<>();
 //        int lresellerId = (Integer) lhttpsession.getAttribute("resellerId");
@@ -179,91 +162,90 @@ return user;
 //        }
         return u;
     }
+
     @Override
     public Tuser getUserJDBC(String username, String password) {
         System.out.println("getUserJDBC");
         HttpSession lhttpsession = getsession.getSession();
         Map<String, Tuser> sessionMap = new HashMap<>();
         int lresellerId = (Integer) lhttpsession.getAttribute("resellerId");
-      
-        String jdbcSql="select * from tUSER where username=? and password =? and (admin =5 or admin =1)";
- logger.debug("sql "+ jdbcSql);
-        Tuser u = new Tuser();
-           Connection conn = null;
 
-            try {
+        String jdbcSql = "select * from tUSER where username=? and password =? and (admin =5 or admin =1)";
+        logger.debug("sql " + jdbcSql);
+        Tuser u = new Tuser();
+        Connection conn = null;
+
+        try {
             conn = util.getConnectionTodbSMS();
             PreparedStatement pst = conn.prepareStatement(jdbcSql);
             pst.setString(1, username);
-             pst.setString(2, password);
+            pst.setString(2, password);
             final ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-            
-          //        populate Tuser
-          u.setId(rs.getLong("id"));
-          u.setUsername(rs.getString("username"));
-          u.setPassword(rs.getString("password"));
-          u.setAgent(rs.getString("agent"));
-          u.setMaxDaily(rs.getInt("max_daily"));
-          u.setMaxWeekly(rs.getInt("max_weekly"));
-          u.setMaxMonthly(rs.getInt("max_monthly"));
-          u.setMaxTotal(rs.getInt("max_total"));
-          u.setMax_total_amt(rs.getInt("max_total_amt"));
-          u.setAdmin(rs.getString("admin").charAt(0));
-          u.setContractNum(rs.getString("contract_num"));
-          u.setContactNumber(rs.getString("contact_number"));
-          u.setShortCodes(rs.getString("short_codes"));
-          u.setResend_failed_sms(rs.getInt("resend_failed_sms"));
-          u.setOrganization(rs.getString("organization"));
-          String takadmin=rs.getString("taskadmin");
-          u.setSuperAccountId(rs.getInt("super_account_id"));
-          
-                
-          u.setTaskadmin(takadmin.charAt(0));
-          
+            if (rs.next()) {
+
+                //        populate Tuser
+                u.setId(rs.getLong("id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setAgent(rs.getString("agent"));
+                u.setMaxDaily(rs.getInt("max_daily"));
+                u.setMaxWeekly(rs.getInt("max_weekly"));
+                u.setMaxMonthly(rs.getInt("max_monthly"));
+                u.setMaxTotal(rs.getInt("max_total"));
+                u.setMax_total_amt(rs.getInt("max_total_amt"));
+                u.setAdmin(rs.getString("admin").charAt(0));
+                u.setContractNum(rs.getString("contract_num"));
+                u.setContactNumber(rs.getString("contact_number"));
+                u.setShortCodes(rs.getString("short_codes"));
+                u.setResend_failed_sms(rs.getInt("resend_failed_sms"));
+                u.setOrganization(rs.getString("organization"));
+                String takadmin = rs.getString("taskadmin");
+                u.setSuperAccountId(rs.getInt("super_account_id"));
+
+                u.setTaskadmin(takadmin.charAt(0));
+
 //                          lhttpsession.setAttribute("user", u);
-                               if (lresellerId == 0 && isResellerClient(u.getAgent())) {
-                        FacesMessage message = new FacesMessage("Not Succesful", " Either your Username or password is invalid");
-                        FacesContext.getCurrentInstance().addMessage(null, message);
-                        return null;
-                    }
+                if (lresellerId == 0 && isResellerClient(u.getAgent())) {
+                    FacesMessage message = new FacesMessage("Not Succesful", " Either your Username or password is invalid");
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    return null;
+                }
 //                    if (lhttpsession.getAttribute("user").equals(luser)) {
 //                        lhttpsession.removeAttribute("user");
 //
 //                    }
-                    String sql = "update tUSER  set loggedIn=1, loggedInTime='" + ourJavaTimestampObject + "' where username =? and password = ?";
+                String sql = "update tUSER  set loggedIn=1, loggedInTime='" + ourJavaTimestampObject + "' where username =? and password = ?";
 //                ;
 
-  PreparedStatement pst2 = conn.prepareStatement(sql);
-            pst.setString(1, username);
-             pst.setString(2, password);
-             pst.execute();
+                PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst.setString(1, username);
+                pst.setString(2, password);
+                pst.execute();
             } else {
                 FacesMessage message = new FacesMessage("Not Succesful", " Either your Username or password is invalid");
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
-            
-            
+
 //          populate Tuser
             JdbcUtil.closeConnection(conn);
 
-        }  catch (Exception m) {
+        } catch (Exception m) {
 
             FacesMessage message = new FacesMessage("Not Succesful", " Either your Username or password is invalid");
             FacesContext.getCurrentInstance().addMessage(null, message);
-           
-            m.printStackTrace();
-        JdbcUtil.closeConnection(conn);
 
+            m.printStackTrace();
+            JdbcUtil.closeConnection(conn);
 
         }
         return u;
-        
+
     }
-       @Override
+
+    @Override
 //       SecurityUtil.verify(this.username, this.password)
     public Tuser getUserWithSha256(String username, String password) {
-         Tuser u = new Tuser();
+        Tuser u = new Tuser();
 //        HttpSession lhttpsession = getsession.getSession();
 //        Map<String, Tuser> sessionMap = new HashMap<>();
 //        int lresellerId = (Integer) lhttpsession.getAttribute("resellerId");
@@ -341,8 +323,8 @@ return user;
         long id = (long) sessionm.getAttribute("id");
         String user = (String) sessionm.getAttribute("username");
 //        Session session = getSessionFactory().openSession();
-                Connection conn = null;
-         try {
+        Connection conn = null;
+        try {
             conn = util.getConnectionTodbSMS();
             String sql = "update tUSER   set logged_in=0, logged_in_time='" + ourJavaTimestampObject + "' where username =? and id= ?";
 
@@ -356,35 +338,36 @@ return user;
             e.printStackTrace();
             JdbcUtil.closeConnection(conn);
         }
-        
+
     }
 
     private boolean isResellerClient(String agentId) {
 
-         Connection conn = null;
-          boolean result=false;
+        Connection conn = null;
+        boolean result = false;
         try {
-            conn = util.getConnectionTodbSMS();
+            conn = util.getConnectionTodbTask();
             String sql = "select id from tClient  where id != 0";
 
             PreparedStatement pst = conn.prepareStatement(sql);
             final ResultSet rs = pst.executeQuery();
-           
-            while(rs.next()){
-                int _id=rs.getInt("id");
-                if(((_id==Integer.valueOf(agentId)))) result=true;
+
+            while (rs.next()) {
+                int _id = rs.getInt("id");
+                String id = String.valueOf(_id);
+                if (agentId.equals(id)) {
+                    result = true;
+                }
             }
-            
 
             JdbcUtil.closeConnection(conn);
-            
 
         } catch (SQLException e) {
             e.printStackTrace();
             JdbcUtil.closeConnection(conn);
         }
         return result;
-        
+
     }
 
 }

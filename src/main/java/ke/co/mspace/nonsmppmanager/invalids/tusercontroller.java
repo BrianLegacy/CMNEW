@@ -15,27 +15,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import static ke.co.mspace.nonsmppmanager.service.UserServiceImpl.drift;
-import static ke.co.mspace.nonsmppmanager.service.UserServiceImpl.picLocation;
-import static ke.co.mspace.nonsmppmanager.service.UserServiceImpl.showMpesaMenu;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -48,7 +38,6 @@ public class tusercontroller implements Serializable {
 
     HttpSession session1 = getsession.getSession();
     private Tuser user;
-    FacesMessage message;
     private String goTo;
     private String accTopUp;
     private String diftChat;

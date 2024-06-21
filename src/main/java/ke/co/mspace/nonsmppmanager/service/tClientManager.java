@@ -5,20 +5,15 @@
  */
 package ke.co.mspace.nonsmppmanager.service;
 
-//import com.sun.faces.config.rules.FacesConfigRuleSet;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.context.FacesContext;
-import static ke.co.mspace.nonsmppmanager.model.AuthenticationBean.AUTH_KEY;
 import ke.co.mspace.nonsmppmanager.model.tclientModel;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-//import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 /**
  *
@@ -68,18 +63,12 @@ public class tClientManager {
         String sql="SELECT id,clientName email picPath from tClient where id ='"+id+"'";
         String logo="";
         try {
-//            tclientlist= new ArrayList();
-//            tclientModel model=new tclientModel();
             con=dbcon.getConnectionTodbPAYMENT();
             Statement st=con.createStatement();
             ResultSet rs=st.executeQuery(sql);
             
             while(rs.next()){
-//               model.setClientName(rs.getString("clientName"));
-//               model.setId(rs.getInt("id"));
-//               model.setEmail("email");
-//               model.setSystType(rs.getString("systemType"));
-//               tclientlist.add(model);
+
                  logo=rs.getString("picPath");
                  
                

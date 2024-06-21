@@ -8,6 +8,7 @@ package org.mspace.clientmanager.user;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedBean
 @ViewScoped
-public class UserController {
+public class UserController implements Serializable{
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(UserController.class);
     ManageCreditsOperations manageCreditsOperations;
@@ -774,9 +775,7 @@ public class UserController {
         UserScroller us = new UserScroller();
         UserServiceApi userService = new UserServiceImpl();
         String agent = ac.currentUSer();
-        int current = Math.round(us.availableCredits(conn)[0]);
         String getRes = "SELECT admin,max_contacts from tUSER where username='" + agent + "'";
-//        String getRes = "SELECT admin,max_contacts from tUSER where username=' and agent ='email'";
         try {
             conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
@@ -824,16 +823,6 @@ public class UserController {
                 ((UserScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userScroller")).addUserToList(newUser);
             }
 
-            //            AlphaServiceApi aService = new AlphaServiceImpl();
-//            if (!alphanumeric.isEmpty()) {
-//                //get the type of alpa selected and persist it in
-//                String alphaType=aService.getAlphanumericType(alphanumeric, conn);
-//                aService.persistAlpha(username, alphanumeric,alphaType,conn);
-//            }
-//            Alpha alpha = aService.loadAlphanumericByUsername(username, conn);
-//            if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("alphaScroller")) {
-//                ((AlphaScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("alphaScroller")).addAlphaToList(alpha);
-//            }
             JsfUtil.addSuccessMessage("Email User Saved successfully.");
             //Added to manage ccredits 
             userService.updateCredits(username, credits.getNumCredits(), conn);

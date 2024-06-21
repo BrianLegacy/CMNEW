@@ -5,6 +5,7 @@
  */
 package ke.co.mspace.nonsmppmanager.util;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,10 +18,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Norrey Osako
  */
-public class JdbcUtil {
-   
+public class JdbcUtil implements Serializable{
 
     boolean DATA_CENTER = false;
+    boolean DATA_CENTER_LIVE = false;
     boolean DEBUG = true;
     boolean GATEWAY = false;
     boolean WEBSITE = false;
@@ -33,6 +34,7 @@ public class JdbcUtil {
     public String dbUSSD = "dbUSSD";
     public String dbEMAIL = "dbEMAIL";
 
+    public String dataCenterUser = "newsms";
     public String dataCenterTestUser = "datacenter";//second datacenter test server
 //    public String dataCenterTestUser = "dashboard";
     public String localMySQLUser = "mysql";
@@ -40,9 +42,12 @@ public class JdbcUtil {
     public String clientManagerMySQLUser = "clientmanager";
     public String websiteUser = "dlr";
 
+    
     public String testMySQLUser = "test";
     public String testMySQLUser64 = "mysql";
 
+    public String dataCenterPassword = "NewSms123#";
+    
     public String dataCenterTestPassword = "DataCenter2023#";//second datacenter test server
 //     public String dataCenterTestPassword = "Dashboard@2023#";
     public String localMySQLPassword = "mysql123";
@@ -52,30 +57,32 @@ public class JdbcUtil {
     public String clientManagerMySQLPassword = "ClientManager123#";
     public String websitePassword = "dlr123";
 
+    private final String dataCenterHost = "10.164.0.5";
+    
     private final String dataCenterTestHost = "34.90.1.89";//second datacenter test server
 //          private final String dataCenterTestHost = "192.168.10.44";
-    private final String localMySQLHost = "192.168.3.148";
+    private final String localMySQLHost = "127.0.0.1";
     private final String testMySQLHost = "10.164.0.5";
     private final String testMySQLHost64 = "192.168.1.51";
 //    private final String clientManagerMySQLHost = "34.90.100.104";
     private final String clientManagerMySQLHost = "10.164.0.5";
     private final String websiteHost = "10.164.0.5";
-    
-    private final String mysqlOptions="?zeroDateTimeBehavior=convertToNull&?autoReconnect=true&useSSL=false";
+
+    private final String mysqlOptions = "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true";
 
     private final int portNumber = 3306;
     //             192.168.1.51
     //sms
     //sms1234
 
-    public Connection getConnectionTodbSMS()  {
+    public Connection getConnectionTodbSMS() {
         {
 
             Connection conn = null;
             //         DataCenter
             Properties localDataCenterProps = new Properties();
-            localDataCenterProps.put("user", this.dataCenterTestUser);
-            localDataCenterProps.put("password", this.dataCenterTestPassword);
+            localDataCenterProps.put("user", this.dataCenterUser);
+            localDataCenterProps.put("password", this.dataCenterPassword);
 
 //         local
             Properties localConnectionProps = new Properties();
@@ -106,22 +113,22 @@ public class JdbcUtil {
             if (this.databaseType.equals("mysql")) {
                 try {
                     DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                    
+
                     if (conn == null) {
 //                     DataCenter
-if (DATA_CENTER) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterTestHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            localDataCenterProps);
-}
+                        if (DATA_CENTER_LIVE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    localDataCenterProps);
+                        }
 //                    
 
 //                    Local
-if (DEBUG) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
-            + ":" + portNumber + "/" + dbSMS + mysqlOptions,
-            localConnectionProps);
-}
+                        if (DEBUG) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
+                                    + ":" + portNumber + "/" + dbSMS + mysqlOptions,
+                                    localConnectionProps);
+                        }
 //Test
 
 //                    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + testMySQLHost
@@ -132,17 +139,17 @@ if (DEBUG) {
 //                          + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
 //                      testConnectionProps64);
 //Live
-if (GATEWAY) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            liveConnectionProps);
-}
+                        if (GATEWAY) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    liveConnectionProps);
+                        }
 //website
-if (WEBSITE) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            websiteConnectionProps);
-}
+                        if (WEBSITE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    websiteConnectionProps);
+                        }
 
                     }
                     if (conn != null) {
@@ -164,14 +171,14 @@ if (WEBSITE) {
         }
     }
 
-    public Connection getConnectionTodbEMAIL()  {
+    public Connection getConnectionTodbEMAIL() {
         {
 
             Connection conn = null;
             //         DataCenter
             Properties localDataCenterProps = new Properties();
-            localDataCenterProps.put("user", this.dataCenterTestUser);
-            localDataCenterProps.put("password", this.dataCenterTestPassword);
+            localDataCenterProps.put("user", this.dataCenterUser);
+            localDataCenterProps.put("password", this.dataCenterPassword);
 
 //         local
             Properties localConnectionProps = new Properties();
@@ -202,22 +209,22 @@ if (WEBSITE) {
             if (this.databaseType.equals("mysql")) {
                 try {
                     DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                    
+
                     if (conn == null) {
 //                     DataCenter
-if (DATA_CENTER) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterTestHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            localDataCenterProps);
-}
+                        if (DATA_CENTER_LIVE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    localDataCenterProps);
+                        }
 ////                    
 
 //                    Local
-if (DEBUG) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
-            + ":" + portNumber + "/" + dbEMAIL + mysqlOptions,
-            localConnectionProps);
-}
+                        if (DEBUG) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
+                                    + ":" + portNumber + "/" + dbEMAIL + mysqlOptions,
+                                    localConnectionProps);
+                        }
 //Test
 
 //                    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + testMySQLHost
@@ -228,17 +235,17 @@ if (DEBUG) {
 //                          + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
 //                      testConnectionProps64);
 //Live
-if (GATEWAY) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            liveConnectionProps);
-}
+                        if (GATEWAY) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    liveConnectionProps);
+                        }
 //website
-if (WEBSITE) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
-            + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
-            websiteConnectionProps);
-}
+                        if (WEBSITE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    websiteConnectionProps);
+                        }
 
                     }
                     if (conn != null) {
@@ -260,14 +267,14 @@ if (WEBSITE) {
         }
     }
 
-    public Connection getConnectionTodbTask()  {
+    public Connection getConnectionTodbTask() {
         {
             Connection conn = null;
             //DataCenterlocalMySQLUser
 
             Properties localDataCenterProps = new Properties();
-            localDataCenterProps.put("user", this.dataCenterTestUser);
-            localDataCenterProps.put("password", this.dataCenterTestPassword);
+            localDataCenterProps.put("user", this.dataCenterUser);
+            localDataCenterProps.put("password", this.dataCenterPassword);
 
             //Local
             Properties localConnectionProps = new Properties();
@@ -297,22 +304,22 @@ if (WEBSITE) {
             if (this.databaseType.equals("mysql")) {
                 try {
                     DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                    
+
                     if (conn == null) {
-                        
+
                         //DataCenter
-                        if (DATA_CENTER) {
-                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterTestHost
+                        if (DATA_CENTER_LIVE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
                         }
 //
 //Local
-if (DEBUG) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
-            + ":" + portNumber + "/" + dbTASK + mysqlOptions,
-            localConnectionProps);
-}
+                        if (DEBUG) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
+                                    + ":" + portNumber + "/" + dbTASK + mysqlOptions,
+                                    localConnectionProps);
+                        }
 //Test
 //                    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + testMySQLHost
 //                           + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
@@ -323,30 +330,30 @@ if (DEBUG) {
 //                           + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
 //                          testConnectionProps64);
 //Live
-if(GATEWAY){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
-            + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
-            liveConnectionProps);  
-}
+                        if (GATEWAY) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
+                                    + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
+                                    liveConnectionProps);
+                        }
 //WEB
-if(WEBSITE){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
-            + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
-            websiteConnectionProps);
-}
+                        if (WEBSITE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
+                                    + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
+                                    websiteConnectionProps);
+                        }
                     }
                     if (conn != null) {;
-                    conn.setCatalog(this.dbTASK);
+                        conn.setCatalog(this.dbTASK);
                     }
                 } catch (SQLException ex) {
                     java.util.logging.Logger.getLogger(JdbcUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (this.databaseType.equals("derby")) {
-                try{
-                conn = DriverManager.getConnection("jdbc:" + databaseType + ":" + dbTASK, localConnectionProps);
-                }catch(SQLException e){
-              java.util.logging.Logger.getLogger(JdbcUtil.class.getName()).log(Level.SEVERE, null, e);
+                try {
+                    conn = DriverManager.getConnection("jdbc:" + databaseType + ":" + dbTASK, localConnectionProps);
+                } catch (SQLException e) {
+                    java.util.logging.Logger.getLogger(JdbcUtil.class.getName()).log(Level.SEVERE, null, e);
 
                 }
             }
@@ -361,8 +368,8 @@ if(WEBSITE){
 
             //DataCenter
             Properties localDataCenterProps = new Properties();
-            localDataCenterProps.put("user", this.dataCenterTestUser);
-            localDataCenterProps.put("password", this.dataCenterTestPassword);
+            localDataCenterProps.put("user", this.dataCenterUser);
+            localDataCenterProps.put("password", this.dataCenterPassword);
 
 //            local
             Properties localConnectionProps = new Properties();
@@ -392,22 +399,22 @@ if(WEBSITE){
             if (this.databaseType.equals("mysql")) {
                 try {
                     DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                    
+
                     if (conn == null) {
-                        
+
 //                        //Local
-if (DATA_CENTER) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterTestHost
-            + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
-            localDataCenterProps);
-}
+                        if (DATA_CENTER_LIVE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
+                                    + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
+                                    localDataCenterProps);
+                        }
 
 //                    //Local
-if (DEBUG) {
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
-            + ":" + portNumber + "/" + dbPAYMENTS + mysqlOptions,
-            localConnectionProps);
-}
+                        if (DEBUG) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
+                                    + ":" + portNumber + "/" + dbPAYMENTS + mysqlOptions,
+                                    localConnectionProps);
+                        }
 
 //                 Test
 //                    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + testMySQLHost 
@@ -418,20 +425,20 @@ if (DEBUG) {
 //                           + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
 //                          testConnectionProps64);
 //Live
-if(GATEWAY){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
-            + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
-            liveConnectionProps);
-}
+                        if (GATEWAY) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
+                                    + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
+                                    liveConnectionProps);
+                        }
 //WEB
-if(WEBSITE){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
-            + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
-            websiteConnectionProps);
-}
+                        if (WEBSITE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
+                                    + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
+                                    websiteConnectionProps);
+                        }
                     }
                     if (conn != null) {;
-                    conn.setCatalog(this.dbPAYMENTS);
+                        conn.setCatalog(this.dbPAYMENTS);
                     }
                 } catch (SQLException ex) {
                     java.util.logging.Logger.getLogger(JdbcUtil.class.getName()).log(Level.SEVERE, null, ex);
@@ -455,8 +462,8 @@ if(WEBSITE){
             //Data Center
 
             Properties localDataCenterProps = new Properties();
-            localDataCenterProps.put("user", this.dataCenterTestUser);
-            localDataCenterProps.put("password", this.dataCenterTestPassword);
+            localDataCenterProps.put("user", this.dataCenterUser);
+            localDataCenterProps.put("password", this.dataCenterPassword);
 
             //Local props
             Properties localConnectionProps = new Properties();
@@ -486,16 +493,16 @@ if(WEBSITE){
             if (this.databaseType.equals("mysql")) {
                 try {
                     DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-                    
+
                     if (conn == null) {
-                        
+
                         //  Data Center
-                        if (DATA_CENTER) {
-                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterTestHost
+                        if (DATA_CENTER_LIVE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
                         }
-                        
+
                         //  Local
                         if (DEBUG) {
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
@@ -514,17 +521,17 @@ if(WEBSITE){
 //                          testConnectionProps64);
 ////
 // Live
-if(GATEWAY){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
-            + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
-            liveConnectionProps);
-}
+                        if (GATEWAY) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + clientManagerMySQLHost
+                                    + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
+                                    liveConnectionProps);
+                        }
 // WEB
-if(WEBSITE){
-    conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
-            + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
-            websiteConnectionProps);
-}
+                        if (WEBSITE) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + websiteHost
+                                    + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
+                                    websiteConnectionProps);
+                        }
                     }
                     if (conn != null) {
                         conn.setCatalog(this.dbUSSD);
@@ -557,7 +564,7 @@ if(WEBSITE){
     }
 
     public static void printSQLException(SQLException ex) {
-         Logger logger=LoggerFactory.getLogger(JdbcUtil.class);
+        Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
                 if (ignoreSQLException(((SQLException) e).getSQLState()) == false) {

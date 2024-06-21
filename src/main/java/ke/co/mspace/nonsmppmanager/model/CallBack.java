@@ -37,26 +37,27 @@ import javax.faces.bean.SessionScoped;
  *
  * @author developer
  */
-
 @ManagedBean(name = "callback")
 @SessionScoped
 public class CallBack {
 
     private int userid;
     private String callback_url;
-      private String testbednumbers;
-      
+    private String testbednumbers;
+
     private String ussd_assigned_code;
     private boolean status;
-        private boolean testbed;
+    private boolean testbed;
     private String real_status;
     private int temporary_ussd_assigned_code;
-public boolean validaTetestbednumbers() {
 
-		System.out.println("inside validate method");
+    public boolean validaTetestbednumbers() {
 
-return true;
-	}
+        System.out.println("inside validate method");
+
+        return true;
+    }
+
     public String getTestbednumbers() {
         return testbednumbers;
     }
@@ -73,14 +74,13 @@ return true;
         this.testbed = testbed;
     }
 
-    
     public int getTemporary_ussd_assigned_code() {
-        int x=Integer.parseInt(ussd_assigned_code);
+        int x = Integer.parseInt(ussd_assigned_code);
         return x;
     }
 
     public void setTemporary_ussd_assigned_code(int temporary_ussd_assigned_code) {
-        this.ussd_assigned_code=Integer.toString(temporary_ussd_assigned_code);
+        this.ussd_assigned_code = Integer.toString(temporary_ussd_assigned_code);
         this.temporary_ussd_assigned_code = temporary_ussd_assigned_code;
     }
     private Set<Integer> keys = new HashSet();
@@ -119,12 +119,10 @@ return true;
     }
 
     public void setUserid(int userid) {
-            
+
 //           System.out.println("User id is set to "+userid);
         this.userid = userid;
     }
-
- 
 
     public String getCallback_url() {
         return callback_url;
@@ -141,8 +139,6 @@ return true;
     public void setUssd_assigned_code(String ussd_assigned_code) {
         this.ussd_assigned_code = ussd_assigned_code;
     }
-
- 
 
     public boolean isStatus() {
         return status;
@@ -163,24 +159,23 @@ return true;
     public void setFacePainter(FacePainter facePainter) {
         this.facePainter = facePainter;
     }
+
     public void addCallBack() {
-        if(! checkDulicity(userid, callback_url)){
-      
+        if (!checkDulicity(userid, callback_url)) {
+
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl callback = new UserServiceImpl();
-            callback.persistCallBack(this, conn,ussd_assigned_code);
+            callback.persistCallBack(this, conn, ussd_assigned_code);
             System.out.println("The assigned code is " + ussd_assigned_code);
             clearAll();
             JdbcUtil.closeConnection(this.conn);
 //                    facePainter.setMainContent("clientmanager/paybill/managepaybills.xhtml");
 
-       
-        
-        }else{
-               FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Duplicity",null );
-       // FacesContext.getCurrentInstance().addMessage(null, facesMsg);
-        JsfUtil.addErrorMessage("Duplicate UserID and Callback Combination");
-       }
+        } else {
+            FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Duplicity", null);
+            // FacesContext.getCurrentInstance().addMessage(null, facesMsg);
+            JsfUtil.addErrorMessage("Duplicate UserID and Callback Combination");
+        }
     }
 
     public void clearAll() {
@@ -197,16 +192,16 @@ return true;
     public void setSelectedUser(String selectedUser) {
         this.selectedUser = selectedUser;
     }
-    
+
     @PostConstruct
-            public void init(){
+    public void init() {
 
-           fetchcallback();
-            }
-    
-ArrayList<CallBack> callbacks;
+        fetchcallback();
+    }
 
-    public ArrayList<CallBack> getCallbacks()  throws SQLException{
+    ArrayList<CallBack> callbacks;
+
+    public ArrayList<CallBack> getCallbacks() throws SQLException {
         return callbacks;
 //return fetchcallback();
     }
@@ -215,14 +210,14 @@ ArrayList<CallBack> callbacks;
         this.callbacks = callbacks;
     }
 
-    public void fetchcallback()  {
+    public void fetchcallback() {
         System.out.println("get kallbak kalled");
         UserServiceImpl callback = new UserServiceImpl();
 //        System.out.println("Selected User: " + selectedUser);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);
-      
+
         try {
-            callbacks= UserServiceImpl.getCallBack();
+            callbacks = UserServiceImpl.getCallBack();
         } catch (SQLException ex) {
             Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -232,18 +227,16 @@ ArrayList<CallBack> callbacks;
     public void setGroups(ArrayList<Group> groups) {
         this.groups = groups;
     }
-    
-    
-    
-       public ArrayList<Group> getGroups() throws SQLException {
-     
-        return  groups;
+
+    public ArrayList<Group> getGroups() throws SQLException {
+
+        return groups;
     }
-       
-       public void fetchGroups(){
-           groups=UserServiceImpl.getGroups(util.getConnectionTodbSMS());
-       }
-      ArrayList<EmailPricingTable> pricingtable;
+
+    public void fetchGroups() {
+        groups = UserServiceImpl.getGroups(util.getConnectionTodbSMS());
+    }
+    ArrayList<EmailPricingTable> pricingtable;
 
     public ArrayList<EmailPricingTable> getPricingtable() {
         return pricingtable;
@@ -252,11 +245,11 @@ ArrayList<CallBack> callbacks;
     public void setPricingtable(ArrayList<EmailPricingTable> pricingtable) {
         this.pricingtable = pricingtable;
     }
-      
-      public void fetchPricing()  {
-           ArrayList<EmailPricingTable> _pricingtable=null;
+
+    public void fetchPricing() {
+        ArrayList<EmailPricingTable> _pricingtable = null;
         try {
-          pricingtable=  UserServiceImpl.getPricingTable();
+            pricingtable = UserServiceImpl.getPricingTable();
         } catch (SQLException ex) {
             Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -269,55 +262,55 @@ ArrayList<CallBack> callbacks;
     public void setKeys(Set<Integer> keys) {
         this.keys = keys;
     }
-    
-      public boolean checkDulicity(int userID, String callback) {
-           
+
+    public boolean checkDulicity(int userID, String callback) {
+
         String sql = "SELECT * from tSharedUssdClients WHERE tuser_id=? and callback_url=?";
-        System.out.println("Seearching for existing records to prevent duplicity for "+userID+"and" +callback+"sql:" +sql);
+        System.out.println("Seearching for existing records to prevent duplicity for " + userID + "and" + callback + "sql:" + sql);
         try {
-         this.conn = this.util.getConnectionTodbUSSD();
-         PreparedStatement ps=this.conn.prepareStatement(sql);
-         //ps.setInt(1, userid);
-         ps.setInt(1, userID);
-         ps.setString(2, callback);
-         ResultSet rs=ps.executeQuery();
-         while(rs.next()){
-             System.out.println("Duplicate UserID and Callback Combination");
-            //throw new SQLException("Duplicate UserID and Callback Combination");
-            return true;
-         }
-                    JdbcUtil.closeConnection(this.conn);
+            this.conn = this.util.getConnectionTodbUSSD();
+            PreparedStatement ps = this.conn.prepareStatement(sql);
+            //ps.setInt(1, userid);
+            ps.setInt(1, userID);
+            ps.setString(2, callback);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                System.out.println("Duplicate UserID and Callback Combination");
+                //throw new SQLException("Duplicate UserID and Callback Combination");
+                return true;
+            }
+            JdbcUtil.closeConnection(this.conn);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return false;
-        
+
     }
-      
-        public  ArrayList<EmailPricingTable> getPricingTable() throws SQLException{
+
+    public ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
         Connection conn = util.getConnectionTodbEMAIL();
 
         String sql = "select * from tEMAILPRICING te";
-            System.out.println("sql "+sql);
+        System.out.println("sql " + sql);
         PreparedStatement ps = conn.prepareStatement(sql);
         ArrayList<EmailPricingTable> pricingtable = new ArrayList();
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-           EmailPricingTable pricing = new EmailPricingTable();
+            EmailPricingTable pricing = new EmailPricingTable();
             pricing.setId(rs.getInt("id"));
-           pricing.setPrice(rs.getInt("price"));
+            pricing.setPrice(rs.getInt("price"));
             pricing.setEmails_purchased(rs.getString("emails_purchased"));
-             pricing.setExpiry(rs.getString("expiry"));
-             pricingtable.add(pricing);
-             System.out.println("called "+pricing);
+            pricing.setExpiry(rs.getString("expiry"));
+            pricingtable.add(pricing);
+            System.out.println("called " + pricing);
         }
-            System.out.println("method ended");
+        System.out.println("method ended");
         return pricingtable;
-    } 
+    }
 
 }

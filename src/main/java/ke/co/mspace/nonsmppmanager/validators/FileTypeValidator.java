@@ -12,7 +12,7 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import org.primefaces.component.fileupload.FileUpload;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 @FacesValidator("fileTypeValidatorv2")
 public class FileTypeValidator implements Validator {

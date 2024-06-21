@@ -24,5 +24,4 @@ public class getsession {
     }
     
 }
-//  <p:chart type="bar"  id="updat1" model="#{ChartView.animatedModel2}"  style="width:520px; height: 310px" />
 

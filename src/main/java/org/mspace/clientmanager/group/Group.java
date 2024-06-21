@@ -6,14 +6,11 @@
 package org.mspace.clientmanager.group;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 
 /**
  *
  * @author developer
  */
-@ManagedBean(name = "group")
-@ViewScoped
 public class Group {
 
     private int id;

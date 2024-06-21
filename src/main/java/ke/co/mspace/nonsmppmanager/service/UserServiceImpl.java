@@ -1,8 +1,5 @@
 package ke.co.mspace.nonsmppmanager.service;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,15 +29,11 @@ import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.model.UserProfile;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-//import org.richfaces.event.UploadEvent;
-//import org.richfaces.model.UploadItem;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
-import ke.co.mspace.nonsmppmanager.util.SessionUtil;
 
 /**
  *
@@ -70,7 +63,7 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
     public List<UserController> getAllUsers(Connection conn, String name) throws SQLException {
         final Map<Integer, String> groupMap = getGroupMap(conn);
-       
+
         names = name;
         UserScroller us = new UserScroller();
         String lname = us.lastInsert();
@@ -81,8 +74,6 @@ public class UserServiceImpl implements UserServiceApi {
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert,"
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears,tUSER.group"
                 + "  FROM tUSER where tUSER.username='" + name + "'";
-        
-      
 
         List<UserController> result = new ArrayList<>();
 
@@ -122,28 +113,29 @@ public class UserServiceImpl implements UserServiceApi {
             //aUser.setAlphanumeric(rs.getString("alphanumeric"));
             //aUser.setAlphaId(rs.getLong("alphaId"));
             aUser.setMaxContacts(rs.getInt("max_contacts"));
-            
+
             aUser.setGroup(groupMap.get(rs.getInt("group")));
             result.add(aUser);
         }
 
         return result;
     }
-     public Map<Integer, String> getGroupMap(Connection conn) throws SQLException {
+
+    public Map<Integer, String> getGroupMap(Connection conn) throws SQLException {
 
         String sql = "select id ,groupname from dbSMS.tGROUPS";
 
-                 Map<Integer, String> map=new HashMap();
+        Map<Integer, String> map = new HashMap();
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
- 
-           map.put(rs.getInt("id"),rs.getString("groupname"));
-         
-    }  return map;
-     }
-    
+
+            map.put(rs.getInt("id"), rs.getString("groupname"));
+
+        }
+        return map;
+    }
 
     @Override
     public List<UserController> getLastCreated(Connection conn, String name) throws SQLException {
@@ -260,7 +252,7 @@ public class UserServiceImpl implements UserServiceApi {
             aUser.setCreditedBy(rs.getString("user"));
             result.add(aUser);
         }
-        
+
         return result;
     }
 
@@ -276,8 +268,8 @@ public class UserServiceImpl implements UserServiceApi {
         String sql = "INSERT INTO tUSER("
                 + "username, password, max_total, organization, contact_number, email_address, start_date, "
                 + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?)" ;
-       
+                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?)";
+
         ////////////////////////////////////////////////////////
         //Inserting values
         ////////////////////////////////////////////////////////
@@ -310,10 +302,9 @@ public class UserServiceImpl implements UserServiceApi {
         userService.updateAgentCredits(agent, Math.round(us.availableCredits(conn)[0]), user.getSmsCredits(), user.getSmsCredits(), conn);
         //System.out.println(new Date()+"INSERTING USER INSERTING  NEW USER: " + " " + user.getUsername() + "" + count);
         userl.updateAdminBal();
-        
+
     }
 
-    
     private String getAgent() {
         String agent = "";
         int lAdmin = Character.getNumericValue((char) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("admin"));
@@ -694,15 +685,16 @@ public class UserServiceImpl implements UserServiceApi {
         pstmt.setInt(10, user.getAlertThreshold());
 
         pstmt.setString(11, String.valueOf(user.getAdmin()));
-         pstmt.setInt(12, user.getSelectedGroup().getId());
+        pstmt.setInt(12, user.getSelectedGroup().getId());
         pstmt.setLong(13, user.getId());
 
         // Execute the query
         int count = pstmt.executeUpdate();
 
     }
+
     @Override
-     public void updateUserWithoutGroup(UserController user, Connection conn) throws SQLException {
+    public void updateUserWithoutGroup(UserController user, Connection conn) throws SQLException {
 
         String sql = "UPDATE tUSER SET "
                 + "username=?, password=?, max_total=?, organization=?, contact_number = ?, email_address=?"
@@ -826,9 +818,8 @@ public class UserServiceImpl implements UserServiceApi {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-        public static void updateEmailAgentCredits(String agent, int current, int toDeduct, int newBalace, Connection conn) {
+
+    public static void updateEmailAgentCredits(String agent, int current, int toDeduct, int newBalace, Connection conn) {
         try {
             Date dt = new Date();
             AlphaScroller as = new AlphaScroller();
@@ -876,7 +867,6 @@ public class UserServiceImpl implements UserServiceApi {
 
     }
 
-
     @Override
     public Map<String, Object> simpleStatistics() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -903,7 +893,7 @@ public class UserServiceImpl implements UserServiceApi {
         while (rs.next()) {
             auto_id = rs.getInt(1) - 1;
 
-        }       
+        }
 
         return auto_id;
     }
@@ -926,7 +916,7 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     public void persistUserAgent(UserController user, Connection conn) {
-       
+
         String autogen = "";
 
         String sql = "INSERT INTO tUSER("
@@ -1093,18 +1083,14 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
     public void deleteUser(UserController selected, Connection conn) {
         try {
-//          String sql = "UPDATE tUSER set admin= 4 where username =?";
             String sql = "DELETE from tUSER where username =?";
-           
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
             // Bind values to the parameters
             pstmt.setString(1, selected.getUsername());
-            //pstmt.setString(2,alphanumeric);
-            //System.out.println("Deleting UserController  " + selected);
 
             // Execute the query
             int count = pstmt.executeUpdate();
-            //System.out.println("Count status" + count);
         } catch (SQLException ex) {
             Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1120,8 +1106,6 @@ public class UserServiceImpl implements UserServiceApi {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             // Bind values to the parameters
             pstmt.setString(1, selected.getUsername());
-            //pstmt.setString(2,alphanumeric);
-            //System.out.println("Deleting UserController  " + selected);
 
             // Execute the query
             int count = pstmt.executeUpdate();
@@ -1379,27 +1363,27 @@ public class UserServiceImpl implements UserServiceApi {
 
         return result;
     }
-public String formatNumbers(String nums){
-  String []numbers=nums.split(",\\s*");
-  
-  for(int i=0;i<=numbers.length-1;i++){
-      if(numbers[i].startsWith("254") && numbers[i].length()==12 ){
+
+    public String formatNumbers(String nums) {
+        String[] numbers = nums.split(",\\s*");
+
+        for (int i = 0; i <= numbers.length - 1; i++) {
+            if (numbers[i].startsWith("254") && numbers[i].length() == 12) {
 //        okay
-      }else if(((numbers[i].startsWith("01") ||(numbers[i].startsWith("07")))&& numbers[i].length()==10 )){
-          numbers[i]="254"+numbers[i].substring(1, numbers[i].length());
-      }
-      
-    
-  }
-    
-      return String.join(",", numbers);
-}
-    public void persistCallBack(CallBack callback, Connection conn,String assigned_code) {
+            } else if (((numbers[i].startsWith("01") || (numbers[i].startsWith("07"))) && numbers[i].length() == 10)) {
+                numbers[i] = "254" + numbers[i].substring(1, numbers[i].length());
+            }
+
+        }
+
+        return String.join(",", numbers);
+    }
+
+    public void persistCallBack(CallBack callback, Connection conn, String assigned_code) {
         try {
-            String testBedNumbers=callback.getTestbednumbers();
-            callback.setTestbednumbers( formatNumbers(testBedNumbers));
-           
-            
+            String testBedNumbers = callback.getTestbednumbers();
+            callback.setTestbednumbers(formatNumbers(testBedNumbers));
+
             JdbcUtil util = new JdbcUtil();
             conn = util.getConnectionTodbUSSD();
             String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
@@ -1410,7 +1394,7 @@ public String formatNumbers(String nums){
             ps.setString(3, callback.getUssd_assigned_code());
             ps.setBoolean(4, true);
             ps.setString(5, callback.getTestbednumbers());
-             ps.setInt(6, callback.isTestbed()?0:1);
+            ps.setInt(6, callback.isTestbed() ? 0 : 1);
             ps.executeUpdate();
             ps.close();
             JsfUtil.addSuccessMessage("CallBack added successfully!");
@@ -1420,8 +1404,8 @@ public String formatNumbers(String nums){
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-      public static ArrayList<CallBack> getCallBack() throws SQLException {
+
+    public static ArrayList<CallBack> getCallBack() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
         Connection conn = util.getConnectionTodbUSSD();
@@ -1441,16 +1425,16 @@ public String formatNumbers(String nums){
             callback.setCallback_url(rs.getString("callback_url"));
             callback.setUssd_assigned_code(rs.getString("ussd_assigned_code"));
             callback.setStatus(rs.getBoolean("status"));
-              callback.setTestbed(rs.getInt("type")==0?true:false);
+            callback.setTestbed(rs.getInt("type") == 0 ? true : false);
             callback.setTestbednumbers(rs.getString("testbedmobiles"));
-            
+
             callbacklist.add(callback);
 
         }
         return callbacklist;
     }
-            
-        public static  ArrayList<EmailPricingTable> getPricingTable() throws SQLException{
+
+    public static ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
         Connection conn = util.getConnectionTodbEMAIL();
@@ -1461,33 +1445,21 @@ public String formatNumbers(String nums){
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-           EmailPricingTable pricing = new EmailPricingTable();
+            EmailPricingTable pricing = new EmailPricingTable();
             pricing.setId(rs.getInt("id"));
-           pricing.setPrice(rs.getFloat("price"));
+            pricing.setPrice(rs.getFloat("price"));
             pricing.setEmails_purchased(rs.getString("emails_purchased"));
-            String str=rs.getString("emails_purchased");
-            String [] strarr=str.split("-");
+            String str = rs.getString("emails_purchased");
+            String[] strarr = str.split("-");
             pricing.setEmails_purchased_start(strarr[0]);
-           pricing.setEmails_purchased_end(strarr[1]);
-             pricing.setExpiry(rs.getString("expiry"));
-             pricing.setSelectType(new SelectItem(rs.getString("expiry")));
-             
-             pricingtable.add(pricing);
+            pricing.setEmails_purchased_end(strarr[1]);
+            pricing.setExpiry(rs.getString("expiry"));
+            pricing.setSelectType(new SelectItem(rs.getString("expiry")));
+
+            pricingtable.add(pricing);
         }
         return pricingtable;
-    } 
-
-  
-
-//    @Override
-//    public void updateEmailUser(EmailUser aThis, Connection conn) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-
-//    @Override
-//    public void persistEmailUserAgent(EmailUser aThis, Connection conn) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
+    }
 
     public void updateEmailUser(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -1501,8 +1473,9 @@ public String formatNumbers(String nums){
     public boolean authenticateEmailUser(String username, String password) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-   //Added to update email credits
-            @Override
+    //Added to update email credits
+
+    @Override
     public void updateEmailCredits(String username, int smsCredits, Connection conn) throws SQLException {
         String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
         String sqlReseller = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
@@ -1510,9 +1483,9 @@ public String formatNumbers(String nums){
         // Bind values to the parameters
         pstmt.setInt(1, smsCredits);
         pstmt.setString(2, username);
-        int count = pstmt.executeUpdate();        
+        int count = pstmt.executeUpdate();
     }
-    
+
     @Override
     public void persistEmailUserAgent(EmailUser user, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -1522,11 +1495,10 @@ public String formatNumbers(String nums){
     public void updateEmailUser(EmailUser aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    public boolean isUssdCodeAvailable(String code){
-        boolean exist=false;
-        
-        
-        
+
+    public boolean isUssdCodeAvailable(String code) {
+        boolean exist = false;
+
         return exist;
     }
 
@@ -1539,12 +1511,13 @@ public String formatNumbers(String nums){
     public List<UserController> getAllEmailUsers(Connection conn, String userS) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public void persistEmailUser(EmailUser user, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-   public static ArrayList<Group> getGroups(Connection conn) {
+
+    public static ArrayList<Group> getGroups(Connection conn) {
 
         String sql = "select * from dbSMS.tGROUPS ";
         ResultSet rs = null;
@@ -1555,12 +1528,12 @@ public String formatNumbers(String nums){
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Group group=new Group();
+                Group group = new Group();
                 group.setId(rs.getInt("id"));
                 group.setGroupname(rs.getString("groupname"));
                 group.setDescription(rs.getString("description"));
                 groups.add(group);
-                
+
             }
         } catch (SQLException e) {
             Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, e.getMessage());
@@ -1582,7 +1555,5 @@ public String formatNumbers(String nums){
         }
         return (ArrayList<Group>) groups;
     }
-   
 
-    
 }

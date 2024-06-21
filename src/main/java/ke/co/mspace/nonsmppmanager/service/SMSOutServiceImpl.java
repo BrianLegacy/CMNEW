@@ -52,26 +52,27 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * @author Norrey Osako
  */
 public class SMSOutServiceImpl implements SMSOutServiceApi {
-    private static final Logger LOGGER = Logger.getLogger("SMSOutServiceImpl.class" );
+
+    private static final Logger LOGGER = Logger.getLogger("SMSOutServiceImpl.class");
 
     public static final String ANSI_BLUE = "\u001B[34m";
-     public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
     private static final Logger LOG = Logger.getLogger(SMSOutServiceImpl.class.getName());
 
     private final static DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 
     private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user_id").toString();
-    private int limit=500;
+    private int limit = 500;
+
     public SMSOutServiceImpl() {
 
     }
-    
+
     //set sql to session
-    public void smsSetSql(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn) throws SQLException {
+    public void smsSetSql(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException {
 
         DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-     
 
         String query = " SELECT id from tUSER WHERE username='" + user + "'";
 //        System.out.println("Th selected user id report" + user);
@@ -95,11 +96,11 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                     + "tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE"
                     + " LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "'   UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload,"
                     + " tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username"
@@ -112,13 +113,13 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' "
                     + "UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
-                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '" + user_id + "' order by myid desc";
+                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' order by myid desc";
         } else {
             //  sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.super_account_id= '" + adminid + "' ) 
             //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "'  OR tUSER.super_account_id= '" + adminid + "' ) order by myid desc";
@@ -130,15 +131,14 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
         //System.out.println(sqlReseller);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql);
-        
+
     }
 
     //Normal execution should check the size and execute different sql
     @Override
-    public Map<String, Object> userSMSOutReport(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn, int limit) throws SQLException {
+    public Map<String, Object> userSMSOutReport(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn, int limit) throws SQLException {
 
         DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-
 
         String query = " SELECT id from tUSER WHERE username='" + user + "'";
 
@@ -158,11 +158,11 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                     + "tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE"
                     + " LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "'   UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload,"
                     + " tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username"
@@ -175,36 +175,35 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' "
                     + "UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
-                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '" + user_id + "' order by myid desc";
+                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' order by myid desc";
         } else {
-             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id  LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' )"
+            sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id  LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' )"
                     + "UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' ) order by myid desc";
 //            System.out.println(sql);
             sqlReseller = sql;
         }
-        
-        String sqlLimit="";
-        if(limit==0){
-           sqlLimit="";
-        }
-        else {
-            sqlLimit="limit "+limit+1;
+
+        String sqlLimit = "";
+        if (limit == 0) {
+            sqlLimit = "";
+        } else {
+            sqlLimit = "limit " + limit + 1;
 
         }
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql);
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller+" "+sqlLimit : sql+" "+sqlLimit);
+        ResultSet rs = stmt.executeQuery(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller + " " + sqlLimit : sql + " " + sqlLimit);
 
         SMSOut smsout = new SMSOut();
         List<SMSOut> result = new ArrayList<>();
 
-        int count=0;
+        int count = 0;
         while (rs.next()) {
 
             count++;
@@ -250,7 +249,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             String adminid = null;
             while (rs1.next()) {
                 adminid = rs1.getString("id");
-               // System.out.println("The super ID" + adminid);
+                // System.out.println("The super ID" + adminid);
             }
             String sql = null;
             String sqlReseller = null;
@@ -315,11 +314,11 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         }
         return rs;
     }
-    
+
     ///set sql to session
-     //horace changed short_message to short_message and username
-      public void smppSetSql(String user, String startDate, String endDate, Connection conn) throws SQLException {
-          
+    //horace changed short_message to short_message and username
+    public void smppSetSql(String user, String startDate, String endDate, Connection conn) throws SQLException {
+
         String sql = null;
         if (user == null) {
             //SELECT dbSMPPGateway.tSMSOUT.source_addr, dbSMPPGateway.tSMSOUT.destination_addr, dbSMPPGateway.tSMSOUT.short_message, dbSMPPGateway.tSMSOUT.time_submitted, dbSMPPGateway.tSMSOUT.time_processed, dbSMPPGateway.tSMSOUT.registered_delivery, dbSMPPGateway.tUSER.username FROM dbSMPPGateway.tSMSOUT LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id=dbSMPPGateway.tUSER.id WHERE time_submitted >= '201509120000' AND time_submitted <= '201509120000';
@@ -350,16 +349,14 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         }
         List<SMPPOut> result = new ArrayList<>();
 
-        
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", sql);
-   
+
     }
-    
 
     //this should proceed if the user clicks proceed
     @Override
     public Map<String, Object> smppOutReport(String user, String startDate, String endDate, Connection conn, int limit) throws SQLException {
-           
+
         String sql = null;
         if (user == null) {
             //horace changed short_message to short_message and username
@@ -391,23 +388,20 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         }
         List<SMPPOut> result = new ArrayList<>();
 
-        
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", sql);
-      
-        String sqlLimit="";
-        if(limit==0){
-           sqlLimit="";
-           
+
+        String sqlLimit = "";
+        if (limit == 0) {
+            sqlLimit = "";
+
+        } else {
+            sqlLimit = "limit " + limit;
+
         }
-        else {
-            sqlLimit="limit "+limit;
-          
-            
-        }
-        
-        Statement stmt = conn.createStatement();     
-        ResultSet rs = stmt.executeQuery(sql+" "+sqlLimit);
-        
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql + " " + sqlLimit);
+
         while (rs.next()) {
             SMPPOut smsOut = new SMPPOut();
             smsOut.setSourceAddr(rs.getString("source_addr"));
@@ -536,9 +530,9 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             int rowNum = 2;
             int sheetCounter = 1;
             int totalSent = 0;
-            
+
             //horace
-            if (exportSMSOutReport.size()>1){
+            if (exportSMSOutReport.size() > 1) {
                 JsfUtil.addSuccessMessage("Will only generate excell containing the first 15000 rows");
             }
             //
@@ -649,7 +643,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = allocategenerateSMPPXSLSheet(wb, "SMPPOUT_Sheet_1");
-            List<SMPPOut> exportSMSOutReport = (List) smppOutReport(user, startDate, endDate, conn,0).get("result");
+            List<SMPPOut> exportSMSOutReport = (List) smppOutReport(user, startDate, endDate, conn, 0).get("result");
             int rowNum = 2;
             int sheetCounter = 1;
             Font font = wb.createFont();
@@ -911,7 +905,6 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
     @Override
     public Map<String, Object> smsOutGroupBy(String user, String startDate, String endDate, Connection conn) throws SQLException {
 
-        //original String sql = "SELECT time_submitted, user, YEAR(time_submitted) year, MONTHNAME(STR_TO_DATE(MONTH(time_submitted), '%m')) month, COUNT(MONTHNAME(STR_TO_DATE(MONTH(time_submitted), '%m'))) frequency from tSMSOUT WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND user = '" + user + "'  GROUP BY month, year ORDER BY time_submitted";
         String sql = "SELECT  user, YEAR(time_submitted) year, MONTHNAME(STR_TO_DATE(MONTH(time_submitted), '%m')) month, COUNT(MONTHNAME(STR_TO_DATE(MONTH(time_submitted), '%m'))) frequency from tSMSOUT WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND user = '" + user + "'  GROUP BY month, year ";
 
         List<Object[]> results = new ArrayList<>();
@@ -954,7 +947,6 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "on t.user = u.username WHERE u.agent = '" + user_id + "' and "
                 + "t.time_submitted >= '" + startDate + "' AND t.time_submitted <= '" + endDate + "' "
                 + "GROUP BY t.user, month, year ";
-
 
         List<Object[]> results = new ArrayList<>();
 
@@ -1059,7 +1051,6 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
     @Override
     public String getRealSMSStatus(final String smsID, final Connection conn) throws SQLException {
 
-
         String toReturn = null;
 
         String sql = "SELECT desctiption FROM tSMSSTATUS WHERE id='" + smsID + "'";
@@ -1074,8 +1065,8 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         return toReturn;
 
     }
-    
-     public void generateXSLToFileSystem(String user, String startDate, String endDate, Connection conn) throws SQLException {
+
+    public void generateXSLToFileSystem(String user, String startDate, String endDate, Connection conn) throws SQLException {
         // SMSOut sout= new SMSOut();
 
         try {
@@ -1157,40 +1148,23 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
     }
 
-     @Override
-     ///begining 
-        public int checkIfFileIsLarge(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn) throws SQLException {
-            boolean res=false;
+    @Override
+    ///begining 
+    public int checkIfFileIsLarge(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException {
+        boolean res = false;
 
-//            System.out.println("Inside checker "+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-//         System.out.println("Start Date"+startDate+"  End Date"+endDate);
-//        String schsdate = (outFormat.format(startDate));
-//        String schedate = (outFormat.format(endDate));
-//
-//        schsdate = schsdate + " 00:00:01";
-//        schedate = schedate + " 23:59:59";
 
         String query = " SELECT id from tUSER WHERE username='" + user + "'";
-//        System.out.println("Th selected user id report" + user);
-//         System.out.println("preparing statement"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         Statement stmt1 = conn.createStatement();
-//          System.out.println(" statement ready"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         ResultSet rs1 = stmt1.executeQuery(query);
-//         System.out.println(" execute query called"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         String adminid = null;
-//         System.out.println(" iterating result set"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         while (rs1.next()) {
             adminid = rs1.getString("id");
-//            System.out.println("The super ID" + adminid);
         }
-//         System.out.println(" finished iteration admin work done"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
         String sql = null;
         String sqlReseller = null;
         if (user == null) {
-            //SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' 
-            //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' order by myid desc";
-
             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, "
                     + "tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' "
                     + "AND time_submitted <= '" + endDate + "' "
@@ -1198,11 +1172,11 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                     + "tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE"
                     + " LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "'   UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload,"
                     + " tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username"
@@ -1212,69 +1186,58 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' "
                     + "UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' UNION ALL "
                     + "select sc.id as myId , sc.source as source_addr,sc.dest as destination_addr,  sc.message as message_payload, sc.sendTime as time_submitted, "
-                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " sc.sendTime as time_processed ,sc.username as user, 11 as status ,'Scheduled' as  desctiption from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  "
-                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '" + user_id + "' order by myid desc";
+                    + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' order by myid desc";
         } else {
-            //  sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.super_account_id= '" + adminid + "' ) 
-            //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "'  OR tUSER.super_account_id= '" + adminid + "' ) order by myid desc";
             sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id  LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' )"
                     + "UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' ) order by myid desc";
 //            System.out.println(sql);
             sqlReseller = sql;
         }
-              
 
-               sql = UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql;
+        sql = UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql;
 
-        
-        sql="SELECT COUNT(myid) FROM ("+sql+") as t";
+        sql = "SELECT COUNT(myid) FROM (" + sql + ") as t";
 //         System.out.println(ANSI_BLUE+"large sql ="+sql+ANSI_RESET);
 //         System.out.println("check if file is large preparing"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
-          PreparedStatement ps=conn.prepareStatement(sql);
-       long t1= System.currentTimeMillis();
-          
+        PreparedStatement ps = conn.prepareStatement(sql);
+        long t1 = System.currentTimeMillis();
+
 //          System.out.println(ANSI_BLUE+"check if file is large calling"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString()+ANSI_RESET);
-          ResultSet rs=ps.executeQuery();
-                  long t2= System.currentTimeMillis();
-                  long minutes=TimeUnit.MILLISECONDS.toSeconds(t2-t1);
-                  double min=(double)minutes/60;
-                  
+        ResultSet rs = ps.executeQuery();
+        long t2 = System.currentTimeMillis();
+        long minutes = TimeUnit.MILLISECONDS.toSeconds(t2 - t1);
+        double min = (double) minutes / 60;
+
 //                           System.out.println("check if file is large ended"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString());
-            LOGGER.log( Level.SEVERE,(ANSI_BLUE+"check if file is large executed with "+min+"minutes"+ANSI_RESET));
+        LOGGER.log(Level.SEVERE, (ANSI_BLUE + "check if file is large executed with " + min + "minutes" + ANSI_RESET));
 
-          int count=0;
-rs.next();
-         count=rs.getInt("COUNT(myid)"); 
-     return count;
+        int count = 0;
+        rs.next();
+        count = rs.getInt("COUNT(myid)");
+        return count;
     }
-     //enf
-        @Override
-        
-         public int smppcheckIfFileIsLarge(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn) throws SQLException {
-            boolean res=false;
-        DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-//         System.out.println("Start Date"+startDate+"  End Date"+endDate);
-//        String schsdate = (outFormat.format(startDate));
-//        String schedate = (outFormat.format(endDate));
-//
-//        schsdate = schsdate + " 00:00:01";
-//        schedate = schedate + " 23:59:59";
+    //enf
 
+    @Override
+
+    public int smppcheckIfFileIsLarge(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException {
+        boolean res = false;
+        DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
         String query = " SELECT id from tUSER WHERE username='" + user + "'";
         Statement stmt1 = conn.createStatement();
         ResultSet rs1 = stmt1.executeQuery(query);
         String adminid = null;
-        
+
         while (rs1.next()) {
             adminid = rs1.getString("id");
-//            System.out.println("The super ID" + adminid);
         }
-          String sql = null;
+        String sql = null;
         if (user == null) {
             //SELECT dbSMPPGateway.tSMSOUT.source_addr, dbSMPPGateway.tSMSOUT.destination_addr, dbSMPPGateway.tSMSOUT.short_message, dbSMPPGateway.tSMSOUT.time_submitted, dbSMPPGateway.tSMSOUT.time_processed, dbSMPPGateway.tSMSOUT.registered_delivery, dbSMPPGateway.tUSER.username FROM dbSMPPGateway.tSMSOUT LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id=dbSMPPGateway.tUSER.id WHERE time_submitted >= '201509120000' AND time_submitted <= '201509120000';
             sql = "SELECT dbSMPPGateway.tSMSOUT.id AS myid,dbSMPPGateway.tSMSOUT.status, "
@@ -1302,30 +1265,22 @@ rs.next();
             sql = "SELECT dbSMPPGateway.tSMSOUT.id AS myid,dbSMPPGateway.tSMSOUT.status, dbSMPPGateway.tSMSOUT.source_addr, dbSMPPGateway.tSMSOUT.destination_addr, dbSMPPGateway.tSMSOUT.short_message, dbSMPPGateway.tSMSOUT.time_submitted, dbSMPPGateway.tSMSOUT.time_processed, dbSMPPGateway.tSMSOUT.registered_delivery, dbSMPPGateway.tUSER.username,dbSMPPGateway.tSMSSTATUS.desctiption FROM dbSMPPGateway.tSMSOUT LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id=dbSMPPGateway.tUSER.id LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT.status=dbSMPPGateway.tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND username = '" + user + "' "
                     + "UNION ALL SELECT dbSMPPGateway.tSMSOUT_COMPLETE.id AS myid,dbSMPPGateway.tSMSOUT_COMPLETE.status, dbSMPPGateway.tSMSOUT_COMPLETE.source_addr, dbSMPPGateway.tSMSOUT_COMPLETE.destination_addr, dbSMPPGateway.tSMSOUT_COMPLETE.short_message, dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted, dbSMPPGateway.tSMSOUT_COMPLETE.time_processed, dbSMPPGateway.tSMSOUT_COMPLETE.registered_delivery, dbSMPPGateway.tUSER.username,dbSMPPGateway.tSMSSTATUS.desctiption FROM dbSMPPGateway.tSMSOUT_COMPLETE LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT_COMPLETE.tUSER_id=dbSMPPGateway.tUSER.id LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT_COMPLETE.status=dbSMPPGateway.tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND username = '" + user + "' order by myid desc";
         }
-        
-        sql="SELECT COUNT(*) FROM ("+sql+") as t";
-          PreparedStatement ps=conn.prepareStatement(sql);
-          ResultSet rs=ps.executeQuery();
-          int count=0;
-//          while(rs.next()){
-              rs.next();
-         count=rs.getInt("COUNT(*)");
-//          }
-//         if(count>=20)
-//             res=true;
-            
-     return count;
+
+        sql = "SELECT COUNT(*) FROM (" + sql + ") as t";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        int count = 0;
+        rs.next();
+        count = rs.getInt("COUNT(*)");
+
+
+        return count;
     }
-         
-         @Override
-             public Map<String, Object> getSummarySms(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn, int limit) throws SQLException {
+
+    @Override
+    public Map<String, Object> getSummarySms(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn, int limit) throws SQLException {
 
         DateFormat outFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        String schsdate = (outFormat.format(startDate));
-//        String schedate = (outFormat.format(endDate));
-//
-//        schsdate = schsdate + " 00:00:01";
-//        schedate = schedate + " 23:59:59";
 
         String query = " SELECT id from tUSER WHERE username='" + user + "'";
         Statement stmt1 = conn.createStatement();
@@ -1333,14 +1288,11 @@ rs.next();
         String adminid = null;
         while (rs1.next()) {
             adminid = rs1.getString("id");
-//            System.out.println("The super ID" + adminid);
         }
         String sql = null;
         String sqlReseller = null;
         if (user == null) {
-            //SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' 
-            //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' order by myid desc";
-
+       
             sql = "SELECT tSMSOUT.id as myid, tSMSOUT.message_payload "
                     + " FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' "
                     + "AND time_submitted <= '" + endDate + "' "
@@ -1348,68 +1300,47 @@ rs.next();
                     + "   FROM tSMSOUT_COMPLETE"
                     + " LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "'   UNION ALL "
                     + "select  sc.id as myid, sc.message as message_payload "
-                    + " from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT tSMSOUT.id as myid, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT  tSMSOUT_COMPLETE.id as myid, tSMSOUT_COMPLETE.message_payload,tSMSOUT_COMPLETE.time_submitted , tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user,tSMSOUT_COMPLETE.status ,tSMSSTATUS.desctiption "
-                    
                     + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username"
                     + " WHERE time_submitted >= " + startDate + " AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' order by myid desc";
 
         } else if (user.isEmpty()) {
-            //sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "'
-            //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' order by myid desc";
-                
             sql = "SELECT tSMSOUT.id as myid,tSMSOUT.message_payload FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' "
                     + "UNION ALL SELECT  tSMSOUT_COMPLETE.id as myid, tSMSOUT_COMPLETE.message_payload FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' UNION ALL "
                     + "select sc.id as myid, sc.message as message_payload "
-                    + " from tUSERSMSSCHEDULE sc where  sc.sendTime >= '"+scheduleStart+"' AND sc.sendTime  <= '"+scheduleEnd+"'   order by myid desc";
+                    + " from tUSERSMSSCHEDULE sc where  sc.sendTime >= '" + scheduleStart + "' AND sc.sendTime  <= '" + scheduleEnd + "'   order by myid desc";
 
             sqlReseller = "SELECT  tSMSOUT.id as myid, tSMSOUT.message_payload "
                     + "FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id inner join tUSER on tSMSOUT.user = tUSER.username "
-                    + "WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '"+user_id+"' UNION ALL "
+                    + "WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' UNION ALL "
                     + "SELECT  tSMSOUT_COMPLETE.id as myid, tSMSOUT_COMPLETE.message_payload"
-                    + " FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '"+startDate+"' AND time_submitted <= '"+endDate+"' and tUSER.agent = '" + user_id + "' order by myid desc";
+                    + " FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id inner join tUSER on tSMSOUT_COMPLETE.user = tUSER.username WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' and tUSER.agent = '" + user_id + "' order by myid desc";
         } else {
-            //  sql = "SELECT tSMSOUT.id AS myid,tSMSOUT.source_addr, tSMSOUT.destination_addr, tSMSOUT.message_payload, tSMSOUT.time_submitted, tSMSOUT.time_processed, tSMSOUT.user, tSMSOUT.status, tSMSSTATUS.desctiption  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.super_account_id= '" + adminid + "' ) 
-            //UNION ALL SELECT tSMSOUT_COMPLETE.id AS myid,tSMSOUT_COMPLETE.source_addr, tSMSOUT_COMPLETE.destination_addr, tSMSOUT_COMPLETE.message_payload, tSMSOUT_COMPLETE.time_submitted, tSMSOUT_COMPLETE.time_processed, tSMSOUT_COMPLETE.user, tSMSOUT_COMPLETE.status, tSMSSTATUS.desctiption  FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user  WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "'  OR tUSER.super_account_id= '" + adminid + "' ) order by myid desc";
             sql = "SELECT  tSMSOUT.id as myid, message_payload  FROM tSMSOUT LEFT JOIN tSMSSTATUS ON tSMSOUT.status=tSMSSTATUS.id  LEFT JOIN tUSER ON tUSER.username=tSMSOUT.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' )"
                     + "UNION ALL SELECT  tSMSOUT_COMPLETE.id as myid,tSMSOUT_COMPLETE.message_payload FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status=tSMSSTATUS.id LEFT JOIN tUSER ON tUSER.username=tSMSOUT_COMPLETE.user WHERE time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' AND (user = '" + user + "' OR tUSER.agent= '" + adminid + "' OR tUSER.super_account_id='" + adminid + "' ) order by myid desc";
-            
+
             sqlReseller = sql;
         }
-        
-        String sqlLimit="";
-        if(limit==0){
-           sqlLimit="";
-        }
-        else {
-            sqlLimit="limit "+limit;
+
+        String sqlLimit = "";
+        if (limit == 0) {
+            sqlLimit = "";
+        } else {
+            sqlLimit = "limit " + limit;
 
         }
 
-        //System.out.println(sqlReseller);
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql);
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller+" "+sqlLimit : sql+" "+sqlLimit);
-//        rs.last();
-        //check should come here ..if user selects proceed and the rows are 
-        //more than 100,run the code else just continue executing but limit the number of rows
-
-        //System.out.println("The last row in the table::::<<<<<>>>>>:::: " + rs.getRow());
-//        rs.first();
-        //check the list size here 
-        //if( list is less than the number set run the below code){
-
+        ResultSet rs = stmt.executeQuery(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller + " " + sqlLimit : sql + " " + sqlLimit);
         SMSOut smsout = new SMSOut();
-        //ResultSet rs= smsout.getResultSet();
-        //int rows =(Integer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("ListSize");
-
-        //System.out.println("List has "+rows+" Rows ");
+        
         List<SMSOut> result = new ArrayList<>();
-        int count=0;
+        int count = 0;
         while (rs.next()) {
 
             count++;
@@ -1426,30 +1357,23 @@ rs.next();
         Map<String, Object> mapResult = new HashMap<>();
         mapResult.put("result", result);
         mapResult.put("noSMS", noSMS);
-        //} end of if else
-//System.out.println("Total Rows:"+count);
+
         return mapResult;
     }
-             
-             
-              @Override
+
+    @Override
     public Map<String, Object> smppgetSummarySms(String user, String startDate, String endDate, Connection conn, int limit) throws SQLException {
-           
+
         String sql = null;
         if (user == null) {
-            //horace changed short_message to short_message and username
-            //SELECT dbSMPPGateway.tSMSOUT.source_addr, dbSMPPGateway.tSMSOUT.destination_addr, dbSMPPGateway.tSMSOUT.short_message, dbSMPPGateway.tSMSOUT.time_submitted, dbSMPPGateway.tSMSOUT.time_processed, dbSMPPGateway.tSMSOUT.registered_delivery, dbSMPPGateway.tUSER.username FROM dbSMPPGateway.tSMSOUT LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id=dbSMPPGateway.tUSER.id WHERE time_submitted >= '201509120000' AND time_submitted <= '201509120000';
             sql = "SELECT dbSMPPGateway.tSMSOUT.id AS myid, "
-                    
                     + "dbSMPPGateway.tSMSOUT.short_message AS message_payload"
                     + " FROM dbSMPPGateway.tSMSOUT"
                     + " LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id=dbSMPPGateway.tUSER.id LEFT "
                     + "JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT.status=dbSMPPGateway.tSMSSTATUS.id WHERE"
                     + " time_submitted >= '" + startDate + "' AND time_submitted <= '" + endDate + "' "
                     + "UNION ALL SELECT dbSMPPGateway.tSMSOUT_COMPLETE.id AS myid, "
-                    
                     + "dbSMPPGateway.tSMSOUT_COMPLETE.short_message"
-                    
                     + "  FROM dbSMPPGateway.tSMSOUT_COMPLETE LEFT"
                     + " JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT_COMPLETE.tUSER_id=dbSMPPGateway.tUSER.id LEFT JOIN"
                     + " dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT_COMPLETE.status=dbSMPPGateway.tSMSSTATUS.id WHERE "
@@ -1465,25 +1389,21 @@ rs.next();
         }
         List<SMPPOut> result = new ArrayList<>();
 
-        
 //        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("reportSQL", sql);
-       
-        String sqlLimit="";
-        if(limit==0){
-           sqlLimit="";
+        String sqlLimit = "";
+        if (limit == 0) {
+            sqlLimit = "";
+        } else {
+            sqlLimit = "limit " + limit;
+
         }
-        else {
-            sqlLimit="limit "+limit;
-           
-            
-        }
-        
-        Statement stmt = conn.createStatement();     
-        ResultSet rs = stmt.executeQuery(sql+" "+sqlLimit);
-        
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql + " " + sqlLimit);
+
         while (rs.next()) {
             SMPPOut smsOut = new SMPPOut();
-            
+
             smsOut.setMessagePayload(rs.getString("message_payload"));
 
             result.add(smsOut);

@@ -17,7 +17,7 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class FacePainter implements Serializable {
 
-    private String mainContent = "clientmanager/manageuserdetails/addsmsuser.xhtml";
+    private String mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
 
     public String getMainContent() {
 

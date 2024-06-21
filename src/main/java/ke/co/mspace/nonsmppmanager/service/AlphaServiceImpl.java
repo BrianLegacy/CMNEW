@@ -42,8 +42,8 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
 //    private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 //    private final String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
-    
-private final String user =SessionUtil.getAUTH_KEY();
+    private final String user = SessionUtil.getAUTH_KEY();
+
     public AlphaServiceImpl() {
 
     }
@@ -57,23 +57,18 @@ private final String user =SessionUtil.getAUTH_KEY();
     }
 
     @Override
-    public Map<String,String> getAlphanumericsNames(Connection conn) {
+    public Map<String, String> getAlphanumericsNames(Connection conn) {
 
         //String sql = "select distinct short_code from tSDP where short_code_type = 2";
-        String sql = "select distinct short_code,sid_type from tSDPNew where short_code_type = 2 order by short_code asc";
-        String sql2 = "select distinct short_code from tSDP where short_code_type = 2";
-
-//        String sqlReseller = "SELECT DISTINCT t.short_code  FROM tSDP t inner join tUSER u on "
-//                + "t.agent_id = u.id where t.short_code_type = 2 and t.agent_id = '"+user_id+"'";
-        String sqlReseller = "SELECT DISTINCT t.short_code,t.sid_type  FROM tSDPNew t inner join tUSER u on "
+        String sql = "select short_code,sid_type from tSDPNew where short_code_type = 2 ";
+        
+        String sqlReseller = "select  t.short_code,t.sid_type  FROM tSDPNew t inner join tUSER u on "
                 + "t.agent_id = u.id where t.short_code_type = 2 and t.agent_id = '" + user_id + "'";
 
-        String sqlReseller2 = "SELECT DISTINCT t.short_code  FROM tSDP t inner join tUSER u on "
-                + "t.agent_id = u.id where t.short_code_type = 2 and t.agent_id = '" + user_id + "' order by t.short_code asc";
-
+      
         ResultSet rs = null;
         PreparedStatement stmt = null;
-        Map<String,String> alphanumerics = new HashMap<>();
+        Map<String, String> alphanumerics = new HashMap<>();
         List<String> airtelalphas = new ArrayList<>();
 
         try {
@@ -81,8 +76,8 @@ private final String user =SessionUtil.getAUTH_KEY();
             rs = stmt.executeQuery();
             while (rs.next()) {
                 String a = rs.getString("short_code");
-                
-                alphanumerics.put(a,a);
+
+                alphanumerics.put(a, a);
             }
         } catch (SQLException e) {
             Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
@@ -102,15 +97,13 @@ private final String user =SessionUtil.getAUTH_KEY();
             }
 
         }
-        return  alphanumerics;
+        return alphanumerics;
     }
-    
-    
-       public List<SelectItem> getGroups(Connection conn) {
+
+    public List<SelectItem> getGroups(Connection conn) {
 
         //String sql = "select distinct short_code from tSDP where short_code_type = 2";
         String sql = "select * from dbSMS.tGROUPS ";
-      
 
         ResultSet rs = null;
         PreparedStatement stmt = null;
@@ -120,12 +113,12 @@ private final String user =SessionUtil.getAUTH_KEY();
             stmt = conn.prepareStatement(sql);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Group group=new Group();
+                Group group = new Group();
                 group.setId(rs.getInt("id"));
                 group.setGroupname(rs.getString("groupname"));
                 group.setDescription(rs.getString("description"));
                 groups.add(new SelectItem(group.getGroupname()));
-                
+
             }
         } catch (SQLException e) {
             Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
@@ -147,26 +140,25 @@ private final String user =SessionUtil.getAUTH_KEY();
         }
         return groups;
     }
-       
-              public Group getGroup(String groupname,Connection conn) {
+
+    public Group getGroup(String groupname, Connection conn) {
 
         //String sql = "select distinct short_code from tSDP where short_code_type = 2";
         String sql = "select * from dbSMS.tGROUPS where groupname=? ";
-      
 
         ResultSet rs = null;
         PreparedStatement stmt = null;
-        Group group=new Group();
+        Group group = new Group();
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, groupname);
             rs = stmt.executeQuery();
             while (rs.next()) {
-                
+
                 group.setId(rs.getInt("id"));
                 group.setGroupname(rs.getString("groupname"));
                 group.setDescription(rs.getString("description"));
-                
+
             }
         } catch (SQLException e) {
             Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
@@ -188,7 +180,6 @@ private final String user =SessionUtil.getAUTH_KEY();
         }
         return group;
     }
-
 
     @Override
     public List<String> getAirTelAlphas(Connection conn) {
@@ -279,7 +270,7 @@ private final String user =SessionUtil.getAUTH_KEY();
 
     @Override
     public List<Alpha> getAllAlphanumerics(Connection conn) {
-        
+
         String sql = "SELECT * FROM tAllowedAlphanumerics";
         String sqlReseller = "SELECT t.* FROM tAllowedAlphanumerics t inner join tUSER u on t.username = u.username where u.agent = '" + user_id + "'";
         List<Alpha> result = new ArrayList<>();
@@ -287,7 +278,7 @@ private final String user =SessionUtil.getAUTH_KEY();
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(SessionUtil.isReseller() ? sqlReseller : sql);
-            System.out.println("ksql "+(SessionUtil.isReseller() ? sqlReseller : sql));
+            System.out.println("ksql " + (SessionUtil.isReseller() ? sqlReseller : sql));
             while (rs.next()) {
                 Alpha alpha = new Alpha();
                 alpha.setId(rs.getLong("id"));
@@ -508,13 +499,13 @@ private final String user =SessionUtil.getAUTH_KEY();
                 headerCell.setCellStyle(styles.get("header"));
             }
             List<Alpha> alphaList = null;
-            
-                JdbcUtil util = new JdbcUtil();
-                Connection conn = util.getConnectionTodbSMS();
 
-                alphaList = getAllAlphanumerics(conn);
-                JdbcUtil.closeConnection(conn);
-            
+            JdbcUtil util = new JdbcUtil();
+            Connection conn = util.getConnectionTodbSMS();
+
+            alphaList = getAllAlphanumerics(conn);
+            JdbcUtil.closeConnection(conn);
+
             int rowNum = 2;
 
             for (Alpha alpha : alphaList) {
@@ -626,7 +617,7 @@ private final String user =SessionUtil.getAUTH_KEY();
     public String getAlphanumericType(String alpha, Connection conn) {
         String alphaType = "";
         String sql = "SELECT sid_type from tSDPNew where short_code='" + alpha + "'";
-      //  System.out.println(sql);
+        //  System.out.println(sql);
         ResultSet rs = null;
         PreparedStatement stmt = null;
         try {
@@ -652,14 +643,14 @@ private final String user =SessionUtil.getAUTH_KEY();
 
     @Override
     public boolean findAlphanumericByUsername(String selectedUsername, String alphanumeric, Connection conn) throws SQLException {
-        boolean exist=false;
+        boolean exist = false;
         String sql = "SELECT username, alphanumeric FROM tAllowedAlphanumerics WHERE username='" + selectedUsername + "' and alphanumeric='" + alphanumeric + "'";
         Alpha alpha = null;
         //System.out.println(sql);
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         if (rs.next()) {
-           return true;
+            return true;
         }
 
         return exist;

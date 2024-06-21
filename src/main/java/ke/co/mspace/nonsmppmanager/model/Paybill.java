@@ -1,21 +1,17 @@
 package ke.co.mspace.nonsmppmanager.model;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.validation.constraints.Pattern;
 import ke.co.mspace.nonsmppmanager.service.PaybillServiceApi;
 import ke.co.mspace.nonsmppmanager.service.PaybillServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;

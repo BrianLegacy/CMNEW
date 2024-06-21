@@ -71,7 +71,9 @@ public class client_logo implements Serializable {
         Connection conn = null;
         boolean result = false;
         try {
+//            System.out.println("inside get before system");
             conn = util.getConnectionTodbTask();
+//            System.out.println("inside get after system");
             String sql = "select * from tClient";
             System.out.println("testing type");
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -93,7 +95,8 @@ public class client_logo implements Serializable {
         } catch (SQLException e) {
               logopath = "../files/config/MSpacelogo.png";
 //            e.printStackTrace();
-            JdbcUtil.closeConnection(conn);
+//uncomment create conn in dbtask connection
+           JdbcUtil.closeConnection(conn);
         }
         return tclient;
     }
@@ -164,19 +167,6 @@ public class client_logo implements Serializable {
     }
     public String clnt_logo_mod() {
         Session session1 = null;
-        
-//        
-//         if((getsession.getSession().getAttribute("temporaladmin"))!=null ){
-//       int adminKind= Character.getNumericValue((char) getsession.getSession().getAttribute("temporaladmin") );
-//             String agent= (String) getsession.getSession().getAttribute("agent") ;
-//             if(!agent.isEmpty()){
-//                  return (String)  getsession.getSession().getAttribute("logopath2");
-//             }
-//       if(adminKind==3){
-//           return (String)  getsession.getSession().getAttribute("logopath2");
-//       }
-//         }
-//        if from  is resseler get path from session
          Connection conn = null;
         boolean result = false;
         try {
