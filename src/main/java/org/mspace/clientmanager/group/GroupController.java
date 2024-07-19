@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -24,6 +25,7 @@ public class GroupController implements Serializable {
     private List<Group> groups;
     private Group group;
     private Group currentGroupItem;
+    private List<SelectItem> listgroups;
 
     @ManagedProperty(value = "#{facePainter}")
     private FacePainter facePainter;
@@ -33,10 +35,19 @@ public class GroupController implements Serializable {
         groupDAO = new GroupDAOImpl();
         refreshGroups();
         group = new Group();
+        listgroups = groupDAO.listGroups();
     }
 
     public List<Group> getGroups() {
         return groups;
+    }
+
+    public List<SelectItem> getListgroups() {
+        return listgroups;
+    }
+
+    public void setListgroups(List<SelectItem> listgroups) {
+        this.listgroups = listgroups;
     }
 
     public Group getCurrentGroupItem() {
@@ -80,7 +91,6 @@ public class GroupController implements Serializable {
     public void updateUserGroup() {
         if (currentGroupItem != null) {
             groupDAO.updateGroup(currentGroupItem.getId(), currentGroupItem.getGroupname(), currentGroupItem.getDescription());
-            System.out.println("*******&&&&&&*****" + currentGroupItem.getGroupname());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Group updated successfully."));
             refreshGroups();
         } else {

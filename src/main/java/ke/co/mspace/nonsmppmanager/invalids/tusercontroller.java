@@ -176,6 +176,7 @@ public class tusercontroller implements Serializable {
                             System.out.println("setting agent as "+result.getAgent());
                             session.setAttribute("agent", result.getAgent());
                             session.setAttribute("max_total", result.getMaxTotal());
+                            session.setAttribute("max_contacts", result.getMax_contacts());
                             session.setAttribute("max_daily", result.getMaxDaily());
                             session.setAttribute("max_weekly", result.getMaxWeekly());
                             session.setAttribute("max_monthly", result.getMaxMonthly());
@@ -188,17 +189,6 @@ public class tusercontroller implements Serializable {
                             session.setAttribute("non.smpp.manager",user1 );
                             session.setAttribute("loggedInUser", user1);
 
-
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
                             
                             try {
                                 long counttoday = result.getSmsCountToday();

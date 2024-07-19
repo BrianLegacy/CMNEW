@@ -13,28 +13,36 @@
                 .ui-growl-item-container.ui-state-highlight {
                     border-color: red;
 
-                } 
-            
-               .pgid-borderless.ui-panelgrid>*>tr,
-.pgid-borderless.ui-panelgrid .ui-panelgrid-cell {
-    border: none;
-}
+                }
+
+                .pgid-borderless.ui-panelgrid>*>tr,
+                .pgid-borderless.ui-panelgrid .ui-panelgrid-cell {
+                    border: none;
+                }
             </style>
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
 
             <div align="center">
-                <p:panel id="maintab" header="AVAILABLE USER ALPHANUMERIC" >
-                    
+                <p:panel id="maintab" header="AVAILABLE USER ALPHANUMERIC">
+                    <h:form>
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
+                            <p:commandButton value="XLSX" title="Export to XLSX" icon="fa fa-file-excel-o">
+                                <p:dataExporter type="xlsx" target=":table" fileName="Alphanumerics"/>
+                            </p:commandButton>
+                            <p:commandButton value="CSV" title="Export to CSV" icon="fa fa-file-csv">
+                                <p:dataExporter type="csv" target=":table" fileName="Alphanumerics"/>
+                            </p:commandButton>
+                        </div>
+                    </h:form>
                     <p:dataTable var="data" value="#{alphaScroller.allAlphas}" id="table"
                                  rows="15"
                                  paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                     
-                                 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+
                                  >
-                       
+
                         <p:column headerText="Username">
                             <h:outputText value="#{data.username}" />
                         </p:column>
@@ -43,16 +51,16 @@
                             <h:outputText value="#{data.name}" />
                         </p:column>
 
-                        <p:column headerText="Action">
-                           
+                        <p:column headerText="Action" exportable="false">
+
                             <!--<p:panelGrid columns="2"  style="width: 100px; ;" styleClass="pgid-borderless">-->
-                             
-                                 <h:form> 
+
+                            <h:form> 
                                 <p:commandLink style="padding: .3em 1em;" 
                                                id="editbutton"
                                                ajax="true"
                                                >
-<h:graphicImage 
+                                    <h:graphicImage 
                                         value="resources/images/edit.gif" width="15px">
 
                                     </h:graphicImage>
@@ -62,14 +70,14 @@
                                              event="click"
                                              />
                                     <p:tooltip for="editbutton" value="Click to edit alphanumeric"/>
-                      
+
                                 </p:commandLink>  
-                                
-                                     <p:commandLink rendered="#{userScroller.amIResellersUser()}" style="padding: .3em 1em;" 
-                                                      id="deletebutton"
+
+                                <p:commandLink rendered="#{userScroller.amIResellersUser()}" style="padding: .3em 1em;" 
+                                               id="deletebutton"
                                                ajax="true"
                                                >
-<h:graphicImage 
+                                    <h:graphicImage 
                                         value="resources/images/delete.gif" width="15px">
 
                                     </h:graphicImage>
@@ -78,17 +86,17 @@
                                              update="@([id$=deletegroupmodal])" 
                                              event="click"
                                              />
-       <p:tooltip for="deletebutton" value="Click to delete alphanumeric"/>
+                                    <p:tooltip for="deletebutton" value="Click to delete alphanumeric"/>
 
                                 </p:commandLink>
-                                
-</h:form>
-                          <!--</p:panelGrid>-->
-                           
-                                
-                                
-                                <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                                     <h:form>
+
+                            </h:form>
+                            <!--</p:panelGrid>-->
+
+
+
+                            <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                                <h:form>
                                     <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
                                         <tr >
                                             <td ><h:outputLabel for="groupname" value="Username" /></td>
@@ -98,52 +106,52 @@
                                         </tr>
                                         <tr><td> <h:inputHidden id="alphaId" value="#{alphaScroller.currentItem.id}">
 
-                        </h:inputHidden></td></tr>
+                                                </h:inputHidden></td></tr>
 
                                         <tr>
                                             <td ><h:outputLabel  value="Alphanumeric" /></td>
                                             <td  >
                                                 <p:selectOneMenu  
                                                     value="#{alphaScroller.currentItem.name}"
-                                                    
-                                         id="org_alphanumeric" 
-                                          required="true" requiredMessage="Aphanumerics Required" 
-                                          >
-                            <f:selectItem itemLabel="Select Sender ID"/>
-                            <f:selectItems  value="#{userController.comboAlphanumerics}"  />
-                            
-                        </p:selectOneMenu >
+
+                                                    id="org_alphanumeric" 
+                                                    required="true" requiredMessage="Aphanumerics Required" 
+                                                    >
+                                                    <f:selectItem itemLabel="Select Sender ID"/>
+                                                    <f:selectItems  value="#{smscontroller.listAlphas}"  />
+
+                                                </p:selectOneMenu >
                                             </td>
                                         </tr>
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
                                         <p:commandButton style="margin-right: 10px" ajax="true"  
-                                                          
+
                                                          value="Update">
                                             <p:ajax 
                                                 process="org_alphanumeric"
                                                 listener="#{alphaScroller.saveOrUpdateAlpha}"  
-                                                         oncomplete="PF('editgroupmodal').hide();" 
-                                                         update="@([id$=table])"
-                                                         />
-                                        
-                                        
+                                                oncomplete="PF('editgroupmodal').hide();" 
+                                                update="@([id$=table])"
+                                                />
+
+
                                         </p:commandButton>
-                                        
-                                        
-                                        
+
+
+
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
-                                     </h:form>
-                                </p:dialog> 
+                                </h:form>
+                            </p:dialog> 
 
 
 
 
-                                <p:dialog header="Delete  Alphanumeric" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
-                                    <h:form>
+                            <p:dialog header="Delete  Alphanumeric" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
+                                <h:form>
                                     <p:outputLabel value="Are you sure you want to delete `#{alphaScroller.currentItem.name}` group?.
                                                    You cannot undo this operation."/>
                                     <br/>
@@ -155,20 +163,20 @@
                                                          value="Delete"></p:commandButton>
                                         <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
                                     </div>
-                                    </h:form>
-                                </p:dialog> 
-                           
-                        </p:column>
-<f:facet name="paginatorTopLeft">
-    <h:form>
-                <p:commandButton type="button" icon="pi pi-refresh"/></h:form>
-            </f:facet>
+                                </h:form>
+                            </p:dialog> 
 
-            <f:facet name="paginatorBottomRight">
-                
-                <h:form>
-                    <p:commandButton type="button" icon="pi pi-cloud-upload"/></h:form>
-            </f:facet>
+                        </p:column>
+                        <f:facet name="paginatorTopLeft">
+                            <h:form>
+                                <p:commandButton type="button" icon="pi pi-refresh"/></h:form>
+                        </f:facet>
+
+                        <f:facet name="paginatorBottomRight">
+
+                            <h:form>
+                                <p:commandButton type="button" icon="pi pi-cloud-upload"/></h:form>
+                        </f:facet>
 
                     </p:dataTable>
 
@@ -179,9 +187,9 @@
 
                 </p:panel>
             </div>
-            
-            
-            
+
+
+
         </ui:composition>
     </h:body>
 </html> 

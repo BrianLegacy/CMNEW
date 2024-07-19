@@ -14,27 +14,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 /**
  *
  * @author mspace
  */
-
 @ManagedBean(name = "logo_client")
 @SessionScoped
 public class logo_client implements Serializable {
 
     HttpSession session = getsession.getSession();
     client_logo clnt = new client_logo();
-    JdbcUtil jdbcUtil=new JdbcUtil();
+    JdbcUtil jdbcUtil = new JdbcUtil();
 
     private String linkLabel;
     private String link;
@@ -69,7 +65,7 @@ public class logo_client implements Serializable {
         return ret;
     }
 
-    public String getClientName(){
+    public String getClientName() {
         int reselId = (int) session.getAttribute("resellerId");
         clientName = reselId > 0 ? getResellerName(reselId) : "MSpace";
         link = reselId != 0 ? "" : "https://www.mspace.co.ke";
@@ -82,7 +78,7 @@ public class logo_client implements Serializable {
         this.clientName = clientName;
     }
 
-    public String getClientContact(){
+    public String getClientContact() {
         int reselId = (int) session.getAttribute("resellerId");
         clientContact = reselId > 0 ? getResellerContact(reselId) : "0722 962 934";
         return clientContact;
@@ -104,19 +100,19 @@ public class logo_client implements Serializable {
         System.out.println("home page settingkserter");
         session.setAttribute("resellerId", 0);
         char adminv;
-           if((getsession.getSession().getAttribute("temporaladmin"))!=null ){
-                 System.out.println("temporal admin not null");
-       adminv=(char) getsession.getSession().getAttribute("temporaladmin");
-      
-        long loggedInId=(long)getsession.getSession().getAttribute("id");
-        String retriedImagePath=clnt.clnt_logo2((int)loggedInId);
-         session.setAttribute("logopath", retriedImagePath);
-          System.out.println("home page logged in id  "+loggedInId);
-               System.out.println("homepage clientlogopath "+retriedImagePath);
-         return retriedImagePath;
+        if ((getsession.getSession().getAttribute("temporaladmin")) != null) {
+            System.out.println("temporal admin not null");
+            adminv = (char) getsession.getSession().getAttribute("temporaladmin");
+            String loggedInUsername = (String) org.mspace.clientmanager.util.getsession.getSession().getAttribute("username");
 
-         }
-                     
+            long loggedInId = (long) getsession.getSession().getAttribute("id");
+            String retriedImagePath = clnt.clnt_logo2(loggedInUsername);
+            session.setAttribute("logopath", retriedImagePath);
+            System.out.println("home page logged in id  " + loggedInId);
+            System.out.println("homepage clientlogopath " + retriedImagePath);
+            return retriedImagePath;
+
+        }
 
         logopath = clnt.clnt_logo();
         a = logopath;
@@ -125,8 +121,8 @@ public class logo_client implements Serializable {
             System.out.println("home page a is null");
             a = "../files/config/MSpacelogo.png";
         }
-        
-  System.out.println("home page a not is null");
+
+        System.out.println("home page a not is null");
         session.setAttribute("logopath", a);
 
         return a;
@@ -161,13 +157,16 @@ public class logo_client implements Serializable {
 
     public String clnt_logo2() {
         int id;
+        String username = null;
         try {
             HttpServletRequest request = getsession.getrequest();
             id = request != null ? Integer.valueOf(request.getParameter("id")) : 0;
+            username = request != null ? String.valueOf(request.getParameter("username")) : "";
             session.setAttribute("resellerId", id);
 
         } catch (NumberFormatException e) {
             id = (int) session.getAttribute("resellerId");
+
         }
 
         resellerId = id;
@@ -175,7 +174,7 @@ public class logo_client implements Serializable {
         session.setAttribute("resellerId", id);
 //        clientName = getResellerName(id);
 
-        logopath = clnt.clnt_logo2(id);
+        logopath = clnt.clnt_logo2(username);
         a = logopath;
 
         if (a == null || a.isEmpty()) {
@@ -184,7 +183,7 @@ public class logo_client implements Serializable {
         }
 
         session.setAttribute("logopath", a);
-         session.setAttribute("logopath2", a);
+        session.setAttribute("logopath2", a);
 
         return a;
     }
@@ -192,24 +191,25 @@ public class logo_client implements Serializable {
     public String current_yr() {
 
         int reselId = 0;
-        if(session.getAttribute("agent")!=null && !((String) session.getAttribute("agent")).equalsIgnoreCase("") ){
-            reselId=Integer.parseInt((String) session.getAttribute("agent"));
+        if (session.getAttribute("agent") != null && !((String) session.getAttribute("agent")).equalsIgnoreCase("")) {
+            reselId = Integer.parseInt((String) session.getAttribute("agent"));
         }
-        System.out.println("link label "+reselId);
+        System.out.println("link label " + reselId);
         linkLabel = reselId != 0 ? "Licenced to " + getResellerName(reselId) + "" : "MSpace Solutions Ltd. ";
 
         link = reselId != 0 ? "" : "https://www.mspace.co.ke";
         // session.setAttribute("urlLink", link);
         return new SimpleDateFormat("yyyy").format(new Date());
     }
-       public String current_yr2() {
+
+    public String current_yr2() {
 
         int reselId = (int) session.getAttribute("resellerId");
 
         linkLabel = (int) session.getAttribute("resellerId") != 0 ? "Licenced to " + getResellerName(reselId) + "" : "MSpace Solutions Ltd. ";
 
         link = (int) session.getAttribute("resellerId") != 0 ? "" : "https://www.mspace.co.ke";
-      
+
         return new SimpleDateFormat("yyyy").format(new Date());
     }
 
@@ -223,9 +223,9 @@ public class logo_client implements Serializable {
     }
 
     private String getResellerName(int id) {
-         Connection conn = null;
+        Connection conn = null;
         boolean result = false;
-        String lclientName="";
+        String lclientName = "";
         try {
             conn = jdbcUtil.getConnectionTodbTask();
             String sql = "select * from tClient where id =?";
@@ -233,7 +233,7 @@ public class logo_client implements Serializable {
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setLong(1, id);
             final ResultSet rs = pst.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 lclientName = rs.getString("clientName");
             }
 
@@ -243,14 +243,15 @@ public class logo_client implements Serializable {
             e.printStackTrace();
             JdbcUtil.closeConnection(conn);
         }
-return lclientName;
+        return lclientName;
 
     }
 //
+
     private String getResellerContact(long id) {
-Connection conn = null;
+        Connection conn = null;
         boolean result = false;
-         String lclientContact="";
+        String lclientContact = "";
         try {
             conn = jdbcUtil.getConnectionTodbSMS();
             String sql = "select contact_number from tUSER wherer id =?";
@@ -258,23 +259,21 @@ Connection conn = null;
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setLong(1, id);
             final ResultSet rs = pst.executeQuery();
-           if(rs.next()){
-               lclientContact=rs.getString("contact_number");
-               
-           }
-           getsession.getSession().setAttribute("clientContact", lclientContact);
-         
+            if (rs.next()) {
+                lclientContact = rs.getString("contact_number");
+
+            }
+            getsession.getSession().setAttribute("clientContact", lclientContact);
 
             JdbcUtil.closeConnection(conn);
 
         } catch (SQLException e) {
-            
+
             e.printStackTrace();
             JdbcUtil.closeConnection(conn);
             return "";
         }
-          return lclientContact;
-       
+        return lclientContact;
 
     }
 

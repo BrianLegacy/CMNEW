@@ -4,12 +4,26 @@
  */
 package org.mspace.clientmanager.sms;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import ke.co.mspace.nonsmppmanager.model.Alpha;
+import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
+import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import org.mspace.clientmanager.group.GroupDAO;
+import org.mspace.clientmanager.group.GroupDAOImpl;
 import org.mspace.clientmanager.user.UserController;
 
 /**
@@ -26,17 +40,43 @@ public class SmsController implements Serializable {
     private List<UserController> smsUsers;
     private UserController newSmsUser;
     private UserController currentSmsUser;
+    private AlphaServiceApi alphaDAO;
+    private String alphanumeric;
+    private Alpha selectedAlpha;
+    private List<Alpha> senderIds;
+    private GroupDAO groupDAO;
+    private List<SelectItem> listGroups;
+
+    private List<SelectItem> listAlphas;
+    private final JdbcUtil jdbcUtil = new JdbcUtil();
 
     @PostConstruct
     public void init() {
         smsDAO = new SmsDAOImpl();
+        alphaDAO = new AlphaServiceImpl();
+        groupDAO = new GroupDAOImpl();
         refreshUsers();
         newSmsUser = new UserController();
-
+        currentSmsUser = new UserController();  
+        
     }
 
     public List<UserController> getSmsUsers() {
         return smsUsers;
+    }
+
+    public List<SelectItem> getListAlphas() {
+        listAlphas = smsDAO.getAlphas();
+        return listAlphas;
+    }
+
+    public List<SelectItem> getListGroups() {
+        listGroups = groupDAO.listGroups();
+        return listGroups;
+    }
+    
+    public List<Alpha> getSenderIds() {
+        return senderIds;
     }
 
     public UserController getNewSmsUser() {
@@ -53,13 +93,130 @@ public class SmsController implements Serializable {
 
     public void setCurrentSmsUser(UserController currentSmsUser) {
         this.currentSmsUser = currentSmsUser;
+        refreshAlphas();
+    }
+
+    public String getAlphanumeric() {
+        return alphanumeric;
+    }
+
+    public void setAlphanumeric(String alphanumeric) {
+        this.alphanumeric = alphanumeric;
+    }
+
+    public Alpha getSelectedAlpha() {
+        return selectedAlpha;
+    }
+
+    public void setSelectedAlpha(Alpha selectedAlpha) {
+        this.selectedAlpha = selectedAlpha;
+    }
+
+    public void addSmsUser() {
+        if (newSmsUser != null) {
+            try {
+                newSmsUser.saveUser();
+                refreshUsers();
+            } catch (IOException e) {
+                JsfUtil.addErrorMessage("Error occured while trying to create user");
+            }
+        }
+    }
+
+    public void editSmsUser() {
+        if (currentSmsUser != null) {
+            if (smsDAO.editSmsUser(currentSmsUser)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "User updated successfully."));
+            } else {
+                JsfUtil.addErrorMessage("Error while editing user");
+            }
+            refreshUsers();
+        } else {
+            JsfUtil.addErrorMessage("No User selected for update.");
+
+        }
+    }
+
+    public void manageSmsCredit() {
+        if (currentSmsUser != null) {
+            if (currentSmsUser.getCreditsToManage() < 0) {
+                JsfUtil.addErrorMessage("Credit has to be positive value.");
+            } else {
+                try {
+                    currentSmsUser.manageCredit();
+                    refreshUsers();
+                } catch (IOException e) {
+                    JsfUtil.addErrorMessage("Error reading the form try again");
+                }
+            }
+
+        }
+    }
+
+    public void deleteUser() {
+        if (currentSmsUser != null) {
+            if (smsDAO.deleteSmsUser(currentSmsUser)) {
+                refreshUsers();
+                JsfUtil.addSuccessMessage("User was deleted successfully. ");
+            } else {
+                JsfUtil.addSuccessMessage("Try again Something went wrong. ");
+            }
+        } else {
+            JsfUtil.addErrorMessage("Select User and try again. ");
+        }
+
+    }
+
+    public void assignAlpha() {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            if (alphaDAO.findAlphanumericByUsername(currentSmsUser.getUsername(), alphanumeric, conn)) {
+                JsfUtil.addErrorMessage("Sender Id already exists for  " + currentSmsUser.getUsername());
+            } else {
+                String alphaType = alphaDAO.getAlphanumericType(alphanumeric, conn);
+                if (alphaDAO.persistAlpha(currentSmsUser.getUsername(), alphanumeric, alphaType, conn) > 0) {
+                    refreshAlphas();
+                    JsfUtil.addSuccessMessage(" Sender Id successfully assigned ");
+                } else {
+                    JsfUtil.addErrorMessage("Something went wrong, try again");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+    }
+
+    public void deleteAlpha() {
+        if (selectedAlpha != null) {
+            try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+                if (alphaDAO.removeUseAlpha(selectedAlpha.getName(), selectedAlpha.getUsername(), conn) > 0) {
+                    refreshAlphas();
+                    JsfUtil.addSuccessMessage("Successfully deleted Sender ID");
+                } else {
+                    JsfUtil.addErrorMessage("Something went wrong, Try again");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JsfUtil.addErrorMessage("Select sender Id and try again. ");
+        }
     }
 
     private void refreshUsers() {
         smsUsers = smsDAO.fetchSmsusers();
     }
-    
-    public void resetSmsUser(){
-        newSmsUser= new UserController();
+
+    private void refreshAlphas() {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            senderIds = alphaDAO.loadAlphanumerics(currentSmsUser.getUsername(), conn);
+        } catch (SQLException ex) {
+            Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void resetSmsUser() {
+        newSmsUser = new UserController();
     }
 }

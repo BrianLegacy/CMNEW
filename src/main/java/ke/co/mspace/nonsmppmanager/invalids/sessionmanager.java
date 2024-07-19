@@ -5,7 +5,6 @@
  */
 package ke.co.mspace.nonsmppmanager.invalids;
 
-
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpSession;
  *
  * @author mspace
  */
-
-
 @ManagedBean(name = "sessionmanager")
 @SessionScoped
 public class sessionmanager implements Serializable {
@@ -28,18 +25,18 @@ public class sessionmanager implements Serializable {
     private String info;
 
     public String getInfo() {
-        
-          int temporaladmin =Character.getNumericValue( (char) session.getAttribute("temporaladmin"));
-       
-       String agent =(String) session.getAttribute("agent");
-       
-       if(!agent.isEmpty()){
-           return " ";
-       }
-       if(temporaladmin==3){
-           return " ";
-       }
-       
+
+        int temporaladmin = Character.getNumericValue((char) session.getAttribute("temporaladmin"));
+
+        String agent = (String) session.getAttribute("agent");
+
+        if (!agent.isEmpty()) {
+            return " ";
+        }
+        if (temporaladmin == 3) {
+            return " ";
+        }
+
         Object obj = session.getAttribute("resellerId");
 
         if (obj != null) {
@@ -55,7 +52,7 @@ public class sessionmanager implements Serializable {
     }
 
     public long getRemainigsms() {
-        System.out.println("Long Range Validate rmaining sms"+remainigsms);
+        System.out.println("Long Range Validate rmaining sms" + remainigsms);
         return remainigsms;
     }
 
@@ -75,28 +72,28 @@ public class sessionmanager implements Serializable {
     }
 
     public String getsessionname() {
-
-        String m = "Welcome   ";
+        String m = "Welcome ";
         remainigsms = (long) session.getAttribute("max_total");
-        String username =(String) session.getAttribute("username");
-        
-        String message = (m + username +" SMS Balance " + remainigsms);
-        
-        
-        
+        int emailBalance = (int) session.getAttribute("max_contacts");
+        String username = (String) session.getAttribute("username");
 
+        // Check if remainigsms or emailBalance are -1 and adjust the message accordingly
+        String smsBalanceMessage = (remainigsms == -1) ? "Unlimited" : String.valueOf(remainigsms);
+        String emailBalanceMessage = (emailBalance == -1) ? "Unlimited" : String.valueOf(emailBalance);
+
+        // Formulate the message
+        String message = m + username + " - SMS : <b>" + smsBalanceMessage + "</b>, Email : <b>" + emailBalanceMessage + "</b>";
         return message;
     }
-    
-    
-      public Boolean showChat() {
 
-      String uname=FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("admin").toString();
-      String agent= (String) getsession.getSession().getAttribute("agent") ;
-        if(!agent.isEmpty()){
+    public Boolean showChat() {
+
+        String uname = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("admin").toString();
+        String agent = (String) getsession.getSession().getAttribute("agent");
+        if (!agent.isEmpty()) {
             return false;
         }
-        return !uname.equalsIgnoreCase("3")?true:false;
+        return !uname.equalsIgnoreCase("3") ? true : false;
     }
 
     public String getsubaccstatus() {
@@ -116,70 +113,64 @@ public class sessionmanager implements Serializable {
 
         return resId > 0 ? resPayBill : "778827";
     }
-    
-      client_logo clnt = new client_logo();
+
+    client_logo clnt = new client_logo();
 
     public String getLogoPath() {
-        
-           System.out.println("home page settingkserter");
+
+        System.out.println("home page settingkserter");
         session.setAttribute("resellerId", 0);
         char adminv;
-       
-        
-        
-           if((org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin"))!=null ){
-                 System.out.println("temporal admin not null");
-       adminv=(char) org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin");
-       if(adminv=='1'){
-            return clnt.clnt_logo_mod();
-        }
-        long loggedInId=(long)org.mspace.clientmanager.util.getsession.getSession().getAttribute("id");
-        String retriedImagePath=clnt.clnt_logo2((int)loggedInId);
-         session.setAttribute("clientlogopath", retriedImagePath);
-          System.out.println("home page logged in id  "+loggedInId);
-               System.out.println("homepage clientlogopath "+retriedImagePath);
-         return retriedImagePath;
 
-         }
-        
-        
-        
-        
-        
+        if ((org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin")) != null) {
+            System.out.println("temporal admin not null");
+            adminv = (char) org.mspace.clientmanager.util.getsession.getSession().getAttribute("temporaladmin");
+            if (adminv == '1') {
+                return clnt.clnt_logo_mod();
+            }
+            long loggedInId = (long) org.mspace.clientmanager.util.getsession.getSession().getAttribute("id");
+            String loggedInUsername = (String) org.mspace.clientmanager.util.getsession.getSession().getAttribute("username");
+            String retriedImagePath = clnt.clnt_logo2(loggedInUsername);
+            session.setAttribute("clientlogopath", retriedImagePath);
+            System.out.println("home page logged in id  " + loggedInId);
+            System.out.println("homepage clientlogopath " + retriedImagePath);
+            return retriedImagePath;
+
+        }
+
         HttpSession session = getsession.getSession();
         company_logopath = (String) session.getAttribute("clientlogopath");
 
 //                company_logopath =client_logo.clnt_logo();
-
         //String path = new File("").getAbsolutePath();
         //String paath = session.getServletContext().getRealPath("/");
-        System.out.println("String real path: "+company_logopath);
-         System.out.println("String real path: "+(String) session.getAttribute("logopath2"));
+        System.out.println("String real path: " + company_logopath);
+        System.out.println("String real path: " + (String) session.getAttribute("logopath2"));
 //         return "https://i.pinimg.com/originals/cf/8a/11/cf8a11b44a748c4ce286fb020f920ada.png";
         return company_logopath;
-        
-      
+
     }
-    
+
     public String getUrl() {
         HttpSession session = getsession.getSession();
-             String agent =(String) session.getAttribute("agent");
-        int temporaladmin =Character.getNumericValue( (char) session.getAttribute("temporaladmin"));
-         if(!agent.isEmpty()){
+        String agent = (String) session.getAttribute("agent");
+        int temporaladmin = Character.getNumericValue((char) session.getAttribute("temporaladmin"));
+        if (!agent.isEmpty()) {
             return "";
         }
-        if(temporaladmin==3){
+        if (temporaladmin == 3) {
             return "";
         }
         return (String) session.getAttribute("urlLink");
     }
+
     public String getClientname() {
-         String agent =(String) session.getAttribute("agent");
-        int temporaladmin =Character.getNumericValue( (char) session.getAttribute("temporaladmin"));
-        if(!agent.isEmpty()){
+        String agent = (String) session.getAttribute("agent");
+        int temporaladmin = Character.getNumericValue((char) session.getAttribute("temporaladmin"));
+        if (!agent.isEmpty()) {
             return "";
         }
-        if(temporaladmin==3){
+        if (temporaladmin == 3) {
             return "";
         }
         HttpSession session = getsession.getSession();

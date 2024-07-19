@@ -11,25 +11,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Alpnumeric;
-import static ke.co.mspace.nonsmppmanager.model.AuthenticationBean.AUTH_KEY;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *
@@ -39,7 +25,7 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
     private static final Logger LOG = Logger.getLogger(AlphaServiceImpl.class.getName());
     private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
-
+    private JdbcUtil jdbcutil = new JdbcUtil();
 //    private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 //    private final String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
     private final String user = SessionUtil.getAUTH_KEY();
@@ -57,47 +43,29 @@ public class AlphaServiceImpl implements AlphaServiceApi {
     }
 
     @Override
-    public Map<String, String> getAlphanumericsNames(Connection conn) {
+    public List<SelectItem> getAlphanumericsNames() {
+        String sql = "SELECT short_code, sid_type FROM tSDPNew WHERE short_code_type = 2 ORDER BY short_code";
+        String sqlReseller = "SELECT t.short_code, t.sid_type FROM tSDPNew t INNER JOIN tUSER u ON t.agent_id = u.id "
+                + "WHERE t.short_code_type = 2 AND t.agent_id = ? ORDER BY short_code";
 
-        //String sql = "select distinct short_code from tSDP where short_code_type = 2";
-        String sql = "select short_code,sid_type from tSDPNew where short_code_type = 2 ";
-        
-        String sqlReseller = "select  t.short_code,t.sid_type  FROM tSDPNew t inner join tUSER u on "
-                + "t.agent_id = u.id where t.short_code_type = 2 and t.agent_id = '" + user_id + "'";
+        List<SelectItem> selectItems = new ArrayList<>();
 
-      
-        ResultSet rs = null;
-        PreparedStatement stmt = null;
-        Map<String, String> alphanumerics = new HashMap<>();
-        List<String> airtelalphas = new ArrayList<>();
+        try (Connection conn = jdbcutil.getConnectionTodbSMS() ;PreparedStatement stmt = conn.prepareStatement(SessionUtil.getReseller().equalsIgnoreCase("none") ? sql : sqlReseller)) {
+            if (!SessionUtil.getReseller().equalsIgnoreCase("none")) {
+                stmt.setString(1, user_id);
+            }
 
-        try {
-            stmt = conn.prepareStatement(SessionUtil.getReseller().equalsIgnoreCase("none") ? sqlReseller : sql);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                String a = rs.getString("short_code");
-
-                alphanumerics.put(a, a);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String shortCode = rs.getString("short_code");
+                    selectItems.add(new SelectItem(shortCode, shortCode));
+                }
             }
         } catch (SQLException e) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
-        } finally {
-
-            try {
-                if (rs != null) {
-
-                    rs.close();
-                }
-
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, "Error retrieving alphanumeric names", e);
         }
-        return alphanumerics;
+
+        return selectItems;
     }
 
     public List<SelectItem> getGroups(Connection conn) {
@@ -121,7 +89,8 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
             }
         } catch (SQLException e) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, e.getMessage());
         } finally {
 
             try {
@@ -132,9 +101,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
                 if (stmt != null) {
                     stmt.close();
+
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AlphaServiceImpl.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -161,7 +132,8 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
             }
         } catch (SQLException e) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, e.getMessage());
         } finally {
 
             try {
@@ -172,9 +144,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
                 if (stmt != null) {
                     stmt.close();
+
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AlphaServiceImpl.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -203,9 +177,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
             while (rs.next()) {
                 String a = rs.getString("airtel");
                 airtelalphas.add(a);
+
             }
         } catch (SQLException e) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, e.getMessage());
         } finally {
 
             try {
@@ -216,9 +192,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
                 if (stmt != null) {
                     stmt.close();
+
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AlphaServiceImpl.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -246,9 +224,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
             while (rs.next()) {
                 String a = rs.getString("short_code");
                 alphanumerics.add(a);
+
             }
         } catch (SQLException e) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, e.getMessage());
         } finally {
 
             try {
@@ -259,9 +239,11 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
                 if (stmt != null) {
                     stmt.close();
+
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AlphaServiceImpl.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -300,33 +282,25 @@ public class AlphaServiceImpl implements AlphaServiceApi {
     @Override
     public List<Alpha> getAgentAlphas(Connection conn, String user) {
 
-        UserScroller us = new UserScroller();
-        String selected_id = us.userSelectedUSerID();
-        System.out.println();
-        String sqlReseller = "SELECT t.* FROM tAllowedAlphanumerics t inner join tUSER u on "
-                + "t.username = u.username where u.agent = '926'";
-        System.out.println("*******************" + sqlReseller);
+        String sqlReseller = "SELECT short_code, contactEmail FROM tSDPNew WHERE agent_id = ?";
         List<Alpha> result = new ArrayList<>();
-        try {
 
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sqlReseller);
+        try (Connection connection = conn; PreparedStatement stmt = connection.prepareStatement(sqlReseller)) {
 
-            while (rs.next()) {
-                Alpha alpha = new Alpha();
-                alpha.setId(rs.getLong("id"));
-                alpha.setUsername(rs.getString("username"));
-                alpha.setName(rs.getString("alphanumeric"));
-
-                result.add(alpha);
+            stmt.setString(1, user);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Alpha alpha = new Alpha();
+                    alpha.setUsername(rs.getString("contactEmail"));
+                    alpha.setName(rs.getString("short_code"));
+                    result.add(alpha);
+                }
             }
-            JdbcUtil.closeConnection(conn);
         } catch (SQLException ex) {
             JdbcUtil.printSQLException(ex);
         }
 
         return result;
-
     }
 
     @Override
@@ -334,17 +308,43 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
         String sql = "INSERT INTO tAllowedAlphanumerics(username, alphanumeric,sid_type) VALUES (?, ?,?)";
 
-//         String sql = "update tAllowedAlphanumerics set "
-//                + "alphanumeric= ?,sid_type=? WHERE username in "
-//                + "(select username from tUSER where username = ? or super_account_id in"
-//                + "(select id from tUSER where username = ?))";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+        int count = 0;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, alpha);
+            pstmt.setString(3, alpaType);
+
+            count = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            JdbcUtil.printSQLException(e);
+
+        }
         // Bind values to the parameters
-        pstmt.setString(1, username);
-        pstmt.setString(2, alpha);
-        pstmt.setString(3, alpaType);
-        int count = pstmt.executeUpdate();
+
         return count;
+    }
+
+    @Override
+    public List<Alpha> loadAlphanumerics(String username, Connection conn) {
+        String sql = "SELECT * FROM tAllowedAlphanumerics WHERE username= ? ";
+        List<Alpha> result = new ArrayList<>();
+
+        try (Connection connection = conn; PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Alpha alpha = new Alpha();
+                    alpha.setUsername(rs.getString("username"));
+                    alpha.setName(rs.getString("alphanumeric"));
+                    alpha.setMessage(rs.getString("sid_type"));
+                    result.add(alpha);
+                }
+            }
+        } catch (SQLException ex) {
+            JdbcUtil.printSQLException(ex);
+        }
+
+        return result;
     }
 
     @Override
@@ -374,12 +374,10 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
-    public void updateAgentAlphas(String username, String alphanumeric, Connection conn) throws SQLException {
-        System.out.println("Enter Method");
-//sql = "UPDATE tAllowedAlphanumerics SET  alphanumeric=? WHERE username=?";
-        //String sql = "Update tSDP set agent_id =? where short_code=?";
+    public boolean updateAgentAlphas(String username, String alphanumeric, Connection conn) throws SQLException {
         String sql = "Update tSDPNew set agent_id =? where short_code=?";
-        System.out.println("The querry" + sql);
+
+        boolean result = false;
         ////////////////////////////////////////////////////////
         //Inserting values
         ////////////////////////////////////////////////////////
@@ -387,12 +385,10 @@ public class AlphaServiceImpl implements AlphaServiceApi {
         // Bind values to the parameters
         pstmt.setString(1, username);
         pstmt.setString(2, alphanumeric);
-        System.out.println(pstmt);
 
         // Execute the query
-        int count = pstmt.executeUpdate();
-        System.out.println("Count status" + count);
-
+        result = pstmt.executeUpdate() > 0;
+        return result;
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -439,180 +435,157 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
         String sql = "DELETE FROM tAllowedAlphanumerics WHERE username=?";
 
-        ////////////////////////////////////////////////////////
-        //Deleting values
-        ////////////////////////////////////////////////////////
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        // Bind values to the parameters
-        pstmt.setString(1, aThis.getUsername());
+        int count = 0;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setString(1, aThis.getUsername());
+            count = pstmt.executeUpdate();
 
-        // Execute the query
-        int count = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, e);
+
+        }
 
     }
 
     @Override
-    public void removeAgentAlpha(Alpha selected, Connection conn) {
-
-        try {
-            String sql = "Update tSDPNew set agent_id ='' where short_code=?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+    public boolean removeAgentAlpha(Alpha selected, Connection conn) {
+        String sql = "Update tSDPNew set agent_id ='' where short_code=?";
+        boolean result = false;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, selected.getName());
-            int count = pstmt.executeUpdate();
-            System.out.println("Count status" + count);
+
+            result = pstmt.executeUpdate() > 0;
+
         } catch (SQLException ex) {
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-
-    }
-
-    @Override
-    public void generateXSL() {
-
-        try {
-
-            HSSFWorkbook wb = new HSSFWorkbook();
-            Map<String, CellStyle> styles = createStyles(wb);
-            HSSFSheet sheet = wb.createSheet("User_Alphanumerics_sheet_1");
-
-            PrintSetup printSetup = sheet.getPrintSetup();
-            printSetup.setLandscape(true);
-            sheet.setFitToPage(true);
-            sheet.setHorizontallyCenter(true);
-
-            //title row
-            Row titleRow = sheet.createRow(0);
-            titleRow.setHeightInPoints(45);
-            Cell titleCell = titleRow.createCell(0);
-            titleCell.setCellValue("USER ALPHANUMERICS LIST");
-            titleCell.setCellStyle(styles.get("title"));
-            sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$B$1"));
-
-            String[] titles = {"USERNAME", "ALPHANUMERIC"};
-            HSSFRow row = sheet.createRow(1);
-            row.setHeightInPoints(40);
-
-            Cell headerCell;
-            for (int i = 0; i < titles.length; i++) {
-                headerCell = row.createCell(i);
-                headerCell.setCellValue(titles[i]);
-                headerCell.setCellStyle(styles.get("header"));
-            }
-            List<Alpha> alphaList = null;
-
-            JdbcUtil util = new JdbcUtil();
-            Connection conn = util.getConnectionTodbSMS();
-
-            alphaList = getAllAlphanumerics(conn);
-            JdbcUtil.closeConnection(conn);
-
-            int rowNum = 2;
-
-            for (Alpha alpha : alphaList) {
-                row = sheet.createRow(rowNum);
-                row.createCell(0).setCellValue(alpha.getUsername());
-                row.createCell(1).setCellValue(alpha.getName());
-
-                rowNum++;
-            }
-
-            sheet.setColumnWidth(0, 20 * 256); //30 characters wide
-            sheet.setColumnWidth(1, 20 * 256);
-
-            FacesContext context = FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-            res.setContentType("application/vnd.ms-excel");
-            res.setHeader("Content-disposition", "attachment;filename=mydata.xlsx");
-
-            ServletOutputStream out = res.getOutputStream();
-            wb.write(out);
-            out.flush();
-            out.close();
-            FacesContext.getCurrentInstance().responseComplete();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static Map<String, CellStyle> createStyles(Workbook wb) {
-        Map<String, CellStyle> styles = new HashMap<>();
-        CellStyle style;
-        Font titleFont = wb.createFont();
-        titleFont.setFontHeightInPoints((short) 18);
-        titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        style.setFont(titleFont);
-        styles.put("title", style);
-
-        Font monthFont = wb.createFont();
-        monthFont.setFontHeightInPoints((short) 11);
-        monthFont.setColor(IndexedColors.WHITE.getIndex());
-        style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        style.setFont(monthFont);
-        style.setWrapText(true);
-        styles.put("header", style);
-
-        style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setWrapText(true);
-        style.setBorderRight(CellStyle.BORDER_THIN);
-        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(CellStyle.BORDER_THIN);
-        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderTop(CellStyle.BORDER_THIN);
-        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderBottom(CellStyle.BORDER_THIN);
-        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        styles.put("cell", style);
-
-        style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
-        styles.put("formula", style);
-
-        style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
-        styles.put("formula_2", style);
-
-        return styles;
+        return result;
     }
 
 //    @Override
-//    public String  getAgentAlphanumerics(Connection conn,String user) {
-//      // String sql = "select distinct short_code from tSDP where short_code_type = 2";
-//        UserScroller us=new UserScroller();
-//        String sql = "SELECT DISTINCT t.short_code  FROM tSDP t inner join tUSER u on "
-//                + "t.agent_id = u.id where t.short_code_type = 2 and t.agent_id = '"+user+'"';
-//         System.out.println("\n"+sql);
-//        ResultSet rs = null;
-//        PreparedStatement stmt = null;
-//        List<String> alphanumerics = new ArrayList<>();
-//        
+//    public void generateXSL() {
+//
 //        try {
-//            stmt = conn.prepareStatement( sql);
-//            rs = stmt.executeQuery();
-//            while (rs.next()) {
-//                String a = rs.getString("short_code");
-//                alphanumerics.add(a);
+//
+//            HSSFWorkbook wb = new HSSFWorkbook();
+//            Map<String, CellStyle> styles = createStyles(wb);
+//            HSSFSheet sheet = wb.createSheet("User_Alphanumerics_sheet_1");
+//
+//            PrintSetup printSetup = sheet.getPrintSetup();
+//            printSetup.setLandscape(true);
+//            sheet.setFitToPage(true);
+//            sheet.setHorizontallyCenter(true);
+//
+//            //title row
+//            Row titleRow = sheet.createRow(0);
+//            titleRow.setHeightInPoints(45);
+//            Cell titleCell = titleRow.createCell(0);
+//            titleCell.setCellValue("USER ALPHANUMERICS LIST");
+//            titleCell.setCellStyle(styles.get("title"));
+//            sheet.addMergedRegion(CellRangeAddress.valueOf("$A$1:$B$1"));
+//
+//            String[] titles = {"USERNAME", "ALPHANUMERIC"};
+//            HSSFRow row = sheet.createRow(1);
+//            row.setHeightInPoints(40);
+//
+//            Cell headerCell;
+//            for (int i = 0; i < titles.length; i++) {
+//                headerCell = row.createCell(i);
+//                headerCell.setCellValue(titles[i]);
+//                headerCell.setCellStyle(styles.get("header"));
 //            }
-//        } catch (SQLException e) {
-//            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+//            List<Alpha> alphaList = null;
+//
+//            JdbcUtil util = new JdbcUtil();
+//            Connection conn = util.getConnectionTodbSMS();
+//
+//            alphaList = getAllAlphanumerics(conn);
+//            JdbcUtil.closeConnection(conn);
+//
+//            int rowNum = 2;
+//
+//            for (Alpha alpha : alphaList) {
+//                row = sheet.createRow(rowNum);
+//                row.createCell(0).setCellValue(alpha.getUsername());
+//                row.createCell(1).setCellValue(alpha.getName());
+//
+//                rowNum++;
+//            }
+//
+//            sheet.setColumnWidth(0, 20 * 256); //30 characters wide
+//            sheet.setColumnWidth(1, 20 * 256);
+//
+//            FacesContext context = FacesContext.getCurrentInstance();
+//            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+//            res.setContentType("application/vnd.ms-excel");
+//            res.setHeader("Content-disposition", "attachment;filename=mydata.xlsx");
+//
+//            ServletOutputStream out = res.getOutputStream();
+//            wb.write(out);
+//            out.flush();
+//            out.close();
+//            FacesContext.getCurrentInstance().responseComplete();
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
-//        return alphanumerics.toString();
-//   }
+//    }
+//    private static Map<String, CellStyle> createStyles(Workbook wb) {
+//        Map<String, CellStyle> styles = new HashMap<>();
+//        CellStyle style;
+//        Font titleFont = wb.createFont();
+//        titleFont.setFontHeightInPoints((short) 18);
+//        titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+//        style = wb.createCellStyle();
+//        style.setAlignment(CellStyle.ALIGN_CENTER);
+//        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//        style.setFont(titleFont);
+//        styles.put("title", style);
+//
+//        Font monthFont = wb.createFont();
+//        monthFont.setFontHeightInPoints((short) 11);
+//        monthFont.setColor(IndexedColors.WHITE.getIndex());
+//        style = wb.createCellStyle();
+//        style.setAlignment(CellStyle.ALIGN_CENTER);
+//        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//        style.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+//        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+//        style.setFont(monthFont);
+//        style.setWrapText(true);
+//        styles.put("header", style);
+//
+//        style = wb.createCellStyle();
+//        style.setAlignment(CellStyle.ALIGN_CENTER);
+//        style.setWrapText(true);
+//        style.setBorderRight(CellStyle.BORDER_THIN);
+//        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+//        style.setBorderLeft(CellStyle.BORDER_THIN);
+//        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+//        style.setBorderTop(CellStyle.BORDER_THIN);
+//        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+//        style.setBorderBottom(CellStyle.BORDER_THIN);
+//        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+//        styles.put("cell", style);
+//
+//        style = wb.createCellStyle();
+//        style.setAlignment(CellStyle.ALIGN_CENTER);
+//        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+//        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+//        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
+//        styles.put("formula", style);
+//
+//        style = wb.createCellStyle();
+//        style.setAlignment(CellStyle.ALIGN_CENTER);
+//        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//        style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+//        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+//        style.setDataFormat(wb.createDataFormat().getFormat("0.00"));
+//        styles.put("formula_2", style);
+//
+//        return styles;
+//    }
     @Override
     public String getAlphanumericType(String alpha, Connection conn) {
         String alphaType = "";
@@ -630,7 +603,9 @@ public class AlphaServiceImpl implements AlphaServiceApi {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Logger.getLogger(AlphaServiceImpl.class.getName()).log(Level.SEVERE, null, e.getMessage());
+            Logger
+                    .getLogger(AlphaServiceImpl.class
+                            .getName()).log(Level.SEVERE, null, e.getMessage());
         }
         System.err.println("sid type " + alphaType);
         return alphaType;
@@ -659,14 +634,26 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
     @Override
     public int removeUseAlpha(String alphanumeric, String username, Connection conn) throws SQLException {
-        String sql = "Delete from tAllowedAlphanumerics  where username=? and alphanumeric =?";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setString(2, alphanumeric);
-        pst.setString(1, username);
-        System.out.println(pst);
+        String sql = "Delete from tAllowedAlphanumerics  where username= ? and alphanumeric = ? ";
 
-        int deleted = pst.executeUpdate();
+        int deleted = 0;
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(2, alphanumeric);
+            pst.setString(1, username);
+
+            deleted = pst.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(AlphaServiceImpl.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
+        }
 
         return deleted;
+    }
+
+    @Override
+    public void generateXSL() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

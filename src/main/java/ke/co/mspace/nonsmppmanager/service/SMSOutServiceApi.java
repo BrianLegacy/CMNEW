@@ -10,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import ke.co.mspace.nonsmppmanager.model.OPTOut;
+import ke.co.mspace.nonsmppmanager.model.SMPPOut;
+import ke.co.mspace.nonsmppmanager.model.SMSOut;
 
 /**
  *
@@ -17,13 +20,22 @@ import java.util.Map;
  */
 public interface SMSOutServiceApi {
 
-    Map<String, Object> userSMSOutReport(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd,Connection conn, int limit) throws SQLException;
+    List<OPTOut> fetchOptOutReport(String startDate, String endDate);
+    
+    List<SMSOut> fetchSMSReport(String user, String startDate, String endDate);
+
+    List<SMPPOut> fetchSMPPReport(String user, String startDate, String endDate);
+
+    Map<String, Object> userSMSOutReport(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn, int limit) throws SQLException;
+
     //added by horace
- public Map<String, Object> getSummarySms(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn, int limit) throws SQLException;    
- public Map<String, Object> smppgetSummarySms(String user, String startDate, String endDate, Connection conn, int limit) throws SQLException;
+    public Map<String, Object> getSummarySms(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn, int limit) throws SQLException;
+
+    public Map<String, Object> smppgetSummarySms(String user, String startDate, String endDate, Connection conn, int limit) throws SQLException;
 
 //added by horace
-    public int checkIfFileIsLarge(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd,Connection conn) throws SQLException;
+    public int checkIfFileIsLarge(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException;
+
     public void generateXSL(String user, String startDate, String endDate, Connection conn) throws SQLException;
 
     public void generateSMPPXSL(String user, String startDate, String endDate, Connection conn) throws SQLException;
@@ -43,12 +55,12 @@ public interface SMSOutServiceApi {
     public Map<String, Object> smppOutReport(String user, String startDate, String endDate, Connection conn, int limit) throws SQLException;
 
     public Map<String, Object> optOutReport(String startDate, String endDate, Connection conn) throws SQLException;
-    
-    public ResultSet getResultSet(String user, String startDate, String endDate, Connection conn);
-    
-    public void smppSetSql(String user, String startDate, String endDate, Connection conn) throws SQLException;
-    
-       public void smsSetSql(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd, Connection conn) throws SQLException;
 
-    public int smppcheckIfFileIsLarge(String user, String startDate, String endDate,String scheduleStart,String scheduleEnd,Connection conn) throws SQLException;
+    public ResultSet getResultSet(String user, String startDate, String endDate, Connection conn);
+
+    public void smppSetSql(String user, String startDate, String endDate, Connection conn) throws SQLException;
+
+    public void smsSetSql(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException;
+
+    public int smppcheckIfFileIsLarge(String user, String startDate, String endDate, String scheduleStart, String scheduleEnd, Connection conn) throws SQLException;
 }

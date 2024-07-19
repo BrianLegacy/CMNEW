@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedBean
 @ViewScoped
-public class UserController implements Serializable{
+public class UserController implements Serializable {
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(UserController.class);
     ManageCreditsOperations manageCreditsOperations;
@@ -88,13 +89,14 @@ public class UserController implements Serializable{
 
     private boolean enableEmailAlertWhenCreditOver = false;
     private boolean reseller;
-//    private List<User> listUsers;
+    private List<SelectItem> listAlphas;
     private String selectedUsername;
     private String previousUsername;
     private String message;
     private String alphanumeric;
-    private String group;
+    private String group ;
     private Group selectedGroup;
+    private int groupId ;
     private String airalphanumeric;
     private Long alphaId;
     private int creditsToManage;
@@ -128,12 +130,18 @@ public class UserController implements Serializable{
         this.facePainter = facePainter;
     }
 
+    @PostConstruct
+    public void init(){
+        AlphaServiceImpl asi = new AlphaServiceImpl();
+        listAlphas = asi.getAlphanumericsNames();
+    }
+            
     public UserController() {
     }
 
     public UserController(Long id, String username, String password, int smsCredits, int emailCredits, String organization,
             String userMobile, String userEmail, Date startDate, Date endDate, String alphanumeric,
-            int creditsToManage, char admin, String creditManageType, int alertThreshold, int arrears, float cost_per_sms, int MaxContacts, int MaxTotal) {
+            int creditsToManage, char admin, String creditManageType, int alertThreshold, int arrears, float cost_per_sms, int MaxContacts, int MaxTotal ) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -154,23 +162,34 @@ public class UserController implements Serializable{
         this.arrears = arrears;
 //        this.maxContacts=MaxContacts;
         this.maxTotal = MaxTotal;
+        
 
     }
 
-    public Map<String, String> getComboAlphanumerics() {
-
-        Map<String, String> myAlphanumerics = new HashMap<>();
-
-        AlphaServiceImpl asi = new AlphaServiceImpl();
-        selectItems = new ArrayList();
-
-        conn = util.getConnectionTodbSMS();
-        myAlphanumerics = asi.getAlphanumericsNames(conn);
-        JdbcUtil.closeConnection(conn);
-
-//        logger.debug("returned " + myAlphanumerics.size() + " alphanumerics");
-        return myAlphanumerics;
+    public List<SelectItem> getListAlphas() {
+       
+        return listAlphas;
     }
+
+    public void setListAlphas(List<SelectItem> listAlphas) {
+        this.listAlphas = listAlphas;
+    }
+
+   
+    
+    
+//    public List<SelectItem> getComboAlphanumerics() {
+//        List<SelectItem> selectItems = new ArrayList<>();
+//
+//        AlphaServiceImpl asi = new AlphaServiceImpl();
+//
+//        try (Connection conn = util.getConnectionTodbSMS()) {
+//            selectItems = asi.getAlphanumericsNames(conn);
+//        } catch (SQLException e) {
+//            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, "Error retrieving alphanumeric names", e);
+//        }
+//        return selectItems;
+//    }
 
     public List<SelectItem> getComboGroups() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
@@ -264,6 +283,16 @@ public class UserController implements Serializable{
         this.id = id;
     }
 
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+    
+    
+    
     public Long getAlphaId() {
 
         return alphaId;
@@ -398,10 +427,6 @@ public class UserController implements Serializable{
     }
 
     public Date getEndDate() {
-        //System.out.println(this.emailPlan);
-//        Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE,this.emailPlan);
-//        endDate=cal.getTime();
         return endDate;
     }
 
@@ -536,8 +561,7 @@ public class UserController implements Serializable{
         conn = util.getConnectionTodbSMS();
         int current = Math.round(us.availableCredits(conn)[0]);
 
-        CreditRequestObject creditRequestObject = new CreditRequestObject
-                .Builder()
+        CreditRequestObject creditRequestObject = new CreditRequestObject.Builder()
                 .setSMSCredits(smsCredits)
                 .setCreditsToManage(creditsToManage)
                 .setCurrent(current)
@@ -579,17 +603,15 @@ public class UserController implements Serializable{
 
                 case "add":
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("credit_type", "add");
-                 
+
                     final int previous_balance = maxContacts;
                     this.maxContacts = maxContacts + creditsToManage;
                     final int new_balance = maxContacts;
                     int newBalace;
-                    //if((curent>0) && (creditsToManage<=current) && (currennt!=-1))
-              
-                       System.out.println("maxcontacts"+current);
+
+                    System.out.println("maxcontacts" + current);
                     if (current < creditsToManage && current != -1) {
                         JsfUtil.addErrorMessage("You have insufficient Email balance.Your balance is: " + current + " Email");
-                        // System.out.println(" The Operation is invalid ");
                     } else {
                         String updateUser = ("User Update::: " + new Date() + " User: " + this.username + " Previous Balance: " + previous_balance + " Credit Allocated: " + creditsToManage + " New Balance: " + new_balance);
                         //System.out.println(updateUser);
@@ -603,11 +625,10 @@ public class UserController implements Serializable{
                         newBalace = adminv == '1' ? -1 : current - creditsToManage;
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", newBalace);
                         userService.updateEmailCredits(username, maxContacts, conn);
-                        
-                        UserServiceImpl.updateEmailAgentCredits(agent, current, creditsToManage, current - creditsToManage, conn);
-                     
-                        //=======================
 
+                        UserServiceImpl.updateEmailAgentCredits(agent, current, creditsToManage, current - creditsToManage, conn);
+
+                        //=======================
                         JsfUtil.addSuccessMessage("You have successfully Added " + creditsToManage + " Email Credits to " + username + " On " + new Date());
                     }
                     break;
@@ -664,12 +685,15 @@ public class UserController implements Serializable{
             //System.out.println(sql);
             st.executeUpdate(sql);
             //System.out.println("Upating the ");
+
         } catch (SQLException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-        public static void updateEmailAdminBal() {
+
+    public static void updateEmailAdminBal() {
         AlphaScroller ac = new AlphaScroller();
         String sql = "UPDATE tUSER set max_contacts = '-1' where admin=1";
         JdbcUtil util = new JdbcUtil();
@@ -679,8 +703,10 @@ public class UserController implements Serializable{
             //System.out.println(sql);
             st.executeUpdate(sql);
             //System.out.println("Upating the ");
+
         } catch (SQLException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -832,17 +858,16 @@ public class UserController implements Serializable{
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
         }
-        facePainter.setMainContent("clientmanager/manageuserdetails/manageemailusers.xhtml");
     }
 //    
 ////    
 
-    public void saveUser(UserController user) throws IOException {
+    public void saveUser() throws IOException {
 
         AlphaServiceImpl asi = new AlphaServiceImpl();
 
         conn = util.getConnectionTodbSMS();
-        user.setSelectedGroup(asi.getGroup(group, conn));
+        this.setSelectedGroup(asi.getGroup(group, conn));
         JdbcUtil.closeConnection(conn);
 
         char adminv = '0';
@@ -867,17 +892,17 @@ public class UserController implements Serializable{
 
             UserServiceApi service = new UserServiceImpl();
             ManageCreditApi creditManager = new ManageCreditImpl();
-            user.setEndDate(service.setEndDate());
-            user.setStartDate(new Date());
+            this.setEndDate(service.setEndDate());
+            this.setStartDate(new Date());
 
             if (adminv != '1') {
 
-                user.setAdmin('3');
+                this.setAdmin('3');
             } else {
-                user.setAdmin('2');
+                this.setAdmin('2');
             }
 
-            service.persistUser(user, conn); //saving to tUser table
+            service.persistUser(this, conn); //saving to tUser table
             SMSCredits credits = new SMSCredits();
             credits.setActionTime(new Date());
             credits.setActionType(adminv == '1' ? '1' : '3');
@@ -910,13 +935,12 @@ public class UserController implements Serializable{
             JsfUtil.addSuccessMessage("User saved successfully.");
             //Added to manage ccredits 
             userService.updateCredits(username, credits.getNumCredits(), conn);
-            user.updateAdminBal();
+            this.updateAdminBal();
             clearAll();
             JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
         }
-        facePainter.setMainContent("clientmanager/manageuserdetails/showsmsusers.xhtml");
     }
 //    end added code
 
@@ -964,14 +988,10 @@ public class UserController implements Serializable{
             // FacesContext.getCurrentInstance().getExternalContext().redirect("viewUserperAgent.jsf");
 
             clearAll();
-//           FacesContext facesContext = FacesContext.getCurrentInstance();
-//            facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext,null, "viewUserperAgent.jsf");
-            //FacesContext.getCurrentInstance().getExternalContext().redirect("viewNewReseller.jsf");
             JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
             JdbcUtil.printSQLException(e);
         }
-        facePainter.setMainContent("clientmanager/managereseller/managereseller.xhtml");
     }
 //=======================================================================================
 

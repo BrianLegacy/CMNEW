@@ -8,6 +8,7 @@ package ke.co.mspace.nonsmppmanager.model;
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,7 +33,6 @@ import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.slf4j.LoggerFactory;
 
@@ -417,32 +417,18 @@ public class SMSOut implements Serializable {
     }
     private int summarysmscount;
 
-//    public int getSummarysmscount() {
-//        List<SMSOut> list = this.summarySMS();
-//        list.g
-//        return (this.summarySMS().get("noSMS"));
-//    }
     public void setSummarysmscount(int summarysmscount) {
         this.summarysmscount = summarysmscount;
     }
 
     public void setSummary(boolean summary) {
-//        System.out.println("automatic"+summary);
         this.summary = summary;
         if (summary) {
             setSummaryOrDetail("Detail");
         } else {
             setSummaryOrDetail("summary");
         }
-//        int count=0;
-//        List<SMSOut> summaryList = null;
-//        smsOutReport.forEach((v)->{});
-//        for(SMSOut list:smsOutReport){
-//           String source= list.getSourceAddr();
-//            for(SMSOut l:smsOutReport){
-////               
-//            }
-//        }
+
     }
     private int numOfSMS;
 
@@ -471,19 +457,15 @@ public class SMSOut implements Serializable {
             schsdate = schsdate + " 00:00:01";
             schedate = schedate + " 23:59:59";
             String endDate = simpleDateFormat.format(reportEndDate);
-            //   System.out.println("Start Date :" + startDate + " End Date : " + endDate);
             //added by horace
             int countOfSMS = service.checkIfFileIsLarge(user, startDate, endDate, schsdate, schedate, conn);
 
             setNumOfSMS(countOfSMS);
 //            System.out.println("The size of the large report is"+countOfSMS);
             if (numOfSMS > limit) {
-//                           System.out.println(ANSI_BLUE+"CHECKER RETURNED"+(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())).toString()+ANSI_BLUE);
-
                 renderModal = true;
                 setRenderModal(true);
 
-                //  RequestContext context = RequestContext.getCurrentInstance();
                 PrimeFaces.current().executeScript("PF('modal').show();");
 
                 service.smsSetSql(user, startDate, endDate, schedate, schedate, conn);
@@ -701,26 +683,28 @@ public class SMSOut implements Serializable {
 
     public List<SelectItem> getData() {
         dataTT = new ArrayList<>();
-        Connection con = null;
-        ResultSet rs = null;
-        Statement stmt = null;
-        try {
-            final JdbcUtil util = new JdbcUtil();
-            con = util.getConnectionTodbSMS();
-            stmt = con.createStatement();
-            String fetch = "SELECT username from dbSMS.tUSER where admin !='5' and agent !='email' order by username asc";
+        String fetch = "SELECT username FROM dbSMS.tUSER WHERE admin != ? AND emailuser != 'Y' ORDER BY username ASC";
+        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? AND emailuser != 'Y'";
 
-            String fetchForReseller = "SELECT username from dbSMS.tUSER where agent = '" + user_id + "' and admin ='3'";
-            rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
-            while (rs.next()) {
-                String originalUsername = rs.getString(1);
-                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
-                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
+        try (
+                Connection con = new JdbcUtil().getConnectionTodbSMS(); PreparedStatement stmt = adnminval == 5 ? con.prepareStatement(fetchForReseller) : con.prepareStatement(fetch)) {
+            if (adnminval == 5) {
+                stmt.setString(1, user_id);
+            } else {
+                stmt.setString(1, "5");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String originalUsername = rs.getString(1);
+                    dataTT.add(new SelectItem(originalUsername));
+                }
             }
         } catch (SQLException err) {
-            err.getMessage();
+            System.err.println("SQL error: " + err.getMessage());
         }
         return dataTT;
+
     }
 
     public List<SelectItem> getEmailUsers() {
@@ -739,8 +723,7 @@ public class SMSOut implements Serializable {
 //                dataTT.add(new SelectItem(rs.getString(1)));
 
                 String originalUsername = rs.getString(1);
-                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
-                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
+                dataTT.add(new SelectItem(originalUsername));
             }
         } catch (SQLException err) {
             err.getMessage();
@@ -828,8 +811,7 @@ public class SMSOut implements Serializable {
             rs = adnminval == 5 ? stmt.executeQuery(fetchForReseller) : stmt.executeQuery(fetch);
             while (rs.next()) {
                 String originalUsername = rs.getString(1);
-                String trimmedUsername = StringUtils.abbreviate(originalUsername, UserScroller.maxUsernameLength); // Trim to a maximum length of 5 characters
-                dataTT.add(new SelectItem(originalUsername, trimmedUsername));
+                dataTT.add(new SelectItem(originalUsername));
             }
         } catch (SQLException err) {
             err.getMessage();

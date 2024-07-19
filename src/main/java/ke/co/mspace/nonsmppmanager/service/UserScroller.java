@@ -6,12 +6,12 @@
 package ke.co.mspace.nonsmppmanager.service;
 
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
-import com.sun.faces.context.FacesContextImpl;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -54,7 +54,6 @@ import ke.co.mspace.nonsmppmanager.model.creditRecord;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 
@@ -106,7 +105,7 @@ public class UserScroller {
     }
 
     public String abbreviate(String str) {
-        return StringUtils.abbreviate(str, maxUsernameLength);
+        return str;
     }
 
     public void setFile(UploadedFile file) {
@@ -131,7 +130,6 @@ public class UserScroller {
         this.user = new UserController();
         this.paybill = new Paybill();
         this.callback = new CallBack();
-        fetchAllUsers();
     }
 
     public Alpha getpCurrentAlpha() {
@@ -291,11 +289,6 @@ public class UserScroller {
 
     private int currentRow;
 
-//    private SimpleSelection selection = new SimpleSelection();
-//    
-//    private UIScrollableDataTable table;
-//    
-//    private SortOrder order = new SortOrder();
     private int scrollerPage = 1;
 
     public String userid;
@@ -902,48 +895,6 @@ public class UserScroller {
         }
     }
 
-    public void saveOrUpdateAlpha(ValueChangeEvent event) {
-
-        boolean exists;
-
-        if (!userS.isEmpty() || userS != null) {
-            try {
-                conn = util.getConnectionTodbSMS();
-                AlphaServiceImpl service = new AlphaServiceImpl();
-                String username = userS;
-                String alphanumeric = event.getNewValue().toString();
-                Long id = currentItem.getAlphaId();
-                AlphaServiceImpl aService = new AlphaServiceImpl();
-                String alphaType = aService.getAlphanumericType(alphanumeric, conn);
-
-                Boolean checkExist = aService.findAlphanumericByUsername(username, alphanumeric, conn);
-//                System.out.println("Check Exist:"+checkExist);
-                if (!checkExist) {
-                    if (service.persistAlpha(username, alphanumeric, alphaType, conn) > 0) {
-                        JsfUtil.addSuccessMessage("User alphanumeric saved successfully");
-                    } else {
-                        JsfUtil.addSuccessMessage("User alphanumeric not saved ");
-                    }
-                } else {
-                    JsfUtil.addSuccessMessage("The sender id is alredy assigned  to " + userS);
-                }
-
-                Alpha alpha = service.loadAlphanumericByUsername(username, conn);
-                if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("alphaScroller")) {
-                    ((AlphaScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("alphaScroller")).addAlphaToList(alpha);
-                }
-
-                JdbcUtil.closeConnection(conn);
-            } catch (SQLException e) {
-                JdbcUtil.printSQLException(e);
-            }
-        } else {
-            JsfUtil.addErrorMessage("Select user to assign Sender ID");
-        }
-        fetchUserAlphas();
-
-    }
-
     public void delete() {
         allUsers.remove(currentRow);
     }
@@ -1137,100 +1088,84 @@ public class UserScroller {
         System.out.println("method called");
         String selectedUser = this.current_user;
 
-        String sql = "SELECT id from tUSER where username='" + selectedUser + "'";
+        // Retrieve user ID based on selected user
+        String sql = "SELECT id FROM tUSER WHERE username='" + selectedUser + "'";
+        int userId = -1;
 
-        conn = util.getConnectionTodbSMS();
-        Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-
-        while (rs.next()) {
-            user_id = rs.getInt(1);
+        try (Connection conn = util.getConnectionTodbSMS(); Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            if (rs.next()) {
+                userId = rs.getInt(1);
+            }
         }
-        util.closeConnection(conn);
-        UploadedFile uploadedFile = event.getFile();
-        System.out.println("method called id " + user_id);
-        String directory = System.getProperty("catalina.home") + "/webapps/files/config"; // Replace with your actual directory path
 
-        System.out.println("method called dir " + directory);
+        if (userId == -1) {
+            JsfUtil.addErrorMessage("User ID not found for username: " + selectedUser);
+            return;
+        }
 
         try {
-            File fileDir = new File(directory);
-            if (!fileDir.exists()) {
-                fileDir.mkdirs();
-            }
+            System.out.println("The tomcat directory is:" + System.getProperty("catalina.base"));
+            System.out.println("Here we are: " + selectedUser);
 
+            UploadedFile uploadedFile = event.getFile();
             String fileName = uploadedFile.getFileName();
-            String uniqueFileName = fileName; // You can modify this to generate a unique name
 
-            String absoluteFilePath = directory + File.separator + selectedUser.concat("Logo").replace(" ", "")
-                    .concat(getFileExtention(uploadedFile.getFileName()));
-            ;
-            InputStream input = uploadedFile.getInputStream();
-            FileOutputStream output = new FileOutputStream(absoluteFilePath);
-
-            int read;
-            byte[] bytes = new byte[1024];
-            while ((read = input.read(bytes)) != -1) {
-                output.write(bytes, 0, read);
+            // Save the uploaded file to a temporary location
+            File tempFile = new File(System.getProperty("java.io.tmpdir"), fileName);
+            try (InputStream input = uploadedFile.getInputStream(); OutputStream output = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
             }
 
-            input.close();
-            output.close();
+            System.out.println("This is the original file name: " + fileName + " | content-type: " + uploadedFile.getContentType());
+            System.out.println("File saved to temporary location: " + tempFile.getAbsolutePath());
 
-            // Now, absoluteFilePath contains the absolute path to the uploaded file
-        } catch (IOException e) {
-            e.printStackTrace();
+            File inConfig = new File(System.getProperty("catalina.home") + "/webapps/files/config/"
+                    + selectedUser.concat("Logo").replace(" ", "").concat(getFileExtension(fileName)));
+
+            boolean renamed = tempFile.renameTo(inConfig);
+            if (renamed) {
+                System.out.println("File successfully copied to: " + inConfig.getName());
+            } else {
+                System.out.println("Failed to move file to: " + inConfig.getAbsolutePath());
+            }
+
+            String filedir = "../files/config/" + inConfig.getName();
+            System.out.println("Path to database is: " + filedir);
+
+            // Call the method that persists the image path to the database
+            setImagePath(selectedUser, filedir);
+            System.out.println("method called file dir" + filedir);
+            JsfUtil.addSuccessMessage("User logo updated successfully");
+
+        } catch (IOException ex) {
+            Logger.getLogger(UserScroller.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        String filedir = "/files/config/" + selectedUser.concat("Logo").replace(" ", "")
-                .concat(getFileExtention(uploadedFile.getFileName()));
-        //Call the method that persistsheimage pathto db
-        setImagePath(user_id, filedir);
-        System.out.println("method called file dir" + filedir);
-        JsfUtil.addSuccessMessage("User logo updated Sucessfully");
-
     }
 
-    public void showSuccessMessage() {
-        // System.out.println("The Message::::::");
-        JsfUtil.addSuccessMessage("User logo updated Sucessfully");
+    public void setImagePath(String username, String picPath) throws SQLException {
+        String sqlUpdate = "UPDATE dbTASK.tClient SET picPath= ? WHERE clientName='" + username + "' ";
+        try (Connection conn = util.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {
+            pstm.setString(1, picPath);
+            int ex = pstm.executeUpdate();
+
+            if (ex == 1) {
+                ulploadms = "Logo updated successfully";
+            } else {
+                ulploadms = "Logo update failed";
+            }
+        }
     }
 
-    /*This method will update the tClient picPath 
-    column with the path from the temp folder*/
-    public void setImagePath(int id, String picPath) throws SQLException {
-        String sqlUpdate = "UPDATE dbTASK.tClient  set picPath= ? where id='" + id + "' ";
-        conn = util.getConnectionTodbTask();
-        PreparedStatement pstm = conn.prepareStatement(sqlUpdate);
-        //System.out.println("The update querry ====>" + sqlUpdate);
-        //System.out.println("image to be inserted is ====>" + picPath);
-        pstm.setString(1, picPath);
-        int ex = pstm.executeUpdate();
-
-        if (ex == 1) {
-
-            ulploadms = "Logo updated Successfuy";
-//            JsfUtil.addSuccessMessage("UserController logo updated Sucessfully");
-            //System.out.println("Success::::: imageuploaded   " + ex);
-        } else {
-            //System.out.println("Error Uploading image!    " + ex);
-//            JsfUtil.addSuccessMessage("UserController logo updated Sucessfully");
-
+    public String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex == -1) {
+            return "";
         }
-//        JsfUtil.addSuccessMessage(ulploadms);
-    }
-
-    /*This function  renames the uploaded file on the tomcat
-    temp folder  to the original filename*/
-    public void renameUploadedFile(File original_file, File newfile) throws IOException {
-        // this.original=original_file;
-
-        if (original_file.exists()) {
-
-        } else {
-        }
-        boolean success = original_file.renameTo(newfile);
-
+        return fileName.substring(lastIndex);
     }
 
     //=======================================================================================================
@@ -1336,27 +1271,6 @@ public class UserScroller {
         return available_credits;
     }
 
-//    public float [] availableEmailCredits(Connection conn) {
-//        float available_credits []= new float[2];
-//        try {
-//            conn = util.getConnectionTodbSMS();
-//            AlphaScroller ac = new AlphaScroller();
-//            String user = ac.currentUSer();
-//            String sql = "Select max_contacts,cost_per_sms from tUSER where username='" + user + "' ";
-//            //System.out.println(sql);
-//            Statement st = conn.createStatement();
-//            ResultSet rs = st.executeQuery(sql);
-//            
-//            while (rs.next()) {
-//                available_credits[0] = rs.getInt(1);
-//                available_credits[1]=rs.getFloat(2);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        System.out.println("Original Cost Per SMS:"+available_credits[1]+" Available Credits:"+available_credits[0]);
-//        return available_credits;
-//    }    
     public String userSelectedUSerID() {
         return this.UserID();
     }

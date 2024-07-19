@@ -20,159 +20,97 @@
             <div align="center">
                 <p:panel id="maintab" header="SMPP OUT REPORT" >
 
-
-
-
-
-
                     <h:form>
-                        <h:panelGrid columns="9" width="100%" style="margin-left:auto; margin-right:auto;padding:8px">
+                        <h:panelGrid columns="8" style="width:100%; margin-left:auto; margin-right:auto; padding:8px;">
                             <h:outputText value="Start Date :"/>
-                            <p:calendar value="#{sMPPOut.reportStartDate}" style="width:200px"/>
+                            <p:calendar value="#{smppreport.reportStartDate}" style="width:200px"/>
                             <h:outputText value="End Date :"/>
-                            <p:calendar value="#{sMPPOut.reportEndDate}"
-                                        style="width:200px"/>
+                            <p:calendar value="#{smppreport.reportEndDate}" style="width:200px"/>
                             <h:outputText value="User :"/>
-                            <p:selectOneMenu id="users" 
-
-                                             value="#{sMPPOut.user}">
-                                <f:ajax   event="change" render="addgroupform" />
+                            <p:selectOneMenu id="users" value="#{smppreport.username}">
+                                <f:ajax event="change" render="addgroupform" />
                                 <f:selectItem itemLabel="Select User" itemValue="" />
-                                <f:selectItems value="#{sMPPOut.usernames}" ></f:selectItems>
+                                <f:selectItems value="#{sMPPOut.usernames}" />
                             </p:selectOneMenu>
-
-
-                            <p:menuButton value="#{sMPPOut.summaryOrDetail}" >
-
-                                <p:menuitem update="maintab"  value="Detail" action="#{sMPPOut.setSummary(true)}"  />
-                                <p:menuitem update="maintab"  value="Summary" action="#{sMPPOut.setSummary(false)}"  />
-
-
-                            </p:menuButton>
-                            <p:menuButton value="Details" rendered="false">
-
-                                <p:menuitem value="Detail" action="#{sMPPOut.setSummary(true)}"  ajax="false"/>
-                                <p:menuitem value="Summary" action="#{sMPPOut.setSummary(false)}" ajax="false" />
-
-
-                            </p:menuButton>
-
-
-                            <h:panelGroup layout="block" rendered="#{sMPPOut.reportStartDate ne null and sMPPOut.reportEndDate ne null}">
-                                <p:commandLink ajax="false" update="table"  
-                                               id="report_gen" 
-                                               action="#{sMPPOut.smppTabularReport}" >
-                                    <h:graphicImage value="/resources/images/report.png" id="generate_report"
-                                                    />
+                            <h:panelGroup layout="block">
+                                <p:commandLink  id="pdf_export">
+                                    <p:dataExporter type="csv" target="report:table" fileName="SMPP report"/>
+                                    <h:graphicImage value="/resources/images/csv.png" id="export_to_pdf" />
                                 </p:commandLink>
-
-
                             </h:panelGroup>
-                            <h:panelGroup layout="block" rendered="#{sMPPOut.reportStartDate ne null and sMPPOut.reportEndDate ne null}">
-
-                                <h:commandLink id="xlsx_gen" action="#{sMPPOut.generateXLSX}">
-                                    <h:graphicImage value="/resources/images/icon-xls.gif" id="export_to_xlsx"
-                                                    />
-                                </h:commandLink>
-
+                            <h:panelGroup layout="block">
+                                <p:commandLink  id="xlsx_export" >
+                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMPP report" postProcessor="#{smppreport.postProcessXLSX}"/>
+                                    <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
+                                </p:commandLink>
                             </h:panelGroup>
                         </h:panelGrid>
 
-
+                        <h:panelGrid columns="1" style="width:100%; margin-left:auto; margin-right:auto; padding:8px; text-align:center;">
+                            <p:commandButton value="Generate" action="#{smppreport.generateSMPP()}"
+                                             update=":report:table msgs"/>
+                        </h:panelGrid>
                     </h:form>
 
-                    <!--<h:form rendered="false" id="summary">-->
+                    <h:form id="report">
+                        <p:dataTable id="table" var="sMPPOut" value="#{smppreport.records}"
+                                     rows="10"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     >
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Mobile"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.destinationAddr}"/>
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Source Address"/>
+                                </f:facet>
+                                <h:outputText  value="#{sMPPOut.sourceAddr}" />
+                            </p:column>
 
-                    <h:outputLabel value=" #{sMPPOut.user} has  #{sMPPOut.summaryValue} messages" 
-                                   rendered="#{ sMPPOut.summaryValue==0 ? false : true}"></h:outputLabel>
-                    <!--</h:form>-->
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Message"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.messagePayload}" />
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Time Sent"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.timeSubmitted}" />
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Last Update"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.timeProcessed}" />
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="User"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.user}" />
+                            </p:column>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Status"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.realStatus}"/>
+                            </p:column>
 
-                    <p:dataTable id="table" var="sMPPOut" value="#{sMPPOut.smsOutReport}" rendered="#{sMPPOut.summary}"
-
-                                 rows="12"
-                                 paginator="true" paginatorPosition="bottom"
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-
-                                 >
-                        <p:column headerText="Mobile">
-                            <h:outputText value="#{sMPPOut.destinationAddr}"/>
-                        </p:column>
-                        <p:column headerText="Source Address">
-                            <h:outputText  value="#{sMPPOut.sourceAddr}" />
-                        </p:column>
-
-                        <p:column headerText="Message">
-                            <h:outputText value="#{sMPPOut.messagePayload}" />
-                        </p:column>
-                        <p:column headerText="Time Sent">
-                            <h:outputText value="#{sMPPOut.timeSubmitted}" />
-                        </p:column>
-                        <p:column headerText="Last Update">
-                            <h:outputText value="#{sMPPOut.timeProcessed}" />
-                        </p:column>
-                        <p:column headerText="User">
-                            <h:outputText value="#{sMPPOut.user}" />
-                        </p:column>
-                        <p:column headerText="Status">
-                            <h:outputText value="#{sMPPOut.realStatus}"/>
-                        </p:column>
-
-                        <p:column headerText="No of SMS">
-                            <h:outputText value="#{sMPPOut.smsCount}" />
-                        </p:column>
-
-
-                    </p:dataTable>
-
-
-
-
-
-
-
-
-                    <h:form>
-
-
-                        <p:dialog height="60" widgetVar="modal"  rendered="#{sMPPOut.renderModal}"  id="modal"  width="400">
-                            <f:facet name="header">
-                                <h:outputText value="Bulk  Report Generator"/>
-                            </f:facet>
-                            <f:facet name="controls">
-                                <h:panelGroup>  
-                                    <h:graphicImage value="/resources/images/icons/close.png" id="hidelink1" styleClass="hidelink"/>
-                                    <!--<rich:componentControl for="modal" attachTo="hidelink1" operation="hide" event="onclick"/>-->
-                                </h:panelGroup>
-                            </f:facet>
-                            <h:outputText value="This a bulky report. Click Proceed to process full report or Cancel to export upto a maximum of 15000 records only"/>
-
-                            <h:panelGrid style="margin-right:auto; margin-left:auto; text-align:center" columns="3">
-
-
-                                <p:commandButton action="#{sMPPOut.closeTheModal()}"  value="Cancel" oncomplete="PF('modal').hide();
-                                                 return false;"
-                                                 >
-
-
-                                </p:commandButton>
-
-
-                                <p:commandButton ajax="false" actionListener="#{sMPPOut.executeReport()}"  value="Proceed" oncomplete="PF('modal').hide();
-                                                 return false;"
-                                                 ></p:commandButton>
-
-                            </h:panelGrid>
-                        </p:dialog>
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="No of SMS"/>
+                                </f:facet>
+                                <h:outputText value="#{sMPPOut.smsCount}" />
+                            </p:column>
+                        </p:dataTable>
                     </h:form>
-
-
-
-
-
-
-
-
 
                 </p:panel>
             </div>

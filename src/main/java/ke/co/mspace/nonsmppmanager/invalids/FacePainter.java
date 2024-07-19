@@ -17,7 +17,7 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class FacePainter implements Serializable {
 
-    private String mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
+    private String mainContent = "landing.xhtml";
 
     public String getMainContent() {
 
@@ -25,7 +25,6 @@ public class FacePainter implements Serializable {
     }
 
     public void setMainContent(String mainContent) {
-        System.out.println("called");
 //        updater k = new updater();
         try {
 //            k.getSmsBalance();

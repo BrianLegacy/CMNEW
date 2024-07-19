@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 @Table(name = "tUSER",
         uniqueConstraints = @UniqueConstraint(columnNames = "username")
 )
-public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
+public class Tuser implements java.io.Serializable, HttpSessionBindingListener {
 
     private Long id;
     private Character admin;
@@ -79,22 +79,22 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
     private double cost_per_sms;
     private int alerted;
     private double max_total_amt;
+    private int max_contacts;
     private String taskAdmin;
     private int resend_failed_sms;
     private static Map<Tuser, HttpSession> logins = new HashMap<Tuser, HttpSession>();
-    private Logger logger=LoggerFactory.getLogger(Tuser.class);
+    private Logger logger = LoggerFactory.getLogger(Tuser.class);
+
     public Tuser() {
-        
-       
+
     }
 
     public Tuser(String agent, int alertThreshold, Date dateUpdated,
             String firstname, long lastReceivedId, boolean loggedIn, Date loggedInTime, long maxDaily, long maxMonthly,
             long maxTotal, long maxWeekly, String password, /*String staffNo,*/ String surname,
-            String username,String taskAdmin, int resend_failed_sms) {
-        
-        
-        this.resend_failed_sms=resend_failed_sms;
+            String username, String taskAdmin, int resend_failed_sms) {
+
+        this.resend_failed_sms = resend_failed_sms;
         this.agent = agent;
         this.alertThreshold = alertThreshold;
         this.dateUpdated = dateUpdated;
@@ -110,35 +110,32 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         //this.staffNo = staffNo;
         this.surname = surname;
         this.username = username;
-        this.taskAdmin=taskAdmin;
+        this.taskAdmin = taskAdmin;
     }
-   
+
     public Tuser(Character admin, int alerted, int arrears, double cost_per_sms, String agent, int alertThreshold, String contactNumber,
             String contractNum, Date dateUpdated, /*Integer departmentNo,*/ String destinationAddr,
             String emailAddress, Boolean enableEmailAlert, Date endDate, String firstname, /*Integer jobTitleNo,*/
-            Date lastReceived, long lastReceivedId, Date lastSend, Long lastSentId, boolean loggedIn, 
+            Date lastReceived, long lastReceivedId, Date lastSend, Long lastSentId, boolean loggedIn,
             Date loggedInTime, long maxDaily, long maxMonthly, long maxTotal, long maxWeekly, String msg,
             String name, /*String notes,*/ String organization, String password, Long receivedMonth,
             Long receivedToday, Long receivedTotal, Long receivedWeek, /*String reportsTo,*/ String shortCodes,
-            Long smsCountMonth, Long smsCountToday, Long smsCountTotal, Long smsCountWeek, 
+            Long smsCountMonth, Long smsCountToday, Long smsCountTotal, Long smsCountWeek,
             /*String staffNo,*/ Date startDate, Integer superAccountId, String surname,
-            Character taskadmin, /*String userId,*/ String username,String taskAdmin,int resend_failed_sms ) {
-         
-       
-        this.resend_failed_sms=resend_failed_sms;
+            Character taskadmin, /*String userId,*/ String username, String taskAdmin, int resend_failed_sms) {
+
+        this.resend_failed_sms = resend_failed_sms;
         this.admin = admin;
         this.agent = agent;
         this.alertThreshold = alertThreshold;
         this.contactNumber = contactNumber;
         this.contractNum = contractNum;
         this.dateUpdated = dateUpdated;
-        //this.departmentNo = departmentNo;
         this.destinationAddr = destinationAddr;
         this.emailAddress = emailAddress;
         this.enableEmailAlert = enableEmailAlert;
         this.endDate = endDate;
         this.firstname = firstname;
-        //this.jobTitleNo = jobTitleNo;
         this.lastReceived = lastReceived;
         this.lastReceivedId = lastReceivedId;
         this.lastSend = lastSend;
@@ -151,30 +148,25 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.maxWeekly = maxWeekly;
         this.msg = msg;
         this.name = name;
-        // this.notes = notes;
         this.organization = organization;
         this.password = password;
         this.receivedMonth = receivedMonth;
         this.receivedToday = receivedToday;
-//        this.receivedTotal = receivedTotal;
         this.receivedWeek = receivedWeek;
-        //this.reportsTo = reportsTo;
         this.shortCodes = shortCodes;
         this.smsCountMonth = smsCountMonth;
         this.smsCountToday = smsCountToday;
         this.smsCountTotal = smsCountTotal;
         this.smsCountWeek = smsCountWeek;
-        //this.staffNo = staffNo;
         this.startDate = startDate;
         this.superAccountId = superAccountId;
         this.surname = surname;
         this.taskadmin = taskadmin;
-        //this.userId = userId;
         this.username = username;
         this.cost_per_sms = cost_per_sms;
         this.arrears = arrears;
         this.alerted = alerted;
-        this.taskAdmin=taskAdmin;
+        this.taskAdmin = taskAdmin;
     }
 
     @Id
@@ -184,7 +176,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
     public Long getId() {
         return this.id;
     }
-     
 
     public void setId(Long id) {
         this.id = id;
@@ -245,14 +236,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.dateUpdated = dateUpdated;
     }
 
-    /*   @Column(name = "department_no")
-    public Integer getDepartmentNo() {
-    return this.departmentNo;
-    }
-    
-    public void setDepartmentNo(Integer departmentNo) {
-    this.departmentNo = departmentNo;
-    }*/
     @Column(name = "destination_addr", length = 20)
     public String getDestinationAddr() {
         return this.destinationAddr;
@@ -299,14 +282,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.firstname = firstname;
     }
 
-    /*  @Column(name = "job_title_no")
-    public Integer getJobTitleNo() {
-    return this.jobTitleNo;
-    }
-    
-    public void setJobTitleNo(Integer jobTitleNo) {
-    this.jobTitleNo = jobTitleNo;
-    }*/
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_received", length = 19)
     public Date getLastReceived() {
@@ -462,15 +437,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.receivedToday = receivedToday;
     }
 
-    /*  @Column(name = "received_total")
-    public Long getReceivedTotal() {
-        return this.receivedTotal;
-    }
-
-    public void setReceivedTotal(Long receivedTotal) {
-        this.receivedTotal = receivedTotal;
-    }
-     */
     @Column(name = "received_week")
     public Long getReceivedWeek() {
         return this.receivedWeek;
@@ -480,14 +446,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.receivedWeek = receivedWeek;
     }
 
-    /*    @Column(name = "reports_to", length = 100)
-    public String getReportsTo() {
-    return this.reportsTo;
-    }
-    
-    public void setReportsTo(String reportsTo) {
-    this.reportsTo = reportsTo;
-    }*/
     @Column(name = "short_codes", length = 250)
     public String getShortCodes() {
         return this.shortCodes;
@@ -533,14 +491,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.smsCountWeek = smsCountWeek;
     }
 
-    /*    @Column(name = "staff_no", nullable = false, length = 100)
-    public String getStaffNo() {
-    return this.staffNo;
-    }
-    
-    public void setStaffNo(String staffNo) {
-    this.staffNo = staffNo;
-    }*/
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date", length = 19)
     public Date getStartDate() {
@@ -578,14 +528,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.taskadmin = taskadmin;
     }
 
-    /*    @Column(name = "user_id", length = 100)
-    public String getUserId() {
-    return this.userId;
-    }
-    
-    public void setUserId(String userId) {
-    this.userId = userId;
-    }*/
     @Column(name = "username", unique = true, nullable = false, length = 100)
     public String getUsername() {
         return this.username;
@@ -621,13 +563,23 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
     public void setAlerted(int alerted) {
         this.alerted = alerted;
     }
-    
+
+    @Column(name = "max_contacts", nullable = false)
+    public int getMax_contacts() {
+        return max_contacts;
+    }
+
+    public void setMax_contacts(int max_contacts) {
+        this.max_contacts = max_contacts;
+    }
+
     @Column(name = "max_total_amt", nullable = false)
     public double getMax_total_amt() {
         return max_total_amt;
     }
-     @Column(name = "resend_failed_sms", nullable = false)
-      public int getResend_failed_sms() {
+
+    @Column(name = "resend_failed_sms", nullable = false)
+    public int getResend_failed_sms() {
         return resend_failed_sms;
     }
 
@@ -635,7 +587,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
         this.resend_failed_sms = resend_failed_sms;
     }
 
-   
     public void setMax_total_amt(double max_total_amt) {
         this.max_total_amt = max_total_amt;
     }
@@ -644,10 +595,6 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
     public String toString() {
         return "Tuser{" + "id=" + id + ", admin=" + admin + ", agent=" + agent + ", alertThreshold=" + alertThreshold + ", contactNumber=" + contactNumber + ", contractNum=" + contractNum + ", dateUpdated=" + dateUpdated + ", destinationAddr=" + destinationAddr + ", emailAddress=" + emailAddress + ", enableEmailAlert=" + enableEmailAlert + ", endDate=" + endDate + ", firstname=" + firstname + ", lastReceived=" + lastReceived + ", lastReceivedId=" + lastReceivedId + ", lastSend=" + lastSend + ", lastSentId=" + lastSentId + ", loggedIn=" + loggedIn + ", loggedInTime=" + loggedInTime + ", maxDaily=" + maxDaily + ", maxMonthly=" + maxMonthly + ", maxTotal=" + maxTotal + ", maxWeekly=" + maxWeekly + ", msg=" + msg + ", name=" + name + ", organization=" + organization + ", password=" + password + ", receivedMonth=" + receivedMonth + ", receivedToday=" + receivedToday + ", receivedWeek=" + receivedWeek + ", shortCodes=" + shortCodes + ", smsCountMonth=" + smsCountMonth + ", smsCountToday=" + smsCountToday + ", smsCountTotal=" + smsCountTotal + ", smsCountWeek=" + smsCountWeek + ", startDate=" + startDate + ", superAccountId=" + superAccountId + ", surname=" + surname + ", taskadmin=" + taskadmin + ", username=" + username + ", arrears=" + arrears + ", cost_per_sms=" + cost_per_sms + ", alerted=" + alerted + ", max_total_amt=" + max_total_amt + ", taskAdmin=" + taskAdmin + ", resend_failed_sms=" + resend_failed_sms + '}';
     }
-
- 
-    
-    
 
     @Override
     public void valueBound(HttpSessionBindingEvent event) {
@@ -660,11 +607,7 @@ public class Tuser implements java.io.Serializable ,HttpSessionBindingListener {
 
     @Override
     public void valueUnbound(HttpSessionBindingEvent event) {
-       logins.remove(this);
+        logins.remove(this);
     }
 
-  
-    
-    
-    
 }

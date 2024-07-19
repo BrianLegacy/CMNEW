@@ -106,11 +106,11 @@
                             <p:column headerText="UserID">
                                 <h:outputText value="#{data.userid}"/>
                             </p:column>
-                            <p:column headerText="Username">
+                            <p:column headerText="Codes">
                                 <h:outputText  value="#{data.ussd_assigned_code}" />
                             </p:column>
 
-                            <p:column headerText="SenderID">
+                            <p:column headerText="Call back Url">
                                 <h:outputText value="#{data.callback_url}" />
                             </p:column>
                             <p:column headerText="Testbed Numbers">
@@ -180,7 +180,6 @@
                                                  requiredMessage="Enter Group Name">
                                         <f:validator validatorId="codeValidator"/>
                                         <f:ajax event="blur" render="msgs"/>
-                                        <f:validateLength minimum="3"/>
                                     </p:inputText>
                                 </div>
                                 <div class="field">

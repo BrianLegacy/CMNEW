@@ -16,12 +16,12 @@
                 }  </style>
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
-             
+
             <div align="center">
                 <p:panel id="maintab" header="" >
-                   
-                           <p:dataTable value="#{userScroller.userProfile}" var="item"
-                                    id="usertb"  style="width: 100%; border-color: #e3f1fa ;">
+
+                    <p:dataTable value="#{userScroller.userProfile}" var="item"
+                                 id="usertb"  style="width: 100%; border-color: #e3f1fa ;">
 
                         <p:column>
                             <f:facet name="header" >
@@ -44,25 +44,25 @@
                                 <p:column colspan="1"><h:outputText value="username" /></p:column>
                                 <p:column><h:outputText value="#{item.username}" /></p:column>
                                 <p:column>
-                                    
-                       <h:form >
-                                
-                             
-                                  <p:commandLink style="padding: .3em 1em;" 
-                                                 styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
-                                                 id="uploadbutton"
-                                               type="button" 
-                                               ajax="true"
-                                               value="Upload photo"
-                                               oncomplete="PF('editgroupmodaladvanced').show();">
-                                      <p:tooltip for="uploadbutton" value="Click to delete paybill/tillnumber"/>
 
-                                  
-                                </p:commandLink>
-                              
-                                    
+                                    <h:form >
+
+
+                                        <p:commandLink style="padding: .3em 1em;" 
+                                                       styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
+                                                       id="uploadbutton"
+                                                       type="button" 
+                                                       ajax="true"
+                                                       value="Upload photo"
+                                                       oncomplete="PF('editgroupmodaladvanced').show();">
+                                            <p:tooltip for="uploadbutton" value="Click to delete paybill/tillnumber"/>
+
+
+                                        </p:commandLink>
+
+
                                     </h:form>
-                                 
+
                                 </p:column>
 
 
@@ -70,24 +70,24 @@
                                 <p:column colspan="1"><h:outputText value="Password" /></p:column>
                                 <p:column><h:outputText value="XXXXXX" /></p:column>
                                 <p:column>
-                                      <h:form >
-                                
-                             
-                                
-                                <p:commandLink style="padding: .3em 1em;" 
-                                                 styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
-                                                 id="changepasswordbutton"
-                                               type="button" 
-                                               ajax="true"
-                                               value="Change Password"
-                                               oncomplete="PF('editgroupmodal').show();">
-                                      <p:tooltip for="changepasswordbutton" value="Click to delete paybill/tillnumber"/>
+                                    <h:form >
 
-                                  
-                                </p:commandLink>
-                                    
+
+
+                                        <p:commandLink style="padding: .3em 1em;" 
+                                                       styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
+                                                       id="changepasswordbutton"
+                                                       type="button" 
+                                                       ajax="true"
+                                                       value="Change Password"
+                                                       oncomplete="PF('editgroupmodal').show();">
+                                            <p:tooltip for="changepasswordbutton" value="Click to change password"/>
+
+
+                                        </p:commandLink>
+
                                     </h:form>
-                                
+
                                 </p:column>
 
                                 <p:column colspan="1"><h:outputText value="Start Date" /></p:column>
@@ -145,107 +145,96 @@
 
                     </p:dataTable>
                     <h:form>
-                             <p:dialog header="Change Password" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                                    
-                                 <p:messages id="passwordmsgs"/>
-                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                        <tr >
-                                            <td ><h:outputLabel for="password" value="Password" /></td>
-                                            <td><p:password style="width: 150px" id="password"
-                                                             value="#{userScroller.password}"
-                                                              requiredMessage="Password required"
-                                                              match="newpassword"
-                                                              
-                                                              >
-                                                   
-                                                </p:password>
-                                                <p:message for="@previous"/>
-                                            </td>
-                                        </tr>
-                                       
-   <tr >
-                                            <td ><h:outputLabel for="newpassword" value="Confirm Password" /></td>
-                                            <td><p:password style="width: 150px" id="newpassword" 
-                                                            value="#{userScroller.confirm}" 
-                                                         required="true"  requiredMessage="Confirm password required"
-                                                         validatorMessage="confirm password too short or does not match password "
-                                                      
-                                                         >
-                                                </p:password> 
-                                                <!--<p:message for="@previous"/>-->
-                                            </td>
-                                        </tr>
-                                        
-                                    </table>
-                                    <br/>
-                                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"  
-                                                          oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload()} " 
-                                                          
-                                                         value="Update"
-                                                         actionListener="#{userScroller.storeNewPassword()}"
-                                                         update="@([id$=passwordmsgs]) @([id$=msgs])"
-                                                         >
-                                          
-                                        
-                                        
-                                        </p:commandButton>
-                                        
-                                        
-                                        
-                                        <p:commandButton value="Cancel" 
-                                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
-                                    </div>
-                                 
-                                </p:dialog> 
+                        <p:dialog header="Change Password" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+
+                            <p:messages id="passwordmsgs"/>
+                            <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                                <tr >
+                                    <td ><h:outputLabel for="password" value="Password" /></td>
+                                    <td><p:password style="width: 150px" id="password"
+                                                    value="#{userScroller.password}"
+                                                    requiredMessage="Password required"
+                                                    match="newpassword"
+
+                                                    >
+
+                                        </p:password>
+                                        <p:message for="@previous"/>
+                                    </td>
+                                </tr>
+
+                                <tr >
+                                    <td ><h:outputLabel for="newpassword" value="Confirm Password" /></td>
+                                    <td><p:password style="width: 150px" id="newpassword" 
+                                                    value="#{userScroller.confirm}" 
+                                                    required="true"  requiredMessage="Confirm password required"
+                                                    validatorMessage="confirm password too short or does not match password "
+
+                                                    >
+                                        </p:password> 
+                                        <!--<p:message for="@previous"/>-->
+                                    </td>
+                                </tr>
+
+                            </table>
+                            <br/>
+                            <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                                <p:commandButton style="margin-right: 10px" ajax="true"  
+                                                 oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload()} " 
+
+                                                 value="Update"
+                                                 actionListener="#{userScroller.storeNewPassword()}"
+                                                 update="@([id$=passwordmsgs]) @([id$=msgs])"
+                                                 >
+
+
+
+                                </p:commandButton>
+
+
+
+                                <p:commandButton value="Cancel" 
+                                                 onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                            </div>
+
+                        </p:dialog> 
                     </h:form>
                     <!--df-->
-                 
+
                     <!--df-->
-                      <h:form>
-                          <p:dialog id="editgroupmodaladvanced" widgetVar="editgroupmodaladvanced" width="450" >
-        <f:facet name="header">
-            <h:outputText value="Upload Logo" />
-        </f:facet>
-      
-                    <h:form enctype="multipart/form-data">
-                                  <!--<p:outputLabel value="upload profile photo"/>-->
-                                  <p:fileUpload
-                                      invalidFileMessage="Allowed types: gif,jpeg,png,jpg" 
-                                      id="photo"
-                                     allowTypes="/(\.|\/)(gif|jpeg|png|jpg)$/"
-                                     multiple="false"
-                                     
-                                      fileUploadListener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" >
-                                  
-                                    <!--<f:validator validatorId="fileTypeValidatorv2" />-->
-                                  </p:fileUpload>
-      
-        <p:message for="@previous"/>
-    </h:form>
+                    <h:form>
+                        <p:dialog id="editgroupmodaladvanced" widgetVar="editgroupmodaladvanced" width="450" >
+                            <f:facet name="header">
+                                <h:outputText value="Upload Logo" />
+                            </f:facet>
 
-
-                    </p:dialog>
-                        </h:form>
+                            <!--<p:outputLabel value="upload profile photo"/>-->
+                            <p:fileUpload listener="#{userScroller.uploadResImage}" mode="advanced" dragDropSupport="true"
+                                          allowTypes="/(\.|\/)(gif|jpeg|jpg|png)$/"
+                                          update="messages">
+                            </p:fileUpload>
+                            <p:messages id="messages" showDetail="true" />
+                        </p:dialog>
+                    </h:form>
 
                     <h:form>
-                    <p:dialog id="uploadphoto" width="450" >
-        <f:facet name="header">
-            <h:outputText value="Upload Logo" />
-        </f:facet>
-      
-       
+                        <p:dialog id="uploadphoto" width="450" >
+                            <f:facet name="header">
+                                <h:outputText value="Upload Logo" />
+                            </f:facet>
 
 
 
-            <h:inputHidden id="previd" value="#{userScroller.current_user}"></h:inputHidden>
-               <h:form enctype="multipart/form-data">
-              <p:fileUpload  id="photo"  fileUploadListener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" />
-        <!--<p:messages id="messages"   />-->
-    </h:form>
 
-                    </p:dialog>
-                        </h:form>
+
+                            <h:inputHidden id="previd" value="#{userScroller.current_user}"></h:inputHidden>
+                            <h:form enctype="multipart/form-data">
+                                <p:fileUpload  id="photo"  fileUploadListener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" />
+                                <!--<p:messages id="messages"   />-->
+                            </h:form>
+
+                        </p:dialog>
+                    </h:form>
                 </p:panel>
             </div>
         </ui:composition>

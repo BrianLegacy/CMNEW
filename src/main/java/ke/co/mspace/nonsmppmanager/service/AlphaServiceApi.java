@@ -19,35 +19,38 @@ import ke.co.mspace.nonsmppmanager.model.Alpnumeric;
  * @author Norrey Osako
  */
 public interface AlphaServiceApi {
-    
-   Map <String,String> getAlphanumericsNames(Connection conn);
-   
-   List<Alpnumeric> getAlphanumerics(Connection conn);
-   
-   String getAlphanumericType(String alpha,Connection conn);
-    
-     List<String> getAirTelAlphas(Connection conn);
-    
-    List<Alpha> getAgentAlphas(Connection conn,String user);
+
+    List<SelectItem> getAlphanumericsNames();
+
+    List<Alpnumeric> getAlphanumerics(Connection conn);
+
+    String getAlphanumericType(String alpha, Connection conn);
+
+    List<String> getAirTelAlphas(Connection conn);
+
+    List<Alpha> getAgentAlphas(Connection conn, String user);
 
     List<Alpha> getAllAlphanumerics(Connection conn) throws SQLException;
 
-    Alpha loadAlphanumericByUsername(String selectedUsername,Connection conn) throws SQLException;
-    boolean findAlphanumericByUsername(String selectedUsername,String alpha,Connection conn) throws SQLException;
+    List<Alpha> loadAlphanumerics(String username, Connection conn);
 
-    int updateAlpha(String username, String alpha,String sid_type, Connection conn) throws SQLException;
-    
-    int persistAlpha(String username, String alpha,String alphatype, Connection conn) throws SQLException;
-  
+    Alpha loadAlphanumericByUsername(String selectedUsername,Connection conn) throws SQLException;
+    boolean findAlphanumericByUsername(String selectedUsername, String alpha, Connection conn) throws SQLException;
+
+    int updateAlpha(String username, String alpha, String sid_type, Connection conn) throws SQLException;
+
+    int persistAlpha(String username, String alpha, String alphatype, Connection conn) throws SQLException;
+
     void updateAlphaByUsername(String previousUsername, String username, Connection conn) throws SQLException;
-    
+
     public void generateXSL();
-    
-    public List<String> getUnusagnedphanumericsNames(Connection conn) ;
-    
-    public void updateAgentAlphas(String username, String alphanumeric, Connection conn)throws SQLException;
-    
-    public void removeAgentAlpha(Alpha selected, Connection conn) throws SQLException;
-    public int removeUseAlpha(String alphanumeric,String username, Connection conn) throws SQLException;
-    
+
+    public List<String> getUnusagnedphanumericsNames(Connection conn);
+
+    public boolean updateAgentAlphas(String username, String alphanumeric, Connection conn) throws SQLException;
+
+    public boolean removeAgentAlpha(Alpha selected, Connection conn) throws SQLException;
+
+    public int removeUseAlpha(String alphanumeric, String username, Connection conn) throws SQLException;
+
 }

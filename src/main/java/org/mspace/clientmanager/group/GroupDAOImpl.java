@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -106,5 +107,22 @@ public class GroupDAOImpl implements GroupDAO {
             LOGGER.log(Level.SEVERE, "SQL error occurred", e);
         }
         return result;
+    }
+
+    @Override
+    public List<SelectItem> listGroups() {
+        String sql = "select id , groupname from tGROUPS order by groupname";
+        
+        List<SelectItem> results = new ArrayList<>();
+        
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()){
+            while(rs.next()){
+                results.add(new SelectItem(rs.getInt("id"), rs.getString("groupname")));
+            }
+        }catch(SQLException ex){
+            LOGGER.log(Level.SEVERE, sql);
+        }
+        return results;
     }
 }

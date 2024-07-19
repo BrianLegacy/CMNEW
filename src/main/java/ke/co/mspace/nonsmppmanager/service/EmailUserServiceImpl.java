@@ -1,4 +1,4 @@
- package ke.co.mspace.nonsmppmanager.service;
+package ke.co.mspace.nonsmppmanager.service;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -18,6 +18,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import ke.co.mspace.nonsmppmanager.invalids.getsession;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Alpnumeric;
 import ke.co.mspace.nonsmppmanager.model.AuthenticationBean;
@@ -34,21 +36,26 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 //import org.richfaces.model.UploadItem;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
 /**
  *
  * @author Norrey Osako
  */
 public class EmailUserServiceImpl implements UserServiceApi {
-    
 
     private static final Logger LOG = Logger.getLogger(UserServiceImpl.class.getName());
 
     private String selectedUser;
-    
+
+    HttpSession session = getsession.getSession();
+    String user = (String) session.getAttribute("username");
+    String agent = String.valueOf(session.getAttribute("id"));
+    char admin = (Character) session.getAttribute("admin");
 
     public String getSelectedUser() {
         return selectedUser;
+
     }
 
     public void setSelectedUser(String selectedUser) {
@@ -72,7 +79,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
         System.out.println("Default selected ::" + names);
         String sql = "";
 
-        sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total,tUSER.max_contacts,"
+        sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_contacts,tUSER.max_contacts,"
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert,"
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears"
                 + "  FROM tUSER where tUSER.username='" + name + "'";
@@ -102,7 +109,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
                 }
             }
 
-            aUser.setSmsCredits(rs.getInt("max_total"));
+            aUser.setSmsCredits(rs.getInt("max_contacts"));
             aUser.setOrganization(rs.getString("organization"));
             aUser.setUserMobile(rs.getString("contact_number"));
             aUser.setUserEmail(rs.getString("email_address"));
@@ -120,69 +127,6 @@ public class EmailUserServiceImpl implements UserServiceApi {
 
         return result;
     }
-    
-    
-//    @Override
-//    public List<User> getAllEmailUsers(Connection conn, String name) throws SQLException {
-//
-//        names = name;
-//        UserScroller us = new UserScroller();
-//        String lname = us.lastInsert();
-//
-//        //System.out.println("Default selected ::" + names);
-//        String sql = "";
-//
-//        sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin,tUSER.max_contacts,"
-//                + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert,"
-//                + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears"
-//                + "  FROM tUSER where tUSER.username='" + name + "'";
-//
-//        List<User> result = new ArrayList<>();
-//
-//        Statement stmt = conn.createStatement();
-//        ResultSet rs = stmt.executeQuery(sql);
-//
-//        while (rs.next()) {
-//            UserController aUser = new UserController();
-//            aUser.setId(rs.getLong("id"));
-//            aUser.setUsername(rs.getString("username"));
-//            aUser.setPassword(rs.getString("password"));
-//            aUser.setAdmin(rs.getString("admin").charAt(0));
-//
-//            String ad = "" + aUser.getAdmin();
-//            if (ad.trim() != null) {
-//                if (ad.equalsIgnoreCase("4")) {
-//                    //System.err.println("AD" + ad + ": username :" + aUser.getUsername() + "can create sub accounts");
-//                    aUser.setUserType("Yes");
-//                    aUser.setCreateAccount(true);
-//                } else {
-//                    //System.err.println("AD" + ad + ": username :" + aUser.getUsername() + "cannot create sub accounts");
-//                    aUser.setUserType("No");
-//                    aUser.setCreateAccount(false);
-//                }
-//            }
-//
-//            aUser.setSmsCredits(rs.getInt("max_total"));
-//            aUser.setOrganization(rs.getString("organization"));
-//            aUser.setUserMobile(rs.getString("contact_number"));
-//            aUser.setUserEmail(rs.getString("email_address"));
-//            aUser.setEnableEmailAlertWhenCreditOver(rs.getBoolean("enable_email_alert"));
-//            aUser.setEndDate(rs.getDate("end_date"));
-//            aUser.setStartDate(rs.getDate("start_date"));
-//            aUser.setAlertThreshold(rs.getInt("alertThreshold"));
-//            aUser.setCost_per_sms(rs.getFloat("cost_per_sms"));
-//            aUser.setArrears(rs.getInt("arrears"));
-//            //aUser.setAlphanumeric(rs.getString("alphanumeric"));
-//            //aUser.setAlphaId(rs.getLong("alphaId"));
-//            aUser.setMaxContacts(rs.getInt("max_contacts"));
-//            result.add(aUser);
-//        }
-//
-//        return result;
-//    }
-//    
-    
-    
 
     @Override
     public List<UserController> getLastCreated(Connection conn, String name) throws SQLException {
@@ -192,7 +136,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
         names = name;
         int last = this.getAutoId(conn);
 
-        String sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total,"
+        String sql = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_contacts,"
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert,"
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears,tAllowedAlphanumerics.alphanumeric, tAllowedAlphanumerics.id as alphaId FROM tUSER"
                 + " LEFT JOIN tAllowedAlphanumerics on tUSER.username=tAllowedAlphanumerics.username where tUSER.admin != 1 and tUSER.username='" + name + "' and tUSER.id=" + last + "";
@@ -222,7 +166,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
                     aUser.setCreateAccount(false);
                 }
             }
-            aUser.setSmsCredits(rs.getInt("max_total"));
+            aUser.setSmsCredits(rs.getInt("max_contacts"));
             aUser.setOrganization(rs.getString("organization"));
             aUser.setUserMobile(rs.getString("contact_number"));
             aUser.setUserEmail(rs.getString("email_address"));
@@ -259,7 +203,9 @@ public class EmailUserServiceImpl implements UserServiceApi {
         String updateSQL = "update tUSER set password = ? where username = ? and admin = 5";
 
         PreparedStatement pst = conn.prepareStatement(updateSQL);
-        pst.setString(1, password);
+        String hashedPassword = PasswordUtil.encrypt(password);
+
+        pst.setString(1, hashedPassword);
         pst.setString(2, loggedInUser.getUsername());
         int r = pst.executeUpdate();
         if (r > 0) {
@@ -306,7 +252,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
 
     @Override
     public void persistUser(UserController user, Connection conn) throws SQLException {
-        System.out.println("Email User Details"+user.toString());
+        System.out.println("Email User Details" + user.toString());
         UserScroller us = new UserScroller();
         UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
@@ -314,56 +260,45 @@ public class EmailUserServiceImpl implements UserServiceApi {
         String agent = ac.currentUSer();
         int lResellerId = getNewResellerId(conn);
 
-        //boolean lIsReseller = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("reseller");
-//        String sql = "INSERT INTO tUSER("
-//                + "username, password, max_total, organization, contact_number, email_address, start_date, "
-//                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms) "
-//                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?)";
-System.out.println("testing insert sql");
         String sql = "INSERT INTO tUSER("
                 + "username, password,max_contacts,organization, contact_number, email_address, start_date, "
-                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?)" ;
-        System.out.println(sql  +"Email user query");
+                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`, emailuser) "
+                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?,'Y')";
+        System.out.println(sql + "Email user query");
         ////////////////////////////////////////////////////////
         //Inserting values
         ////////////////////////////////////////////////////////
         PreparedStatement pstmt = conn.prepareStatement(sql);
         // Bind values to the parameters
         pstmt.setString(1, user.getUsername());
-        pstmt.setString(2, user.getPassword());
-        pstmt.setLong(3, user.getSmsCredits());
-//        pstmt.setLong(3, user.getEmailCredits());
+        String hashedPassword = PasswordUtil.encrypt(user.getPassword());
+        pstmt.setString(2, hashedPassword);
+        pstmt.setLong(3, user.getEmailCredits());
         pstmt.setString(4, user.getOrganization());
         pstmt.setString(5, user.getUserMobile());
         pstmt.setString(6, user.getUserEmail());
         pstmt.setBoolean(7, user.isEnableEmailAlertWhenCreditOver());
         pstmt.setString(8, String.valueOf(user.getAdmin()));
-        //pstmt.setString(8, lIsReseller ? "5" : String.valueOf(user.getAdmin()));
         pstmt.setInt(9, user.getAlertThreshold());
         pstmt.setInt(10, 0);
         pstmt.setInt(11, user.getArrears());
         pstmt.setFloat(12, user.getCost_per_sms());
 //        pstmt.setString(13, getAgent());
-        pstmt.setString(13, "email");
+        if (admin == '5') {
+            pstmt.setString(13, this.agent);
+        } else {
+            pstmt.setString(13, "");
+        }
         pstmt.setString(14, user.getFirstName());
         pstmt.setString(15, user.getSurName());
-         pstmt.setInt(16, user.getSelectedGroup().getId());
-//       pstmt.setInt(16, user.getEmailCredits());
+        pstmt.setInt(16, user.getGroupId());
         // Execute the query
         int count = pstmt.executeUpdate();
         //pesistUserInfo(conn, user);
-        userService.updateAgentCredits(agent, Math.round(us.availableCredits(conn)[0]), user.getSmsCredits(), user.getSmsCredits(), conn);
-        //System.out.println(new Date()+"INSERTING USER INSERTING  NEW USER: " + " " + user.getUsername() + "" + count);
+        userService.updateAgentCredits(agent, Math.round(us.availableCredits(conn)[2]), user.getEmailCredits(), user.getEmailCredits(), conn);
         userl.updateAdminBal();
-        //inserts into tClient and outputs insert status
-//        if (count > 0) {
-//            System.out.println(insertIntoTclient(user, conn, lResellerId) ? "new Reseller (" + user.getUsername() + ") inserted into tClient"
-//                    : " (" + user.getUsername() + ") not inserted into tClient");
-//        }
-    }
 
-    ;
+    }
 
     private String getAgent() {
         String agent = "";
@@ -580,7 +515,7 @@ System.out.println("testing insert sql");
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("admin", rs.getInt("admin"));
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("CurretUserID", userId);
 
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("max_total", rs.getInt("max_total"));
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("max_contacts", rs.getInt("max_contacts"));
 
                 if (rs.getInt("admin") == 5) {
                     showMpesaMenu = "none";
@@ -705,7 +640,7 @@ System.out.println("testing insert sql");
 
             while (rs.next()) {
                 loggedInUser = new UserProfile(rs.getLong("id"), rs.getString("username"), rs.getString("password"),
-                        rs.getLong("max_daily"), rs.getLong("max_weekly"), rs.getLong("max_monthly"), rs.getLong("max_total"),
+                        rs.getLong("max_daily"), rs.getLong("max_weekly"), rs.getLong("max_monthly"), rs.getLong("max_contacts"),
                         rs.getBoolean("logged_in"),
                         rs.getDate("logged_in_time"), rs.getDate("start_date"), rs.getDate("end_date"),
                         BigInteger.valueOf(rs.getLong("sms_count_today")), BigInteger.valueOf(rs.getLong("sms_count_week")),
@@ -724,7 +659,7 @@ System.out.println("testing insert sql");
     @Override
     public void updateUser(UserController user, Connection conn) throws SQLException {
 
-        String sql = "UPDATE tUSER SET username=?, password=?, max_total=?, organization=?, contact_number = ?, email_address=?, enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,admin = ? WHERE id=?";
+        String sql = "UPDATE tUSER SET username=?, password=?, max_contacts=?, organization=?, contact_number = ?, email_address=?, enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,admin = ? WHERE id=?";
 
         ////////////////////////////////////////////////////////
         //Inserting values
@@ -766,7 +701,7 @@ System.out.println("testing insert sql");
             aUser.setUsername(rs.getString("username"));
             aUser.setPassword(rs.getString("password"));
             aUser.setAdmin(rs.getString("admin").charAt(0));
-            aUser.setSmsCredits(rs.getInt("max_total"));
+            aUser.setSmsCredits(rs.getInt("max_contacts"));
             aUser.setOrganization(rs.getString("organization"));
             aUser.setUserMobile(rs.getString("contact_number"));
             aUser.setUserEmail(rs.getString("email_address"));
@@ -819,8 +754,8 @@ System.out.println("testing insert sql");
 
     @Override
     public void updateCredits(String username, int smsCredits, Connection conn) throws SQLException {
-        String sql = "UPDATE tUSER SET max_total = ? WHERE username = ?";
-        String sqlReseller = "UPDATE tUSER SET max_total = ? WHERE username = ?";
+        String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
+        String sqlReseller = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         // Bind values to the parameters
         pstmt.setInt(1, smsCredits);
@@ -836,7 +771,7 @@ System.out.println("testing insert sql");
             Date dt = new Date();
             AlphaScroller as = new AlphaScroller();
             agent = as.currentUSer();
-            String sql = "UPDATE tUSER SET max_total = ? WHERE username = ?";
+            String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, current - toDeduct);
             pstmt.setString(2, agent);
@@ -853,7 +788,7 @@ System.out.println("testing insert sql");
             AlphaScroller as = new AlphaScroller();
             agent = as.currentUSer();
             int altered = currrentusercreds - alter;
-            String sql = "UPDATE tUSER SET max_total = ? WHERE username = ?";
+            String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, currentagentcredits + alter);
             pstmt.setString(2, agent);
@@ -964,7 +899,7 @@ System.out.println("testing insert sql");
         String autogen = "";
 
         String sql = "INSERT INTO tUSER("
-                + "username, password, max_total, organization, contact_number, email_address, start_date, "
+                + "username, password, max_contacts, organization, contact_number, email_address, start_date, "
                 + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent) "
                 + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?)";
 
@@ -1010,7 +945,7 @@ System.out.println("testing insert sql");
         }
         // System.out.println("The id is :" + id);
 
-        String sql = " SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total, tUSER.organization, tUSER.contact_number, tUSER.email_address,"
+        String sql = " SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_contacts, tUSER.organization, tUSER.contact_number, tUSER.email_address,"
                 + " tUSER.enable_email_alert,tUSER.end_date, tUSER.start_date, tUSER.alertThreshold,tUSER.cost_per_sms,tUSER.arrears,tAllowedAlphanumerics.alphanumeric, "
                 + "tAllowedAlphanumerics.id as alphaId FROM tUSER LEFT JOIN tAllowedAlphanumerics on tUSER.username=tAllowedAlphanumerics.username where tUSER.admin !='1'"
                 + "and tUSER.agent='" + id + "'";
@@ -1039,7 +974,7 @@ System.out.println("testing insert sql");
                     aUser.setCreateAccount(false);
                 }
             }
-            aUser.setSmsCredits(rs.getInt("max_total"));
+            aUser.setSmsCredits(rs.getInt("max_contacts"));
             aUser.setOrganization(rs.getString("organization"));
             aUser.setUserMobile(rs.getString("contact_number"));
             aUser.setUserEmail(rs.getString("email_address"));
@@ -1417,14 +1352,14 @@ System.out.println("testing insert sql");
         return result;
     }
 
-    public void persistCallBack(CallBack callback, Connection conn,String assigned_code) {
+    public void persistCallBack(CallBack callback, Connection conn, String assigned_code) {
         try {
             JdbcUtil util = new JdbcUtil();
-             System.out.println("User id is "+callback.getUserid());
-             System.out.println("call back url is "+callback.getCallback_url());
+            System.out.println("User id is " + callback.getUserid());
+            System.out.println("call back url is " + callback.getCallback_url());
             conn = util.getConnectionTodbUSSD();
             String sql = "INSERT INTO tSharedUssdClients(tUSER_id,callback_url,ussd_assigned_code, status)VALUES(?,?,?,?)";
-            System.out.println("tUserId: "+callback.getUserid());
+            System.out.println("tUserId: " + callback.getUserid());
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, callback.getUserid());
             ps.setString(2, callback.getCallback_url());
@@ -1439,8 +1374,8 @@ System.out.println("testing insert sql");
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-      public static ArrayList<CallBack> getCallBack() throws SQLException {
+
+    public static ArrayList<CallBack> getCallBack() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
         Connection conn = util.getConnectionTodbUSSD();
@@ -1460,25 +1395,21 @@ System.out.println("testing insert sql");
             callback.setCallback_url(rs.getString("callback_url"));
             callback.setUssd_assigned_code(rs.getString("ussd_assigned_code"));
             callback.setStatus(rs.getBoolean("status"));
-            
+
             callbacklist.add(callback);
 
         }
         return callbacklist;
     }
 
-  
-
 //    @Override
 //    public void updateEmailUser(EmailUser aThis, Connection conn) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-
 //    @Override
 //    public void persistEmailUserAgent(EmailUser aThis, Connection conn) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-
     public void updateEmailUser(UserController aThis, Connection conn) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -1510,11 +1441,10 @@ System.out.println("testing insert sql");
     public void updateEmailUser(EmailUser aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    public boolean isUssdCodeAvailable(String code){
-        boolean exist=false;
-        
-        
-        
+
+    public boolean isUssdCodeAvailable(String code) {
+        boolean exist = false;
+
         return exist;
     }
 
@@ -1527,7 +1457,7 @@ System.out.println("testing insert sql");
     public List<UserController> getAllEmailUsers(Connection conn, String userS) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 //    public void persistEmailUser (UserController user, Connection conn) throws SQLException {
 //        UserScroller us = new UserScroller();
 //        UserController userl = new UserController();
@@ -1538,7 +1468,7 @@ System.out.println("testing insert sql");
 //
 //        //boolean lIsReseller = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("reseller");
 ////        String sql = "INSERT INTO tUSER("
-////                + "username, password, max_total, organization, contact_number, email_address, start_date, "
+////                + "username, password, max_contacts, organization, contact_number, email_address, start_date, "
 ////                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms) "
 ////                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?)";
 //        String sql = "INSERT INTO tUSER("
@@ -1582,13 +1512,9 @@ System.out.println("testing insert sql");
 ////                    : " (" + user.getUsername() + ") not inserted into tClient");
 ////        }
 //    }
-
     @Override
     public void updateUserWithoutGroup(UserController aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-   
-
-    
 }

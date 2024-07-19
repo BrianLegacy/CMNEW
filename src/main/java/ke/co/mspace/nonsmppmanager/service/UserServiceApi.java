@@ -33,6 +33,12 @@ public interface UserServiceApi {
      public int UpdateUserMaxContacts(UserController currentItem,int MaxContacts,Date StartDate,Date EndDate,Connection  conn);
      public List <UserController>getLastCreated(Connection conn,String name) throws SQLException;
     
+    /**
+     *
+     * @param conn
+     * @param user
+     * @return
+     */
     List<Alpha> getAgentAlphas(Connection conn,String user);
     List<UserController> getAllUsers(Connection conn, String name) throws SQLException;
     

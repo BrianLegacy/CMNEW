@@ -7,6 +7,7 @@ package org.mspace.clientmanager.group;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 
 /**
  *
@@ -23,5 +24,7 @@ public interface GroupDAO {
     public List<Group> fetchGroups();
 
     boolean updateGroup(int id, String groupname, String description);
+    
+    List<SelectItem> listGroups();
 
 }

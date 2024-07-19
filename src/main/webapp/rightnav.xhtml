@@ -72,23 +72,23 @@
                         <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="Manage Group "
                                     actionListener="#{userInfo.viewgroupuser()}" 
                                     ajax="false"  style="background-image: url('#{resource['images/managegroup.png']}');
-                                    background-size: 1.3rem 1.3rem;
+                                    background-size: 1rem 1rem;
                                     background-repeat: no-repeat;
                                     background-position: left;
-                                    padding-left: 30px;"/>
+                                    padding-left: 20px;"/>
                         <p:menuitem value="Manage SMS User"  actionListener="#{userInfo.viewsmsuser()}"
                                     ajax="false" style="background-image: url('#{resource['images/managesms.png']}');
-                                    background-size: 1.3rem 1.3rem;
+                                    background-size: 1rem 1rem;
                                     background-repeat: no-repeat;
                                     background-position: left;
-                                    padding-left: 30px;"/>
+                                    padding-left: 20px;"/>
                         <p:menuitem value="Manage Email Users"     actionListener="#{userInfo.viewemailuser()}" 
                                     ajax="false" 
                                     style="background-image: url('#{resource['images/manageemailusers.png']}');
-                                    background-size: 1.3rem 1.3rem;
+                                    background-size: 1rem 1rem;
                                     background-repeat: no-repeat;
                                     background-position: left;
-                                    padding-left: 30px;"/>
+                                    padding-left: 20px;"/>
                         <p:menuitem value="View Alphanumerics" id="dobS"    actionListener="#{userInfo.viewalphanumerics()}" ajax="false"  icon="fa fa-keyboard-o"/>
                     </p:submenu>
 
@@ -97,38 +97,38 @@
                                     actionListener="#{userInfo.manageReseller()}" 
                                     ajax="false"   
                                     style="background-image: url('#{resource['images/reseller.png']}');
-                                    background-size: 1.3rem 1.3rem;
+                                    background-size: 1rem 1rem;
                                     background-repeat: no-repeat;
                                     background-position: left;
-                                    padding-left: 30px;"/>
+                                    padding-left: 20px;"/>
                     </p:submenu>
 
                     <p:submenu  label="Pricing Table" expanded="true" style="display:#{userScroller.show()}">
                         <p:menuitem  value="Email Pricing Table" actionListener="#{userInfo.pricingTable()}"  ajax="false" 
                                      style="background-image: url('#{resource['images/emailpricing.png']}');
-                                     background-size: 1.3rem 1.3rem;
+                                     background-size: 1rem 1rem;
                                      background-repeat: no-repeat;
                                      background-position: left;
-                                     padding-left: 30px;" />
+                                     padding-left: 20px;" />
                     </p:submenu>
 
                     <p:submenu label="MSpacePESA" expanded="true" style="display:#{userScroller.show()}">
                         <p:menuitem  value="Manage Till/Paybill Number"
                                      actionListener="#{userInfo.viewpaybills()}"  ajax="false"
                                      style="background-image: url('#{resource['images/managetill.png']}');
-                                     background-size: 1.3rem 1.3rem;
+                                     background-size: 1rem 1rem;
                                      background-repeat: no-repeat;
                                      background-position: left;
-                                     padding-left: 30px;"/>
+                                     padding-left: 20px;"/>
                     </p:submenu>
 
                     <p:submenu label="Shared USSD" expanded="true" style="display:#{userScroller.show()}">
                         <p:menuitem  value="Manage Callbacks" actionListener="#{userInfo.viewcallbacks()}"  ajax="false"
                                      style="background-image: url('#{resource['images/managecallback.png']}');
-                                     background-size: 1.3rem 1.3rem;
+                                     background-size: 1rem 1rem;
                                      background-repeat: no-repeat;
                                      background-position: left;
-                                     padding-left: 30px;" />
+                                     padding-left: 20px;" />
                     </p:submenu>
                     <p:submenu rendered="#{userScroller.amIAdmin()}" label="My Account" expanded="true" >
                         <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"
@@ -147,25 +147,22 @@
                             <p:menuitem value="generate" actionListener="#{userInfo.createSmsApiKey()}" 
                                         ajax="false" 
                                         style="background-image: url('#{resource['images/apikey.png']}');
-                                        background-size: contain;
+                                        background-size: 1rem 1rem;
                                         background-repeat: no-repeat;
                                         background-position: left;
-                                        padding-left: 30px;" />
+                                        padding-left: 20px;" />
                         </p:submenu>
                     </p:submenu>
 
                     <p:submenu label="Summary and Reports" expanded="true">
-                        <p:menuitem rendered="#{userScroller.amIResellersUser()}"  value="Bulky Report"
-                                    actionListener="#{userInfo.bulkreports()}"  ajax="false"
-                                    icon="fa-solid fa-folder-open" />
                         <p:menuitem  value="SMS Out Report" actionListener="#{userInfo.smsoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
 
                         <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="SMPP Out Report" actionListener="#{userInfo.smppoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
                         <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="fa-solid fa-file-export" />
                         <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}" 
                                      ajax="false" icon="fa-solid fa-file-invoice-dollar " />
-                        <p:menuitem  value="Single User Visual Report" actionListener="#{userInfo.singleuservisualreport()}"  ajax="false" icon="fa-solid fa-file-image" />
-                        <p:menuitem  value="All Users VIsual Report" actionListener="#{userInfo.alluservisualreport()}"  ajax="false" icon="fa-solid fa-photo-film" />
+                        <!--<p:menuitem  value="Single User Visual Report" actionListener="{userInfo.singleuservisualreport()}"  ajax="false" icon="fa-solid fa-file-image" />-->
+                        <!--<p:menuitem  value="All Users VIsual Report" actionListener="{userInfo.alluservisualreport()}"  ajax="false" icon="fa-solid fa-photo-film" />-->
 
 
 

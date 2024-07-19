@@ -88,10 +88,6 @@ public class UserInfo implements Serializable {
         facePainter.setMainContent("clientmanager/api/smsapi.xhtml");
     }
 
-    public void bulkreports() {
-        facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
-    }
-
     public void smshome() {
         facePainter.setMainContent("clientmanager/groups/addgroupuser.xhtml");
     }

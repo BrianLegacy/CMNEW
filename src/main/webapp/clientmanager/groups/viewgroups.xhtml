@@ -28,8 +28,9 @@
                     <p:panel id="maintab" header="View Group">
                         <p:commandButton value="Create Group" 
                                          style="margin-bottom: 1rem; padding: 0.5rem 0.5rem 0.5rem 2.5rem; background-image: url('#{resource['images/addgroup.png']}'); background-size: 1.5rem 1.5rem; background-repeat: no-repeat; background-position: 0.5rem center;" 
+                                         actionListener="#{groupcontroller.resetGroup()}"
                                          onclick="PF('createGroup').show();" 
-                                         actionListener="#{groupcontroller.resetGroup()}"/>
+                                         />
 
                         <p:dataTable id="groupTable" var="data" value="#{groupcontroller.groups}"
                                      rows="10"

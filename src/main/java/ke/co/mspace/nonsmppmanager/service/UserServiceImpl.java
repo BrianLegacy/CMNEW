@@ -34,6 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
 /**
  *
@@ -212,7 +213,9 @@ public class UserServiceImpl implements UserServiceApi {
         String updateSQL = "update tUSER set password = ? where username = ? and admin = 5";
 
         PreparedStatement pst = conn.prepareStatement(updateSQL);
-        pst.setString(1, password);
+        String hashedPassword = PasswordUtil.encrypt(password);
+
+        pst.setString(1, hashedPassword);
         pst.setString(2, loggedInUser.getUsername());
         int r = pst.executeUpdate();
         if (r > 0) {
@@ -258,6 +261,7 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public void persistUser(UserController user, Connection conn) throws SQLException {
+        System.out.println("################## saving sms user ###############");
         UserScroller us = new UserScroller();
         UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
@@ -276,33 +280,26 @@ public class UserServiceImpl implements UserServiceApi {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         // Bind values to the parameters
         pstmt.setString(1, user.getUsername());
-        pstmt.setString(2, user.getPassword());
-        //pstmt.setLong(3, user.getSmsCredits());
+        String hashedPassword = PasswordUtil.encrypt(user.getPassword());
+        pstmt.setString(2, hashedPassword);
         pstmt.setLong(3, user.getEmailCredits());
         pstmt.setString(4, user.getOrganization());
         pstmt.setString(5, user.getUserMobile());
         pstmt.setString(6, user.getUserEmail());
-
         pstmt.setBoolean(7, user.isEnableEmailAlertWhenCreditOver());
-
         pstmt.setString(8, String.valueOf(user.getAdmin()));
-        //pstmt.setString(8, lIsReseller ? "5" : String.valueOf(user.getAdmin()));
         pstmt.setInt(9, user.getAlertThreshold());
         pstmt.setInt(10, 0);
         pstmt.setInt(11, user.getArrears());
         pstmt.setFloat(12, user.getCost_per_sms());
         pstmt.setString(13, getAgent());
-//        pstmt.setString(13, "email");
         pstmt.setString(14, user.getFirstName());
         pstmt.setString(15, user.getSurName());
-        pstmt.setInt(16, user.getSelectedGroup().getId());
+        pstmt.setInt(16, user.getGroupId());
         // Execute the query
         int count = pstmt.executeUpdate();
-        //pesistUserInfo(conn, user);
         userService.updateAgentCredits(agent, Math.round(us.availableCredits(conn)[0]), user.getSmsCredits(), user.getSmsCredits(), conn);
-        //System.out.println(new Date()+"INSERTING USER INSERTING  NEW USER: " + " " + user.getUsername() + "" + count);
         userl.updateAdminBal();
-
     }
 
     private String getAgent() {
@@ -635,12 +632,9 @@ public class UserServiceImpl implements UserServiceApi {
 
         String sql = "SELECT * FROM tUSER WHERE username='" + user + "'";
 
-        try {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             //System.err.println(sql);
 
-            Connection conn = util.getConnectionTodbSMS();
-
-            Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
@@ -899,37 +893,34 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     //Fuction to  insert reseller data into the dbTASK tClient table 
-    public void pesistUserInfo(Connection conn, UserController user) throws SQLException {
+    public void pesistUserInfo(UserController user) throws SQLException {
 
-        String sqlimg = "INSERT INTO dbTASK.tClient (id,clientName,email,systemType,picPath) values(?,?,?,?,?)";
-
+        String sqlimg = "INSERT INTO dbTASK.tClient (clientName, email, systemType, picPath) VALUES (?, ?, ?, ?)";
         JdbcUtil util = new JdbcUtil();
-        Connection conn2 = util.getConnectionTodbTask();
-        PreparedStatement ps2 = conn2.prepareStatement(sqlimg);
-        ps2.setInt(1, this.getAutoId(conn));
-        ps2.setString(2, user.getOrganization());
-        ps2.setString(3, user.getUserEmail());
-        ps2.setString(4, "web");
-        ps2.setString(5, "url");
-        ps2.executeUpdate();
-        //System.out.println("(save user info to task client )Success.... with ID" + getAutoId(conn));
+        try (Connection conn = util.getConnectionTodbTask() ;PreparedStatement ps2 = conn.prepareStatement(sqlimg)) {
+            ps2.setString(1, user.getUsername());
+            ps2.setString(2, user.getUserEmail());
+            ps2.setString(3, "web");
+            ps2.setString(4, "url");
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
+    @Override
     public void persistUserAgent(UserController user, Connection conn) {
-
-        String autogen = "";
-
         String sql = "INSERT INTO tUSER("
                 + "username, password, max_total, organization, contact_number, email_address, start_date, "
                 + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent) "
                 + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?)";
 
-        //System.out.println("Insert Reseller Querry" + sql);
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Bind values to the parameters
             pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
+            String hashedPassword = PasswordUtil.encrypt(user.getPassword());
+            pstmt.setString(2, hashedPassword);
             pstmt.setLong(3, user.getSmsCredits());
             pstmt.setString(4, user.getOrganization());
             pstmt.setString(5, user.getUserMobile());
@@ -943,10 +934,8 @@ public class UserServiceImpl implements UserServiceApi {
 
             pstmt.setString(13, this.getAgent());
             // Execute the query
-            int count = pstmt.executeUpdate();
-            pesistUserInfo(conn, user);
-            //System.out.println("INSERTING USER INSERTING USER: " + count);
-            //System.out.println("(Save agent )The next auto increment is :" + getAutoId(conn));
+            pstmt.executeUpdate();
+            pesistUserInfo(user);
         } catch (SQLException ex) {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1045,34 +1034,25 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public List<Alpha> getAgentAlphas(Connection conn, String user) {
-
-        UserScroller us = new UserScroller();
-        JdbcUtil util = new JdbcUtil();
-
-        //String sqlReseller = "Select short_code, contactEmail from tSDP where agent_id= '" + user + "'";
-        String sqlReseller = "Select short_code, contactEmail from tSDPNew where agent_id= '" + user + "'";
-        //System.out.println("*******************" + sqlReseller);
+        String sqlReseller = "SELECT short_code, contactEmail FROM tSDPNew WHERE agent_id = ?";
         List<Alpha> result = new ArrayList<>();
-        try {
-            conn = util.getConnectionTodbSMS();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sqlReseller);
 
-            while (rs.next()) {
-                Alpha alpha = new Alpha();
-                //alpha.setId(rs.getLong("id"));
-                alpha.setUsername(rs.getString("contactEmail"));
-                alpha.setName(rs.getString("short_code"));
+        try (Connection connection = conn; PreparedStatement stmt = connection.prepareStatement(sqlReseller)) {
 
-                result.add(alpha);
+            stmt.setString(1, user);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Alpha alpha = new Alpha();
+                    alpha.setUsername(rs.getString("contactEmail"));
+                    alpha.setName(rs.getString("short_code"));
+                    result.add(alpha);
+                }
             }
-            JdbcUtil.closeConnection(conn);
         } catch (SQLException ex) {
             JdbcUtil.printSQLException(ex);
         }
 
         return result;
-
     }
 
     @Override
@@ -1082,11 +1062,9 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public void deleteUser(UserController selected, Connection conn) {
-        try {
-            String sql = "DELETE from tUSER where username =?";
+        String sql = "DELETE from tUSER where username =?";
 
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            // Bind values to the parameters
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, selected.getUsername());
 
             // Execute the query

@@ -127,17 +127,20 @@ public class EmailUser {
     
     List<SelectItem> selectItems;
 
-    public Map<String, String> getComboAlphanumerics() {
-        AlphaServiceImpl asi = new AlphaServiceImpl();
-        selectItems= new ArrayList();
-       Map<String,String> myAlphanumerics = new HashMap<>();
-       
-            conn = util.getConnectionTodbSMS();
-            myAlphanumerics = asi.getAlphanumericsNames(conn);
-            JdbcUtil.closeConnection(conn);
-       
-        return myAlphanumerics;
-    }
+//    public List<SelectItem> getComboAlphanumerics() {
+//        List<SelectItem> selectItems = new ArrayList<>();
+//
+//        AlphaServiceImpl asi = new AlphaServiceImpl();
+//
+//        try (Connection conn = util.getConnectionTodbSMS()) {
+//            selectItems = asi.getAlphanumericsNames(conn);
+//        } catch (SQLException e) {
+//            Logger.getLogger(EmailUser.class.getName()).log(Level.SEVERE, "Error retrieving alphanumeric names", e);
+//        }
+//
+//        // logger.debug("returned " + selectItems.size() + " alphanumerics");
+//        return selectItems;
+//    }
 
     public List<String> getAirComboAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();

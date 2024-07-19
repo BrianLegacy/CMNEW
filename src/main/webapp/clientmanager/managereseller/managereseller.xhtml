@@ -40,49 +40,35 @@
             <div align="center">
                 <p:panel id="maintab" header="View Reseller Users" >
                     <h:form id="showusers">
-                        <p:commandButton value="Add Reseller" style="margin-bottom: 1rem; 
-                                         padding: 0.5rem 0.5rem 0.5rem 2.5rem; 
+                        <p:commandButton value="Add Reseller" style="margin-bottom: 1rem;
+                                         padding: 0.5rem 0.5rem 0.5rem 2.5rem;
                                          background-image: url('#{resource['images/addreseller.png']}');
                                          background-size: 1.5rem 1.5rem;
                                          background-repeat: no-repeat;
                                          background-position:  0.5rem center;" onclick="PF('createReseller').show();" />
-
-                        <table align="center" style="margin-top:15px" >
-                            <tr>
-                                <td style="width: 200px"><h:outputLabel for="users" 
-                                                                        value="Select Reseller" /></td>
-                                <td>   
-
-                                    <p:selectOneMenu id="users" 
-                                                     valueChangeListener="#{userScroller.usersValueChangeListener}"
-                                                     value="#{userScroller.userS}"
-
-                                                     >
-
-                                        <f:ajax listener="#{userScroller.pgetAgentAlphas}"  event="change" 
-                                                render="table aplhagrid" />
-                                        <f:selectItem itemLabel="Select User" itemValue="" />
-                                        <f:selectItems value="#{sMSOut.dataR}" >
-
-                                        </f:selectItems>
-                                    </p:selectOneMenu>
-
-
-
-
-                                </td>
-
-
-
-
-                            </tr>
-                        </table>
-
-
-
-
-                        <p:dataTable id="table" var="data" value="#{userScroller.allUsers}">
-                            <p:column headerText="Username">
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
+                            <div>
+                                <p:commandButton value =" PDF"
+                                                 title="Export to PDF">
+                                    <p:dataExporter type="pdf" target="table" fileName="ResellerUsers" facet="header"/>
+                                </p:commandButton>
+                                <p:commandButton value =" CSV"
+                                                 title="Export to CSV">
+                                    <p:dataExporter type="csv" target="table" fileName="ResellerUsers" facet="header"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                        <p:dataTable id="table" var="data" value="#{resellercontroller.resellers}"
+                                     rows="10"
+                                     rowsPerPageTemplate="10, 15, 25"
+                                     pageLinks="3"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{totalRecords} records"
+                                     scrollable="true"
+                                     resizableColumns="true">
+                            <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
+                                      filterPlaceholder="Filter by Username">
                                 <h:outputText value="#{data.username}" />
                             </p:column>
                             <p:column headerText="User ID">
@@ -91,193 +77,137 @@
                             <p:column headerText="SMS Credits">
                                 <h:outputText value="#{data.smsCredits}" />
                             </p:column>
+                            <p:column headerText="Email Credits">
+                                <h:outputText value="#{data.emailCredits}" />
+                            </p:column>
                             <p:column headerText="Alert Threshold">
                                 <h:outputText value="#{data.alertThreshold}" />
                             </p:column>
-                            <p:column headerText="Organization">
+                            <p:column headerText="Organization"  filterBy="#{data.organization}" 
+                                      filterMatchMode="contains" 
+                                      filterPlaceholder="Filter by Username">
                                 <h:outputText value="#{data.organization}" />
                             </p:column>
                             <p:column headerText="Mobile">
                                 <h:outputText value="#{data.userMobile}" />
                             </p:column>
-                            <p:column headerText="Email">
+                            <p:column headerText="Email" >
                                 <h:outputText value="#{data.userEmail}" />
                             </p:column>
-                            <!--                        <p:column headerText="Group">
-                                                        <h:outputText value="#
-                            {data.group}" />
-                                                    </p:column>-->
 
-
-                            <p:column headerText="Action">
-                                <!--<h:form id="composition">-->
-
+                            <p:column headerText="Action" style="width:170px" exportable="false">
                                 <div style="display: flex; justify-content: space-between;">
+                                    <p:commandButton id="edituserbutton" ajax="true" 
+                                                     icon="fas fa-edit" 
+                                                     title="Click to edit user"
+                                                     oncomplete="PF('editgroupmodal').show();">
+                                        <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
+                                                update="editgroupmodal" 
+                                                event="click" 
+                                                />
+                                    </p:commandButton>
 
+                                    <p:commandButton id="managesmscredits"  
+                                                     icon="fas fa-credit-card" 
+                                                     title="Click to manage SMS credits"
+                                                     oncomplete="PF('editsmscredits').show();">
+                                        <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
+                                                update="editsmscredits" 
+                                                event="click" 
+                                                />
+                                    </p:commandButton>
+                                    <p:commandButton id="manageemailcredits"  
+                                                     icon="fas fa-voicemail" 
+                                                     title="Click to manage Email credits"
+                                                     oncomplete="PF('editemailcredits').show();">
+                                        <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
+                                                update="editemailcredits" 
+                                                event="click" 
+                                                />
+                                    </p:commandButton>
+                                    <p:commandButton id="assignSenderId"
+                                                     icon="fa-regular fa-paper-plane"
+                                                     title="Click to assign and manage senderIds">
+                                        <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}"
+                                                update="senderId" 
+                                                event="click"
+                                                oncomplete="PF('senderId').show();"/>
+                                    </p:commandButton>
 
-                                    <p:commandLink ajax="true" 
-                                                   id="edituserbutton"
-                                                   >
-
-                                        <p:ajax  listener="#{userScroller.pSetCurrentItem(data)}" 
-                                                 update="editgroupmodal" 
-                                                 event="click"
-                                                 oncomplete="PF('editgroupmodal').show();"  
-                                                 />
-                                        <h:graphicImage 
-                                            value="resources/images/edit.gif" width="15px"   >
-
-                                        </h:graphicImage>
-                                        <p:tooltip for="edituserbutton" value="Click to edit user"/>
-
-                                    </p:commandLink>
-
-
-
-                                    <p:commandLink ajax="true" 
-                                                   id="managecredits"
-                                                   >
-
-                                        <p:ajax  listener="#{userScroller.pSetCurrentItem(data)}" 
-                                                 update="editsmscredits" 
-                                                 event="click"
-
-                                                 oncomplete="PF('editsmscredits').show();"  
-                                                 />
-                                        <h:graphicImage 
-                                            value="resources/images/icons/credit.png" width="15px"   >
-
-                                        </h:graphicImage>
-                                        <p:tooltip for="managecredits" value="Click to manage credits"/>
-
-                                    </p:commandLink>
-
-
-
-
-                                    <!--start-->
-
-                                    <p:commandLink ajax="true" 
-                                                   id="deletebutton"
-                                                   >
-
-                                        <p:ajax  listener="#{userScroller.pSetCurrentItem(data)}" 
-                                                 update="deletegroupmodal" 
-                                                 event="click"
-                                                 oncomplete="PF('deletegroupmodal').show();"  
-                                                 />
-                                        <h:graphicImage 
-                                            value="resources/images/delete.gif" width="15px"   >
-
-                                        </h:graphicImage>
-                                        <p:tooltip for="deletebutton" value="Click to delete user"/>
-                                    </p:commandLink>
-                                    <!--stop-->
-
-
+                                    <p:commandButton id="deletebutton" ajax="true" 
+                                                     icon="fas fa-trash-alt" 
+                                                     title="Click to delete user"
+                                                     oncomplete="PF('deletegroupmodal').show();">
+                                        <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
+                                                update="deletegroupmodal"
+                                                event="click" />
+                                    </p:commandButton>
                                 </div>
 
-
-
-
-
-
                             </p:column>
-
-
                         </p:dataTable>
 
-
-                        <p:panel>
-                            <div style="margin-right:auto; margin-left:auto;">
-                                <p:outputLabel value="Assign Alphanumeric : "></p:outputLabel>
-                                <br/>   
-                                <p:selectOneMenu 
-
-
-                                    id="alphanumeric" 
-                                    required="true" requiredMessage="Aphanumerics Required" 
-                                    valueChangeListener="#{userScroller.modifySelectedAlpha}"
-                                    value="#{userController.alphanumeric}" 
-
-
-                                    >
-
-                                    <f:selectItem itemLabel="Select Sender ID"/>
-                                    <f:selectItems  value="#{userController.comboAlphanumerics}"  />
-                                    <!--<f:ajax execute="alphanumeric" event="change" re/>-->
-                                    <p:ajax event="change"   update="showusers:aplhagrid msgs"></p:ajax>
-                                </p:selectOneMenu >
-
-                                <h:panelGrid width="100%" style="margin-left:auto; margin-right:auto;" id="aplhagrid">
-                                    <p:dataTable 
-                                        value="#{userScroller.agentAlphas}"  
-                                        var="ualpha"
-                                        id="alphas"
-                                        styleClass="table table-striped" 
-                                        style="margin-left:auto; margin-right:auto;"
-
-                                        >
-                                        <f:facet name="header">
-                                            <h:outputText value="Available Sender IDs" />
-
-                                        </f:facet>
-
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Short Code"/>
-                                            </f:facet>
-                                            <h:outputText value="#{ualpha.name}" />
-
-                                        </p:column>
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Contact"/>
-                                            </f:facet>
-                                            <h:outputText value="#{ualpha.username}" />
-                                        </p:column>
-                                        <p:column>
-                                            <f:facet name="header">
-                                                <h:outputText value="Action"/>
-                                            </f:facet>
-
-                                            <!--                                actionListener="{userScroller.removeUserAlpha()}" -->
-                                            <!--start-->
-                                            <p:commandLink ajax="true" id="deletealphanumeric"
-                                                           >
-                                                <!--<p:ajax  listener="#
-                                                {userScroller.psetCurrentAlphanumeric(ualpha.name)}"--> 
-                                                <!--        <p:ajax  listener="#
-                                                { alphaScroller.currentItem(ualpha) userScroller.setpCurrentAlpha(ualpha)}" -->
-                                                <p:ajax  listener="#{alphaScroller.psetCurrentAlphanumericObject(ualpha)}" 
-
-                                                         update="alphas,delAlpha" 
-                                                         event="click"
-                                                         oncomplete="PF('delAlpha').show()"  
-                                                         />
-                                                <h:graphicImage 
-                                                    value="/resources/images/delete.gif" width="15px"   >
-
-                                                </h:graphicImage>
-                                                <p:tooltip for="deletealphanumeric" value="Click to delete alphanumeric"/>
-
-                                            </p:commandLink>
-                                            <!--stop-->
-
-                                        </p:column>
-
-                                        <f:facet name="footer">
-
-
-                                        </f:facet>
-                                    </p:dataTable> 
-                                </h:panelGrid>
-
-                            </div>
-
-                        </p:panel>
-
                     </h:form> 
+
+                    <p:dialog header="Assign and Manage Sender IDs" widgetVar="senderId" id="senderId" modal="true" width="800">
+                        <h:form id="numerics">
+                            <p:panel>
+                                <div style="margin-right:auto; margin-left:auto;">
+                                    <p:selectOneMenu id="alphanumeric" value="#{resellercontroller.alphanumeric}" required="true" requiredMessage="Alphanumeric Required" style="margin:10px;" >
+                                        <f:selectItem itemLabel="Select Sender ID"/>
+                                        <f:selectItems value="#{smscontroller.listAlphas}"/>
+                                    </p:selectOneMenu>
+                                    <p:commandButton value="Assign" 
+                                                     action="#{resellercontroller.assignAlpha()}" 
+                                                     update=":numerics:alphaTable msgs" 
+                                                     style="margin: 10px " />
+
+                                    <h:panelGrid width="100%" style="margin-left:auto; margin-right:auto;" id="alphagrid">
+                                        <p:dataTable id="alphaTable" value="#{resellercontroller.senderIds}" var="ualpha"
+                                                     rows="10"
+                                                     rowsPerPageTemplate="5, 10, 15"
+                                                     pageLinks="2"
+                                                     paginator="true" paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                                     scrollable="true"
+                                                     styleClass="table table-striped" 
+                                                     style="margin-left:auto; margin-right:auto;">
+                                            <f:facet name="header">
+                                                <h:outputText value="Available Sender IDs"/>
+                                            </f:facet>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Short Code"/>
+                                                </f:facet>
+                                                <h:outputText value="#{ualpha.name}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Contact"/>
+                                                </f:facet>
+                                                <h:outputText value="#{ualpha.username}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputText value="Action"/>
+                                                </f:facet>
+                                                <p:commandButton id="deletealphanumeric" ajax="true" 
+                                                                 icon="fas fa-trash-alt" 
+                                                                 title="Click to delete user's alpha"
+                                                                 oncomplete="PF('delAlpha').show();">
+                                                    <p:ajax listener="#{resellercontroller.setSelectedAlpha(ualpha)}" 
+                                                            update="delAlpha"
+                                                            event="click" />
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGrid>
+                                </div>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>
+
 
                     <!--create new reseller dialog-->
                     <p:dialog header="Create Reseller" widgetVar="createReseller" id="createReseller" modal="true" width="600">
@@ -286,81 +216,99 @@
                                 <div class="formgrid">
                                     <div class="field">
                                         <p:outputLabel for="username" value="Username"/>
-                                        <p:inputText id="username" value="#{userController.username}" 
-                                                     required="false" placeholder="" 
+                                        <p:inputText id="username" value="#{resellercontroller.newReseller.username}" 
+                                                     required="true" placeholder="" 
                                                      requiredMessage="Enter Username">
                                             <f:validator validatorId="customUsernameValidator"/>
-                                            <f:ajax event="blur" render="msgs" />
+                                            <f:ajax event="blur" render="usernameMessage" />
                                         </p:inputText>
+                                        <p:message for="username" id="usernameMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="password" value="Password"/>
-                                        <p:inputText id="password" value="#{userController.password}" 
+                                        <p:inputText id="password" type="password" value="#{resellercontroller.newReseller.password}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter password" 
-                                                     validatorMessage="Enter password" />
+                                                     validatorMessage="Enter password">
+                                            <f:ajax event="blur" render="passwordMessage" />
+                                        </p:inputText>
+                                        <p:message for="password" id="passwordMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="smscredits" value="SMS Credits"/>
-                                        <p:inputText id="smscredits" value="#{userController.smsCredits}" 
+                                        <p:inputText id="smscredits" value="#{resellercontroller.newReseller.smsCredits}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter credits" 
-                                                     validatorMessage="Enter credits" />
+                                                     validatorMessage="Enter credits">
+                                            <f:ajax event="blur" render="smsCreditsMessage" />
+                                        </p:inputText>
+                                        <p:message for="smscredits" id="smsCreditsMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="organization" value="Organization"/>
-                                        <p:inputText id="organization" value="#{userController.organization}" 
+                                        <p:inputText id="organization" value="#{resellercontroller.newReseller.organization}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter organization" 
-                                                     validatorMessage="Enter organization" />
+                                                     validatorMessage="Enter organization">
+                                            <f:ajax event="blur" render="organizationMessage" />
+                                        </p:inputText>
+                                        <p:message for="organization" id="organizationMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="useremail" value="User Email"/>
-                                        <p:inputText id="useremail" value="#{userController.userEmail}" 
+                                        <p:inputText id="useremail" value="#{resellercontroller.newReseller.userEmail}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter User Email" 
-                                                     validatorMessage="Enter User Email" />
+                                                     validatorMessage="Enter User Email">
+                                            <f:ajax event="blur" render="userEmailMessage" />
+                                        </p:inputText>
+                                        <p:message for="useremail" id="userEmailMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="usermobile" value="User Mobile"/>
-                                        <p:inputText id="usermobile" value="#{userController.userMobile}" 
+                                        <p:inputText id="usermobile" value="#{resellercontroller.newReseller.userMobile}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter User Mobile" 
-                                                     validatorMessage="Enter User Mobile" />
+                                                     validatorMessage="Enter User Mobile">
+                                            <f:ajax event="blur" render="userMobileMessage" />
+                                        </p:inputText>
+                                        <p:message for="usermobile" id="userMobileMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="alertthreshold" value="Alert Threshold"/>
-                                        <p:inputText id="alertthreshold" value="#{userController.alertThreshold}" 
-                                                     required="true" placeholder="" 
-                                                     requiredMessage="" 
-                                                     validatorMessage="" />
+                                        <p:inputText id="alertthreshold" value="#{resellercontroller.newReseller.alertThreshold}" 
+                                                     required="true" placeholder="">
+                                            <f:ajax event="blur" render="alertThresholdMessage" />
+                                        </p:inputText>
+                                        <p:message for="alertthreshold" id="alertThresholdMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="costpersms" value="Cost Per SMS"/>
-                                        <p:inputText id="costpersms" value="#{userController.cost_per_sms}" 
-                                                     required="true" placeholder="" 
-                                                     requiredMessage="" 
-                                                     validatorMessage="" />
+                                        <p:inputText id="costpersms" value="#{resellercontroller.newReseller.cost_per_sms}" 
+                                                     required="true" placeholder="">
+                                            <f:ajax event="blur" render="costPerSmsMessage" />
+                                        </p:inputText>
+                                        <p:message for="costpersms" id="costPerSmsMessage" />
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="arrears" value="Arrears"/>
-                                        <p:inputText id="arrears" value="#{userController.arrears}" 
-                                                     required="true" placeholder="" 
-                                                     requiredMessage="" 
-                                                     validatorMessage="" />
+                                        <p:inputText id="arrears" value="#{resellercontroller.newReseller.arrears}" 
+                                                     required="true" placeholder="">
+                                            <f:ajax event="blur" render="arrearsMessage" />
+                                        </p:inputText>
+                                        <p:message for="arrears" id="arrearsMessage" />
                                     </div>
                                     <div class="field-full">
                                         <p:outputLabel for="enableemailalert" value="Enable email alert when credit is over"/>
                                         <p:selectBooleanCheckbox id="enableemailalert" 
-                                                                 value="#{userController.enableEmailAlertWhenCreditOver}"/>
+                                                                 value="#{resellercontroller.newReseller.enableEmailAlertWhenCreditOver}"/>
                                     </div>
-
                                     <div class="field-full align-center">
-                                        <p:commandButton ajax="false" value="Save" icon="fa fa-save" 
-                                                         actionListener="#{userController.saveReseller()}"
-                                                         onclick="document.getElementById('progressbar').style.display = 'block'" 
+                                        <p:commandButton value="Save" icon="fa fa-save" 
+                                                         action="#{resellercontroller.addReseller()}"
+                                                         update ="showusers:table, msgs"
+                                                         oncomplete="PF ('createReseller').hide;"
                                                          id="savegroupbutton"/>
-                                        <img id="progressbar" src="./images/ajax-loader.gif" style="display:none"/>
                                     </div>
                                 </div>
                             </div>
@@ -368,186 +316,168 @@
                     </p:dialog>
 
 
-                    <p:dialog header="Edit SMS Credits" widgetVar="editsmscredits"  id="editsmscredits"  modal="true" >
-                        <h:form>     
-                            <table align="center" style="margin-top:15px; width: 400px; border-color: white">
-
-                                <tr>
-                                    <td><p:outputLabel value="Username:"></p:outputLabel></td>
-                                    <td><p:inputText value="#{userScroller.currentItem.username}" readonly="true"></p:inputText></td>
-                                </tr>
-                                <tr>
-                                    <td><p:outputLabel value="Available SMS Credits:"></p:outputLabel></td>
-                                    <td><p:inputText value="#{userScroller.currentItem.smsCredits}" readonly="true"></p:inputText></td>
-                                </tr>
-                                <tr>
-                                    <td><p:outputLabel value="Select Action:"></p:outputLabel></td>
-                                    <td>
-
-                                        <p:selectOneMenu id="safaricomalphanumeric" 
-                                                         value="#{userScroller.currentItem.creditManageType}">
-                                            <f:selectItem itemLabel="Add Credit" itemValue="add" />
-                                            <f:selectItem itemLabel="Alter Credit" itemValue="update" />
+                    <!--edit sms credit for reseller-->
+                    <p:dialog header="Edit SMS Credits" widgetVar="editsmscredits" id="editsmscredits" modal="true">
+                        <h:form>
+                            <div class="card" style="width: 400px; margin: 15px auto; border-color: white;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="display: flex; align-items: center;">
+                                        <p:outputLabel for="username" value="Username:" style="margin-right: 10px; width: 150px;"/>
+                                        <p:inputText id="username" value="#{resellercontroller.currentReseller.username}" readonly="true"/>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <p:outputLabel for="smsCredits" value="Available SMS Credits:" style="margin-right: 10px; width: 150px;"/>
+                                        <p:inputText id="smsCredits" value="#{resellercontroller.currentReseller.smsCredits}" readonly="true"/>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <p:outputLabel for="creditManageType" value="Select Action:" style="margin-right: 10px; width: 150px;"/>
+                                        <p:selectOneMenu id="creditManageType" value="#{resellercontroller.currentReseller.creditManageType}">
+                                            <f:selectItem itemLabel="Add Credit" itemValue="add"/>
+                                            <f:selectItem itemLabel="Alter Credit" itemValue="update"/>
                                         </p:selectOneMenu>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><p:outputLabel value="SMS Credit Value :"></p:outputLabel></td>
-                                    <td><p:inputText value="#{userScroller.currentItem.creditsToManage}" ></p:inputText></td>
-                                </tr>
-                                <tr>
-
-                                    <!--hidden-->
-                                    <h:inputHidden id="secret_username" value="#{userScroller.currentItem.username}"/>
-                                    <h:inputHidden id="secrete_smsCredit"  value="#{userScroller.currentItem.smsCredits}"/>
-                                    <!--hidden-->
-
-
-
-                                    <td></td>
-                                    <td >
-
-                                        <p:commandButton value="execute" 
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <p:outputLabel for="creditsToManage" value="SMS Credit Value:" style="margin-right: 10px; width: 150px;"/>
+                                        <p:inputText id="creditsToManage" value="#{resellercontroller.currentReseller.creditsToManage}"/>
+                                    </div>
+                                    <!-- hidden fields -->
+                                    <h:inputHidden id="secret_username" value="#{resellercontroller.currentReseller.username}"/>
+                                    <h:inputHidden id="secrete_smsCredit" value="#{resellercontroller.currentReseller.smsCredits}"/>
+                                    <!-- Command Buttons -->
+                                    <div class="field-full align-center" style="margin-top: 10px;">
+                                        <p:commandButton value="Execute"
+                                                         action="#{resellercontroller.manageCredit()}"
                                                          ajax="true"
                                                          update="showusers:table, msgs"
-                                                         oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editsmscredits').hide();"
-                                                         >
-                                            <f:actionListener binding="#{userScroller.currentItem.manageCredit()}" />
-                                            <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
-                                        </p:commandButton>
-                                    </td>
-
-                                </tr>
-
-                            </table>
-                        </h:form>
-
-                    </p:dialog>            
-
-                    <p:dialog header="Edit SMS User" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                        <h:form>
-
-                            <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                <tr >
-                                    <td ><h:outputLabel for="username" value="Username" /></td>
-                                    <td><p:inputText style="width: 150px" id="username" 
-                                                     value="#{userScroller.currentItem.username}" 
-                                                     >
-                                        </p:inputText>
-
-                                        <h:inputText id="previd" value="#{userScroller.currentItem.previousUsername}" 
-                                                     style="visibility: hidden"></h:inputText>
-                                    </td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="password" 
-                                                        value="Password" /></td>
-                                    <td><p:inputText style="width: 150px" id="password" value="#{userScroller.currentItem.password}" 
-                                                     >
-
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="organization" value="Organization" /></td>
-                                    <td><p:inputText style="width: 150px" id="organization"
-                                                     value="#{userScroller.currentItem.organization}" required="false" placeholder="" 
-                                                     >
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="mobile" value="mobile" /></td>
-                                    <td><p:inputText style="width: 150px" 
-                                                     id="mobile" value="#{userScroller.currentItem.userMobile}" 
-                                                     required="false" placeholder=""  >
-                                        </p:inputText></td>
-                                </tr>
-                                <tr >
-                                    <td ><h:outputLabel for="email" value="email" /></td>
-                                    <td><p:inputText style="width: 150px" id="email" value="#{userScroller.currentItem.userEmail}" 
-                                                     required="false" placeholder="">
-
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="alertthreshold" value="AlertThreshold" /></td>
-                                    <td><p:inputText style="width: 150px" id="alertthreshold" value="#{userScroller.currentItem.alertThreshold}" 
-                                                     required="false" placeholder="" >
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="costpersms" value="Cost Per sMS" /></td>
-                                    <td><p:inputText style="width: 150px" id="costpersms" value="#{userScroller.currentItem.cost_per_sms}" 
-                                                     required="false" placeholder="" >
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="arrears" value="Arrears" /></td>
-                                    <td><p:inputText style="width: 150px" id="arrears" value="#{userScroller.currentItem.arrears}" 
-                                                     required="false" placeholder="" >
-                                        </p:inputText></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="subaccount" value="Can Create Sub-Account" style="display: #{userScroller.showReseller()}" /></td>
-                                    <td> <p:selectBooleanCheckbox id="subaccount"
-                                                                  value="#{userScroller.currentItem.createAccount}"
-                                                                  style="display: #{userScroller.showReseller()}"
-                                                                  /></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="alert"
-                                                        value="Enable Email Alert" /></td>
-                                    <td> <p:selectBooleanCheckbox id="alert"
-                                                                  value="#{userScroller.currentItem.enableEmailAlertWhenCreditOver}"
-                                                                  /></td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="group" value="Group"  rendered="#{userScroller.showReseller()}"  /></td>
-                                    <td> <p:selectOneMenu id="group" 
-                                                          value="#{userController.alphanumeric}"  rendered="#{userScroller.showReseller()}">
-                                            <f:selectItem itemLabel="Select Group" itemValue="" />
-                                            <f:selectItems value="#{userController.comboGroups}" />
-                                        </p:selectOneMenu></td>
-                                </tr>
-
-
-
-
-                            </table>                                      
-
-                            <br/>
-                            <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                <p:commandButton style="margin-right: 10px" ajax="false"  
-                                                 oncomplete="PF('deletegroupmodal').hide();" 
-                                                 value="Save">
-                                    <f:actionListener binding="#{userScroller.storeResller()}" />
-                                    <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
-                                </p:commandButton>
-
-                                <p:commandButton value="Cancel" 
-                                                 onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                                                         oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editsmscredits').hide();"/>
+                                        <p:commandButton value="Cancel" onclick="PF('editsmscredits').hide();"/>
+                                    </div>
+                                </div>
                             </div>
                         </h:form>
-                    </p:dialog> 
+                    </p:dialog>
+
+
+                    <!--edit email credit-->
+                    <p:dialog header="Edit Email Credits" widgetVar="editemailcredits" id="editemailcredits" modal="true">
+                        <h:form id="editEmailCreditsForm">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <p:outputLabel for="username" value="Username" style="margin-right: 10px; width: 150px;"/>
+                                    <p:inputText id="username" value="#{resellercontroller.currentReseller.username}" readonly="true"/>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <p:outputLabel for="availableCredits" value="Available Email Credits" style="margin-right: 10px; width: 150px;"/>
+                                    <p:inputText id="availableCredits" value="#{resellercontroller.currentReseller.maxContacts}" readonly="true"/>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <p:outputLabel for="action" value="Select Action" style="margin-right: 10px; width: 150px;"/>
+                                    <p:selectOneMenu id="action" value="#{resellercontroller.currentReseller.creditManageType}">
+                                        <f:selectItem itemLabel="Add Credit" itemValue="add"/>
+                                        <f:selectItem itemLabel="Alter Credit" itemValue="update"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <p:outputLabel for="creditValue" value="Email Credit Value" style="margin-right: 10px; width: 150px;"/>
+                                    <p:inputText id="creditValue" value="#{resellercontroller.currentReseller.creditsToManage}"/>
+                                </div>
+                                <!-- Hidden fields -->
+                                <h:inputHidden id="secret_username" value="#{resellercontroller.currentReseller.username}"/>
+                                <h:inputHidden id="secrete_smsCredit" value="#{resellercontroller.currentReseller.smsCredits}"/>
+                                <!-- Command Button -->
+                                <div class="field-full align-center">
+                                    <p:commandButton value="Execute"
+                                                     action="#{resellercontroller.manageEmailCredit()}"
+                                                     update=":showusers:table, :msgs"
+                                                     oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editemailcredits').hide();"/>
+                                    <p:commandButton value="Cancel" onclick="PF('editemailcredits').hide();"/>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Edit User" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                        <h:form> 
+                            <div class="card">
+                                <div class="formgrid">
+                                    <div class="field">
+                                        <h:outputLabel for="username" value="Username"/>
+                                        <p:inputText id="username" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.username}"/>
+                                    </div>
+                                    <div class="field">
+                                        <p:outputLabel for="password" value="password"/>
+                                        <p:inputText id="password" type="password" value="#{resellercontroller.currentReseller.password}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="organization" value="Organization"/>
+                                        <p:inputText id="organization" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.organization}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="mobile" value="Mobile"/>
+                                        <p:inputText id="mobile" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.userMobile}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="email" value="Email"/>
+                                        <p:inputText id="email" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.userEmail}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="alertthreshold" value="Alert Threshold"/>
+                                        <p:inputText id="alertthreshold" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.alertThreshold}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="costpersms" value="Cost Per SMS"/>
+                                        <p:inputText id="costpersms" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.cost_per_sms}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="arrears" value="Arrears"/>
+                                        <p:inputText id="arrears" styleClass="input-field"
+                                                     value="#{resellercontroller.currentReseller.arrears}"/>
+                                    </div>
+                                    <div class="field" style="display: #{userScroller.showReseller() ? 'block' : 'none'};">
+                                        <h:outputLabel for="subaccount" value="Can Create Sub-Account"/>
+                                        <p:selectBooleanCheckbox id="subaccount"
+                                                                 value="#{resellercontroller.currentReseller.createAccount}"/>
+                                    </div>
+                                    <div class="field">
+                                        <h:outputLabel for="alert" value="Enable Email Alert"/>
+                                        <p:selectBooleanCheckbox id="alert"
+                                                                 value="#{resellercontroller.currentReseller.enableEmailAlertWhenCreditOver}"/>
+                                    </div>
+                                    <div class="field-full align-center">
+                                        <p:commandButton styleClass="btn" value="Upload Logo"
+                                                         onclick="PF('addLogo').show();"/>
+                                    </div>
+                                    <div class="field-full align-center">
+                                        <p:commandButton styleClass="btn" 
+                                                         actionListener="#{resellercontroller.editReseller()}"
+                                                         update =":showusers:table :msgs"
+                                                         oncomplete="PF('editgroupmodal').hide();"
+                                                         value="Save"/>
+                                        <p:commandButton styleClass="btn" value="Cancel"
+                                                         onclick="PF('editgroupmodal').hide();"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
 
                     <p:dialog header="Delete  Reseller" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
                         <h:form>
-                            <p:outputLabel value="Are you sure you want to delete `#{userScroller.currentItem.username}` sms user?"/>
+                            <h:outputText value="Are you sure you want to delete `#{resellercontroller.currentReseller.username}` ?"/>
                             <br/>
-                            <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                <p:commandButton style="margin-right: 10px" ajax="false" 
+                            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                                <p:commandButton value ="Delete"
+                                                 action ="#{resellercontroller.deleteReseller()}"
+                                                 update =":showusers:table :msgs"
                                                  oncomplete="PF('deletegroupmodal').hide();" 
-                                                 value="Delete">
-                                    <f:actionListener binding="#{userScroller.deleteReseller()}" />
-                                    <f:actionListener binding="#{userScroller.fetchAllUsers()}" />
+                                                 >
                                 </p:commandButton>
 
                                 <p:commandButton value="Cancel" onclick="PF('deletegroupmodal').hide();"></p:commandButton>
@@ -556,52 +486,35 @@
                     </p:dialog> 
 
 
-
-                    <!--start-->
-                    <p:dialog id="delAlpha" widgetVar="delAlpha"  width="450">
-                        <f:facet name="header">
-                            <h:outputText value="Remove Sender ID" />
-                        </f:facet>
-                        <f:facet name="controls">
-                            <h:panelGroup>
-
-                                <h:panelGroup>
-                                    <h:graphicImage value="/resources/images/icons/close.png" id="del"
-                                                    styleClass="hidelink" />
-
-                                </h:panelGroup>
-
-
-                            </h:panelGroup>
-                        </f:facet>
+                    <p:dialog id="addLogo" widgetVar="addLogo" header="Add Logo" modal="true">
                         <h:form>
-                            <p:messages style="color:red;"></p:messages>
-                            <h:panelGrid columns="1">
-                                <p:outputPanel>
-
-                                    <h:outputText value=""></h:outputText>
-                                    <h:inputHidden id="username" value="#{userScroller.currentItem.alphanumeric}">
-
-                                    </h:inputHidden>
-
-                                    <h:outputText  value="Remove #{  alphaScroller.currentItem.name} Sender id  from #{userScroller.userS} ?"/>
-                                </p:outputPanel>
-
-                                <h:panelGrid  columns="2" style="margin-right:auto; margin-left:auto; text-align:center" width="100%">
-                                    <p:commandButton value="Remove"
-
-                                                     >
-
-                                        <p:ajax listener="#{alphaScroller.deleteAgentAlphanumeric}"
-                                                />
-                                        <p:ajax listener="#{userScroller.fetchAgentAlphas()}" oncomplete="PF('delAlpha').hide();" 
-                                                update="msgs,showusers:aplhagrid"/>
-                                    </p:commandButton>
-                                    <p:commandButton value="Cancel" onclick="PF('delAlpha').hide();" />
-                                </h:panelGrid>
-                            </h:panelGrid>
+                            <p:messages id="message" />
+                            <p:fileUpload listener="#{resellercontroller.uploadResellerLogo}" mode="advanced" dragDropSupport="true"
+                                          allowTypes="/(\.|\/)(gif|jpeg|jpg|png)$/"
+                                          update="message">
+                            </p:fileUpload>
                         </h:form>
                     </p:dialog>
+                    <!--start-->
+                    <p:dialog id="delAlpha" widgetVar="delAlpha" header="Remove Sender ID" modal="true" width="450">
+                        <h:form>
+                            <p:messages id="msgs" />
+                            <h:outputText value="Remove #{resellercontroller.selectedAlpha.name} Sender ID from #{resellercontroller.currentReseller.username}?" />
+                            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                                <p:commandButton 
+                                    value="Remove"
+                                    action="#{resellercontroller.delAlpha()}"
+                                    update="msgs, numerics:alphaTable"
+                                    styleClass="ui-button-danger"/>                          
+                                <p:commandButton 
+                                    value="Close" 
+                                    onclick="PF('delAlpha').hide();" 
+                                    icon="fa fa-times" />
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+
 
 
 
@@ -610,6 +523,7 @@
 
                 </p:panel>
             </div>
+          
         </ui:composition>
     </h:body>
 </html> 

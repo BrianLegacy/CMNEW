@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
 import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
 /**
  *
@@ -37,13 +39,13 @@ public class SmsDAOImpl implements SmsDAO {
 
     @Override
     public List<UserController> fetchSmsusers() {
-        
+
         String adminQuery = "SELECT dbSMS.tUSER.id, dbSMS.tUSER.username, dbSMS.tUSER.password, dbSMS.tUSER.admin, "
                 + "dbSMS.tUSER.max_total, dbSMS.tUSER.max_contacts, dbSMS.tUSER.organization, dbSMS.tUSER.contact_number, "
                 + "dbSMS.tUSER.email_address, dbSMS.tUSER.enable_email_alert, dbSMS.tUSER.end_date, dbSMS.tUSER.start_date, "
                 + "dbSMS.tUSER.alertThreshold, dbSMS.tUSER.cost_per_sms, dbSMS.tUSER.arrears, dbSMS.tUSER.group "
                 + "FROM dbSMS.tUSER "
-                + "WHERE dbSMS.tUSER.admin != '5' AND dbSMS.tUSER.agent != 'email'";
+                + "WHERE dbSMS.tUSER.admin != '5' AND dbSMS.tUSER.emailuser != 'Y'";
 
         // Reseller query string
         String resellerQuery = "SELECT dbSMS.tUSER.id, dbSMS.tUSER.username, dbSMS.tUSER.password, dbSMS.tUSER.admin, "
@@ -51,7 +53,7 @@ public class SmsDAOImpl implements SmsDAO {
                 + "dbSMS.tUSER.email_address, dbSMS.tUSER.enable_email_alert, dbSMS.tUSER.end_date, dbSMS.tUSER.start_date, "
                 + "dbSMS.tUSER.alertThreshold, dbSMS.tUSER.cost_per_sms, dbSMS.tUSER.arrears, dbSMS.tUSER.group "
                 + "FROM dbSMS.tUSER "
-                + "WHERE dbSMS.tUSER.agent = ? AND dbSMS.tUSER.admin = '3'";
+                + "WHERE dbSMS.tUSER.agent = ? AND dbSMS.tUSER.admin = '3' AND dbSMS.tUSER.emailuser != 'Y'";
         List<UserController> smsUsers = new ArrayList<>();
 
         try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(adminQuery) : connection.prepareStatement(resellerQuery)) {
@@ -97,18 +99,17 @@ public class SmsDAOImpl implements SmsDAO {
                 }
             }
         } catch (SQLException e) {
-
+            LOGGER.log(Level.SEVERE, "Sql exception while retreiving users");
         }
 
         return smsUsers;
     }
-    
-    public String getGroup(int id){
-        String sql =" select groupname from tGROUPS where id= ?";
-          String groupName = null;
 
-        try (Connection connection = jdbcUtil.getConnectionTodbSMS();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+    public String getGroup(int id) {
+        String sql = " select groupname from tGROUPS where id= ?";
+        String groupName = null;
+
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -117,25 +118,80 @@ public class SmsDAOImpl implements SmsDAO {
                 }
             }
         } catch (SQLException e) {
-           LOGGER.log(Level.SEVERE, "Error collecting groups");
+            LOGGER.log(Level.SEVERE, "Error collecting groups");
         }
+
+        return groupName;
+    }
+
+    @Override
+    public boolean editSmsUser(UserController user) {
+        String sql = "UPDATE tUSER SET "
+                + "username= ?, organization=?, contact_number = ?, email_address=?"
+                + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,`group` =? , password = ?  WHERE id=?";
+        boolean result = false;
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
+            pstmt.setString(2, user.getOrganization());
+            pstmt.setString(3, user.getUserMobile());
+            pstmt.setString(4, user.getUserEmail());
+            pstmt.setBoolean(5, user.isEnableEmailAlertWhenCreditOver());
+            pstmt.setFloat(6, user.getCost_per_sms());
+            pstmt.setInt(7, user.getArrears());
+
+            pstmt.setInt(8, user.getAlertThreshold());
+            pstmt.setInt(9, user.getGroupId());
+            String hashedPassword = PasswordUtil.encrypt(user.getPassword());
+            pstmt.setString(10,hashedPassword);
+
+            pstmt.setLong(11, user.getId());
+
+            result = pstmt.executeUpdate() > 0;
+            LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
+            return result;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "SQL error occurred", e);
+        }
+        return result;
+
+    }
+
+    @Override
+    public List<SelectItem> getAlphas() {
+        List<SelectItem> users = new ArrayList<>();
+        String queryAdmin = "SELECT short_code, sid_type FROM tSDPNew WHERE short_code_type = 2 ORDER BY short_code ";
+        String queryRes = "SELECT t.short_code, t.sid_type FROM tSDPNew t INNER JOIN tUSER u ON t.agent_id = u.id "
+                + "WHERE t.short_code_type = 2 AND t.agent_id = ? ORDER BY short_code  ";
         
-       return groupName; 
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+            if (admin != 'Y') {
+                ps.setLong(1, agent);
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new SelectItem(rs.getString("short_code")));
+            }
+        } catch (SQLException e) {
+            // Handle exceptions
+            LOGGER.log(Level.SEVERE, "Error fetching alphas types", e);
+        }
+        return users;
     }
 
     @Override
-    public boolean deleteUser() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public boolean deleteSmsUser(UserController user
+    ) {
+        String sql = "DELETE from tUSER where username =?";
+        boolean result = false;
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
 
-    @Override
-    public boolean editSmsUser() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public boolean manageCredit() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            // Execute the query
+            result = pstmt.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "SQL error occured ", ex);
+        }
+        return result;
     }
 
 }

@@ -56,11 +56,11 @@
                             <p:message for="password" display="message" />
 
                         </h:panelGrid>
-                        <p:panelGrid  rendered="false" >
+                        <div  style="padding: 0.4rem">
                             <h:outputLink  id="reset" value="PasswordReset.jsf" target="_blank" onclick="PF('myDialogVar').show()" style="color: blue;text-decoration: none;"> 
                                 Forgot Password ?
                             </h:outputLink>
-                        </p:panelGrid>
+                        </div>
 
                         <h:panelGrid style="float: inside" columns="2" cellpadding="2">
                             <p:selectBooleanCheckbox id="bol" value="#{tusercontroller.termsAgreed}" 
