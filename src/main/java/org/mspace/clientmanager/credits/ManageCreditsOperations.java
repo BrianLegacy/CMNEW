@@ -12,6 +12,7 @@ import org.mspace.clientmanager.user.UserController;
  * @author developer
  */
 public interface ManageCreditsOperations {
+
     public void execute(CreditRequestObject creditRequestObject);
-    
+
 }

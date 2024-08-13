@@ -302,4 +302,8 @@ public class ResellerController implements Serializable {
         }
         return fileName.substring(lastIndex);
     }
+
+    public void resetUser() {
+        newReseller = new UserController();
+    }
 }

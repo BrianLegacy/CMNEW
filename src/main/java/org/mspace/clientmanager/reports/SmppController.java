@@ -5,6 +5,7 @@
 package org.mspace.clientmanager.reports;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -76,7 +77,10 @@ public class SmppController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String startDate = simpleDateFormat.format(reportStartDate);
+        startDate = startDate.substring(0, 8) + "000001";
+
         String endDate = simpleDateFormat.format(reportEndDate);
+        endDate = endDate.substring(0, 8) + "235959";
 
         if (!username.isEmpty()) {
             records = smsDAO.fetchSMPPReport(username, startDate, endDate);

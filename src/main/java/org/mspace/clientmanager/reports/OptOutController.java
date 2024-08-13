@@ -67,7 +67,10 @@ public class OptOutController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String startDate = simpleDateFormat.format(reportStartDate);
+        startDate = startDate.substring(0, 8) + "000001";
+
         String endDate = simpleDateFormat.format(reportEndDate);
+        endDate = endDate.substring(0, 8) + "235959";
 
         records = smsDAO.fetchOptOutReport(startDate, endDate);
 

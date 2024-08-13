@@ -27,7 +27,7 @@
                             <h:outputText value="End Date :"/>
                             <p:calendar value="#{smppreport.reportEndDate}" style="width:200px"/>
                             <h:outputText value="User :"/>
-                            <p:selectOneMenu id="users" value="#{smppreport.username}">
+                            <p:selectOneMenu id="users" value="#{smppreport.username}" filter="true">
                                 <f:ajax event="change" render="addgroupform" />
                                 <f:selectItem itemLabel="Select User" itemValue="" />
                                 <f:selectItems value="#{sMPPOut.usernames}" />
@@ -40,7 +40,7 @@
                             </h:panelGroup>
                             <h:panelGroup layout="block">
                                 <p:commandLink  id="xlsx_export" >
-                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMPP report" postProcessor="#{smppreport.postProcessXLSX}"/>
+                                    <p:dataExporter type="xlsxstream" target="report:table" fileName="SMPP report" />
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
                                 </p:commandLink>
                             </h:panelGroup>

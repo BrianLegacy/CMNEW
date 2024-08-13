@@ -585,7 +585,7 @@ public class UserController implements Serializable {
 
     public void manageEmailCredit() throws IOException {
         ManageCreditImpl mcr = new ManageCreditImpl();
-        char adminv = mcr.admiValue();
+        char adminv = mcr.admiValue(); //get value for the one in session
 
         AlphaScroller ac = new AlphaScroller();
         UserScroller us = new UserScroller();
@@ -621,7 +621,7 @@ public class UserController implements Serializable {
                         smsCredit.setNew_balance(new_balance);
                         smsCredit.setPrevious_balance(previous_balance);
                         //creditManager.persistUpdate(smsCredit, conn);
-                        creditManager.persistUpdate2(smsCredit, conn, creditsToManage, current, current - creditsToManage);
+                        creditManager.persistUpdateEmail(smsCredit, conn, creditsToManage, current, current - creditsToManage);
                         newBalace = adminv == '1' ? -1 : current - creditsToManage;
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", newBalace);
                         userService.updateEmailCredits(username, maxContacts, conn);
@@ -643,25 +643,18 @@ public class UserController implements Serializable {
                         int afterBalance = previous_balance2 - creditsToManage;
                         //System.out.println("CURRENT SMS CREDITS/PREVIOUS BALANCE: " + previous_balance2 + "\n" + "CREDITS TO MANAGE: " + creditsToManage + "\n" + "NEW BALANCE: " + afterBalance);
                         this.maxContacts = creditsToManage;
-                        String updateUser = ("User Update::: " + new Date() + " User: " + this.username + " Previous Balance: " + previous_balance2 + " Credit Allocated: " + creditsToManage + " New Balance: " + afterBalance);
-                        //System.out.println(updateUser);
                         final int new_balance2 = afterBalance;
                         smsCredit.setActionType(adminv == '1' ? '2' : '3');
                         smsCredit.setNumCredits(creditsToManage);
                         smsCredit.setNew_balance(new_balance2);
                         smsCredit.setPrevious_balance(previous_balance2);
-                        //
-                        //creditManager.persistUpdate(smsCredit, conn,);
-                        creditManager.persistUpdate2(smsCredit, conn, creditsToManage, previous_balance2, previous_balance2 - creditsToManage);
+                        
+                        creditManager.persistUpdateEmail(smsCredit, conn, creditsToManage,  current, current + creditsToManage);
                         userService.updateEmailCredits(username, previous_balance2 - maxContacts, conn);
-                        newBalace = adminv == '1' ? -1 : previous_balance2 - maxContacts;
+                        newBalace = creditsToManage + current;
+                        System.out.println("previous balance ############### "+ previous_balance2 + " @@@@@@@@@@ whatever max contacts is "+ maxContacts);
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", previous_balance2 - creditsToManage);
-                        userService.updateAgentCredits(agent, current, creditsToManage, previous_balance2 - creditsToManage, conn);
-                        userService.alterAgentCredits(agent, current, previous_balance2, creditsToManage, conn);
-                        // System.out.println("Credits to manage ==" + creditsToManage + "\n" + "Previous balance is ==" + previous_balance2 + "And Curent:" + current);
-                        //System.out.println("SMS after alter is :" + smsCredits);
-                        //FacesContext.getCurrentInstance().getExternalContext().redirect(toRedirect);
-
+                        boolean result = userService.addEmailAgentCredits(agent, newBalace, conn);
                         JsfUtil.addSuccessMessage("You have successfully deducted " + creditsToManage + " Emails  " + "from  " + username);
                     }
 
@@ -693,7 +686,7 @@ public class UserController implements Serializable {
 
     }
 
-    public static void updateEmailAdminBal() {
+    public void updateEmailAdminBal() {
         AlphaScroller ac = new AlphaScroller();
         String sql = "UPDATE tUSER set max_contacts = '-1' where admin=1";
         JdbcUtil util = new JdbcUtil();
@@ -841,8 +834,7 @@ public class UserController implements Serializable {
             credits.setAgent_prevbal(resellerBalance);
 
             credits.setAgent_newbal(adminv == '1' ? -1 : resellerBalance - emailCredits);
-
-            creditManager.persistUpdate(credits, conn);//credits.getNumCredits(),0,credits.getNumCredits());
+            creditManager.newEmailPersist(credits, conn);//credits.getNumCredits(),0,credits.getNumCredits());
 
             UserController newUser = service.loadCustomerByUsername(username, conn);
             if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("userScroller")) {
@@ -852,7 +844,7 @@ public class UserController implements Serializable {
             JsfUtil.addSuccessMessage("Email User Saved successfully.");
             //Added to manage ccredits 
             userService.updateCredits(username, credits.getNumCredits(), conn);
-            this.updateAdminBal();
+            this.updateEmailAdminBal();
             clearAll();
             JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
@@ -962,7 +954,6 @@ public class UserController implements Serializable {
             this.setReseller(true);
 
             service.persistUserAgent(this, conn);
-            // System.out.println("new created reseller user: " + this.username);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newReseller", this.username);
 
             SMSCredits credits = new SMSCredits();
@@ -973,6 +964,19 @@ public class UserController implements Serializable {
             credits.setPrevious_balance(0);
             credits.setNew_balance(smsCredits);
             creditManager.persistUpdate(credits, conn);
+            
+            SMSCredits emailCredit = new SMSCredits();
+            emailCredit.setActionTime(new Date());
+            emailCredit.setActionType('1');
+            emailCredit.setNumCredits(emailCredits);
+            emailCredit.setUsername(username);
+            emailCredit.setPrevious_balance(0);
+            emailCredit.setNew_balance(emailCredits);
+//            credits.setAgent(agent);
+            emailCredit.setAgent_prevbal(-1);
+
+            emailCredit.setAgent_newbal(-1);
+            creditManager.newEmailPersist(emailCredit, conn);
             UserController newUser = service.loadCustomerByUsername(username, conn);
             if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("userScroller")) {
                 ((UserScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("userScroller")).addUserToList(newUser);
@@ -981,11 +985,8 @@ public class UserController implements Serializable {
             String alpatype = aService.getAlphanumericType(message, conn);
             aService.persistAlpha(username, alphanumeric, alpatype, conn);
             Alpha alpha = aService.loadAlphanumericByUsername(username, conn);
-//            if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("alphaScroller")) {
-//                ((AlphaScroller) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("alphaScroller")).addAlphaToList(alpha);
-//            }
+
             JsfUtil.addSuccessMessage("Reseller saved successfully.");
-            // FacesContext.getCurrentInstance().getExternalContext().redirect("viewUserperAgent.jsf");
 
             clearAll();
             JdbcUtil.closeConnection(conn);

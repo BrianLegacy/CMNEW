@@ -76,7 +76,7 @@
                                      scrollable="true"
                                      resizableColumns="true">
                             <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by Username">
+                                      >
                                 <h:outputText value="#{data.username}" />
                             </p:column>
                             <p:column headerText="SMS Per Day">
@@ -91,7 +91,7 @@
                             <p:column headerText="Organization"
                                       filterBy="#{data.organization}" 
                                       filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by Organization">
+                                      >
                                 <h:outputText value="#{data.organization}" />
                             </p:column>
                             <p:column headerText="Mobile">
@@ -103,7 +103,7 @@
                             <p:column headerText="Group"
                                       filterBy="#{data.group}" 
                                       filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by organization">
+                                      >
                                 <h:outputText value="#{data.group}" />
                             </p:column>
 
@@ -165,7 +165,7 @@
                                 <div style="margin-right:auto; margin-left:auto;">
                                     <p:outputLabel value="Assign  Alphanumeric : "></p:outputLabel>
                                     <br/>
-                                    <p:selectOneMenu id="alphanumeric" value="#{smscontroller.alphanumeric}" style="margin:10px;" >
+                                    <p:selectOneMenu id="alphanumeric" value="#{smscontroller.alphanumeric}" style="margin:10px;" filter="true" >
                                         <f:selectItem itemLabel="Select Sender ID"/>
                                         <f:selectItems value="#{smscontroller.listAlphas}"/>
                                     </p:selectOneMenu>
@@ -279,7 +279,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="safaricomalphanumeric" value="Safaricom Alphanumeric"/>
-                                        <p:selectOneMenu id="safaricomalphanumeric" value="#{smscontroller.newSmsUser.alphanumeric}">
+                                        <p:selectOneMenu id="safaricomalphanumeric" value="#{smscontroller.newSmsUser.alphanumeric}" filter="true">
                                             <f:selectItem itemLabel="Select Sender ID" itemValue="" />
                                             <f:selectItems value="#{smscontroller.listAlphas}"  />
                                         </p:selectOneMenu>
@@ -307,7 +307,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="group" value="Group"/>
-                                        <p:selectOneMenu id="group" value="#{smscontroller.newSmsUser.groupId}">
+                                        <p:selectOneMenu id="group" value="#{smscontroller.newSmsUser.groupId}" filter="true" >
                                             <f:selectItem itemLabel="Select Group" itemValue="" />
                                             <f:selectItems value="#{smscontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>
@@ -423,7 +423,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="groups" value="Group"/>
-                                        <p:selectOneMenu id="groups" value="#{smscontroller.currentSmsUser.groupId}">
+                                        <p:selectOneMenu id="groups" value="#{smscontroller.currentSmsUser.groupId}" filter="true">
                                             <f:selectItem itemLabel="#{smscontroller.currentSmsUser.group}" itemValue="" />
                                             <f:selectItems value="#{smscontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>

@@ -13,22 +13,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
-
-import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
-import static ke.co.mspace.nonsmppmanager.service.UserServiceImpl.getUserIdByUsername;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -161,21 +152,22 @@ public class CallBack {
     }
 
     public void addCallBack() {
-        if (!checkDulicity(userid, callback_url)) {
-
+        try {
+            //        if (!checkDulicity(userid, callback_url)) {
+            
             this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl callback = new UserServiceImpl();
             callback.persistCallBack(this, conn, ussd_assigned_code);
+            
             System.out.println("The assigned code is " + ussd_assigned_code);
             clearAll();
             JdbcUtil.closeConnection(this.conn);
-//                    facePainter.setMainContent("clientmanager/paybill/managepaybills.xhtml");
-
-        } else {
-            FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Duplicity", null);
-            // FacesContext.getCurrentInstance().addMessage(null, facesMsg);
-            JsfUtil.addErrorMessage("Duplicate UserID and Callback Combination");
+            
+           callbacks = UserServiceImpl.getCallBack();
+        } catch (SQLException ex) {
+            Logger.getLogger(CallBack.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     public void clearAll() {

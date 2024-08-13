@@ -28,7 +28,7 @@
                             <h:outputText value="End Date :"/>
                             <p:calendar value="#{smsout.reportEndDate}" style="width:200px"/>
                             <h:outputText value="User :"/>
-                            <p:selectOneMenu id="users" value="#{smsout.username}">
+                            <p:selectOneMenu id="users" value="#{smsout.username}" filter="true">
                                 <f:ajax event="change" render="addgroupform" />
                                 <f:selectItem itemLabel="Select User" itemValue="" />
                                 <f:selectItems value="#{sMSOut.data}" />
@@ -41,7 +41,7 @@
                             </h:panelGroup>
                             <h:panelGroup layout="block">
                                 <p:commandLink  id="xlsx_export" >
-                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMSOut" postProcessor="#{smsout.postProcessXLSX}"/>
+                                    <p:dataExporter type="xlsxstream" target="report:table" fileName="SMSOut"/>
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
                                 </p:commandLink>
                             </h:panelGroup>

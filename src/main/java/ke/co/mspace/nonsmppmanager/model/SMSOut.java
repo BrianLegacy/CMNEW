@@ -683,16 +683,14 @@ public class SMSOut implements Serializable {
 
     public List<SelectItem> getData() {
         dataTT = new ArrayList<>();
-        String fetch = "SELECT username FROM dbSMS.tUSER WHERE admin != ? AND emailuser != 'Y' ORDER BY username ASC";
-        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? AND emailuser != 'Y'";
+        String fetch = "SELECT username FROM dbSMS.tUSER WHERE  emailuser = 'Y' OR smsuser = 'Y' ORDER BY username";
+        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? OR emailuser = 'Y' AND smsuser = 'Y' ORDER BY username";
 
         try (
                 Connection con = new JdbcUtil().getConnectionTodbSMS(); PreparedStatement stmt = adnminval == 5 ? con.prepareStatement(fetchForReseller) : con.prepareStatement(fetch)) {
             if (adnminval == 5) {
                 stmt.setString(1, user_id);
-            } else {
-                stmt.setString(1, "5");
-            }
+            } 
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

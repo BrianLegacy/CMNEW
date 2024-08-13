@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
+import ke.co.mspace.nonsmppmanager.invalids.getsession;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -19,6 +21,9 @@ public class GroupDAOImpl implements GroupDAO {
 
     private static final Logger LOGGER = Logger.getLogger(GroupDAOImpl.class.getName());
     private final JdbcUtil util;
+    HttpSession session = getsession.getSession();
+    Long agent = (Long) session.getAttribute("id");
+    char admin = (Character) session.getAttribute("taskAdmin");
 
     public GroupDAOImpl() {
         this.util = new JdbcUtil();
@@ -47,10 +52,12 @@ public class GroupDAOImpl implements GroupDAO {
 
     @Override
     public void saveUserGroup(Group group) {
-        String sql = "INSERT INTO tGROUPS (groupname, description) VALUES (?, ?)";
+
+        String sql = "INSERT INTO tGROUPS (groupname, description, user_id) VALUES (?, ?, ?)";
         try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, group.getGroupname());
             pst.setString(2, group.getDescription());
+            pst.setLong(3, agent);
             pst.executeUpdate();
             LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
         } catch (SQLException e) {
@@ -111,16 +118,15 @@ public class GroupDAOImpl implements GroupDAO {
 
     @Override
     public List<SelectItem> listGroups() {
-        String sql = "select id , groupname from tGROUPS order by groupname";
-        
+        String sql = "select id , groupname from tGROUPS where  order by groupname";
+
         List<SelectItem> results = new ArrayList<>();
-        
-        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()){
-            while(rs.next()){
+
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
                 results.add(new SelectItem(rs.getInt("id"), rs.getString("groupname")));
             }
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, sql);
         }
         return results;

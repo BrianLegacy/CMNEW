@@ -83,7 +83,8 @@ public class sessionmanager implements Serializable {
 
         // Formulate the message
         String message = m + username + " - SMS : <b>" + smsBalanceMessage + "</b>, Email : <b>" + emailBalanceMessage + "</b>";
-        return message;
+        String reseller = m + "<b>" + username + "</b>";
+        return (remainigsms== -1) ?  message: reseller;
     }
 
     public Boolean showChat() {

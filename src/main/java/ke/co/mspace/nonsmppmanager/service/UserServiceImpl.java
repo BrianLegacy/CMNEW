@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserServiceApi {
         String sql = "";
 
         sql = "SELECT tManageCredits.id, tManageCredits.username, tManageCredits.actionType, tManageCredits.actionTime,"
-                + "tManageCredits.numCredits,tManageCredits.previous_balance,tManageCredits.new_balance,tManageCredits.user from dbSMS.tManageCredits where tManageCredits.username='" + name + "' order by tManageCredits.id desc";
+                + "tManageCredits.numCredits,tManageCredits.previous_balance,tManageCredits.new_balance,tManageCredits.user, tManageCredits.system_type from dbSMS.tManageCredits where tManageCredits.username='" + name + "' order by tManageCredits.id desc";
 
         List<creditRecord> result = new ArrayList<>();
 
@@ -253,6 +253,7 @@ public class UserServiceImpl implements UserServiceApi {
             aUser.setPrevious_balance(rs.getString("previous_balance"));
             aUser.setNew_balance(rs.getString("new_balance"));
             aUser.setCreditedBy(rs.getString("user"));
+            aUser.setSystem(rs.getString("system_type"));
             result.add(aUser);
         }
 
@@ -261,7 +262,6 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public void persistUser(UserController user, Connection conn) throws SQLException {
-        System.out.println("################## saving sms user ###############");
         UserScroller us = new UserScroller();
         UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
@@ -271,8 +271,8 @@ public class UserServiceImpl implements UserServiceApi {
 
         String sql = "INSERT INTO tUSER("
                 + "username, password, max_total, organization, contact_number, email_address, start_date, "
-                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`) "
-                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?)";
+                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent,firstname,surname,`group`, smsuser) "
+                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?,?,?,'Y')";
 
         ////////////////////////////////////////////////////////
         //Inserting values
@@ -818,7 +818,7 @@ public class UserServiceImpl implements UserServiceApi {
             Date dt = new Date();
             AlphaScroller as = new AlphaScroller();
             agent = as.currentUSer();
-            String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
+            String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ? ";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, current - toDeduct);
             pstmt.setString(2, agent);
@@ -827,6 +827,22 @@ public class UserServiceImpl implements UserServiceApi {
         } catch (SQLException ex) {
             Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public boolean addEmailAgentCredits(String agent, int newBalace, Connection conn) {
+        String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ? AND max_contacts != -1 ";
+        boolean result = false;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, newBalace);
+            ps.setString(2, agent);
+            result = ps.executeUpdate() > 1;
+            return result;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+        return result;
     }
 
     @Override
@@ -897,7 +913,7 @@ public class UserServiceImpl implements UserServiceApi {
 
         String sqlimg = "INSERT INTO dbTASK.tClient (clientName, email, systemType, picPath) VALUES (?, ?, ?, ?)";
         JdbcUtil util = new JdbcUtil();
-        try (Connection conn = util.getConnectionTodbTask() ;PreparedStatement ps2 = conn.prepareStatement(sqlimg)) {
+        try (Connection conn = util.getConnectionTodbTask(); PreparedStatement ps2 = conn.prepareStatement(sqlimg)) {
             ps2.setString(1, user.getUsername());
             ps2.setString(2, user.getUserEmail());
             ps2.setString(3, "web");
@@ -913,10 +929,10 @@ public class UserServiceImpl implements UserServiceApi {
     public void persistUserAgent(UserController user, Connection conn) {
         String sql = "INSERT INTO tUSER("
                 + "username, password, max_total, organization, contact_number, email_address, start_date, "
-                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent) "
-                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?)";
+                + "end_date, enable_email_alert, admin, alertThreshold,super_account_id,arrears,cost_per_sms,agent, max_contacts) "
+                + "VALUES (?, ?, ?, ?, ?, ?, now(), '2099-12-31', ?, ?, ?,?,?,?,?,?)";
 
-        try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // Bind values to the parameters
             pstmt.setString(1, user.getUsername());
             String hashedPassword = PasswordUtil.encrypt(user.getPassword());
@@ -933,6 +949,7 @@ public class UserServiceImpl implements UserServiceApi {
             pstmt.setFloat(12, user.getCost_per_sms());
 
             pstmt.setString(13, this.getAgent());
+            pstmt.setInt(14, user.getEmailCredits());
             // Execute the query
             pstmt.executeUpdate();
             pesistUserInfo(user);
@@ -1365,7 +1382,7 @@ public class UserServiceImpl implements UserServiceApi {
             JdbcUtil util = new JdbcUtil();
             conn = util.getConnectionTodbUSSD();
             String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
-                    + "ussd_assigned_code, status,testbedmobiles,type)VALUES(?,?,?,?,?,?)";
+                    + "ussd_assigned_code,status,testbedmobiles,type)VALUES(?,?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, callback.getUserid());
             ps.setString(2, callback.getCallback_url());

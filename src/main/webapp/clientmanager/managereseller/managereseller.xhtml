@@ -45,16 +45,18 @@
                                          background-image: url('#{resource['images/addreseller.png']}');
                                          background-size: 1.5rem 1.5rem;
                                          background-repeat: no-repeat;
-                                         background-position:  0.5rem center;" onclick="PF('createReseller').show();" />
+                                         background-position:  0.5rem center;" 
+                                         actionListener="#{resellercontroller.resetUser()}"
+                                         onclick="PF('createReseller').show();" />
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
                                 <p:commandButton value =" PDF"
                                                  title="Export to PDF">
-                                    <p:dataExporter type="pdf" target="table" fileName="ResellerUsers" facet="header"/>
+                                    <p:dataExporter type="pdf" target="table" fileName="ResellerUsers" />
                                 </p:commandButton>
                                 <p:commandButton value =" CSV"
                                                  title="Export to CSV">
-                                    <p:dataExporter type="csv" target="table" fileName="ResellerUsers" facet="header"/>
+                                    <p:dataExporter type="csv" target="table" fileName="ResellerUsers" />
                                 </p:commandButton>
                             </div>
                         </div>
@@ -68,7 +70,7 @@
                                      scrollable="true"
                                      resizableColumns="true">
                             <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by Username">
+                                      >
                                 <h:outputText value="#{data.username}" />
                             </p:column>
                             <p:column headerText="User ID">
@@ -85,7 +87,7 @@
                             </p:column>
                             <p:column headerText="Organization"  filterBy="#{data.organization}" 
                                       filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by Username">
+                                      >
                                 <h:outputText value="#{data.organization}" />
                             </p:column>
                             <p:column headerText="Mobile">
@@ -153,7 +155,7 @@
                         <h:form id="numerics">
                             <p:panel>
                                 <div style="margin-right:auto; margin-left:auto;">
-                                    <p:selectOneMenu id="alphanumeric" value="#{resellercontroller.alphanumeric}" required="true" requiredMessage="Alphanumeric Required" style="margin:10px;" >
+                                    <p:selectOneMenu id="alphanumeric" value="#{resellercontroller.alphanumeric}" required="true" requiredMessage="Alphanumeric Required" style="margin:10px;" filter="true" >
                                         <f:selectItem itemLabel="Select Sender ID"/>
                                         <f:selectItems value="#{smscontroller.listAlphas}"/>
                                     </p:selectOneMenu>
@@ -245,6 +247,16 @@
                                         <p:message for="smscredits" id="smsCreditsMessage" />
                                     </div>
                                     <div class="field">
+                                        <p:outputLabel for="emailcredits" value="Email Credits"/>
+                                        <p:inputText id="emailcredits" value="#{resellercontroller.newReseller.emailCredits}" 
+                                                     required="true" placeholder="" 
+                                                     requiredMessage="Enter credits" 
+                                                     validatorMessage="Enter credits">
+                                            <f:ajax event="blur" render="emailCreditsMessage" />
+                                        </p:inputText>
+                                        <p:message for="emailcredits" id="emailCreditsMessage" />
+                                    </div>
+                                    <div class="field">
                                         <p:outputLabel for="organization" value="Organization"/>
                                         <p:inputText id="organization" value="#{resellercontroller.newReseller.organization}" 
                                                      required="true" placeholder="" 
@@ -304,11 +316,10 @@
                                                                  value="#{resellercontroller.newReseller.enableEmailAlertWhenCreditOver}"/>
                                     </div>
                                     <div class="field-full align-center">
-                                        <p:commandButton value="Save" icon="fa fa-save" 
+                                        <p:commandButton id="savegroupbutton" value="Save" icon="fa fa-save" 
                                                          action="#{resellercontroller.addReseller()}"
                                                          update ="showusers:table, msgs"
-                                                         oncomplete="PF ('createReseller').hide;"
-                                                         id="savegroupbutton"/>
+                                                         oncomplete="if (#{facesContext.maximumSeverity==null}) PF('createReseller').hide();"/>
                                     </div>
                                 </div>
                             </div>

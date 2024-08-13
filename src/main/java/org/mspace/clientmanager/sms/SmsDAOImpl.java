@@ -45,7 +45,7 @@ public class SmsDAOImpl implements SmsDAO {
                 + "dbSMS.tUSER.email_address, dbSMS.tUSER.enable_email_alert, dbSMS.tUSER.end_date, dbSMS.tUSER.start_date, "
                 + "dbSMS.tUSER.alertThreshold, dbSMS.tUSER.cost_per_sms, dbSMS.tUSER.arrears, dbSMS.tUSER.group "
                 + "FROM dbSMS.tUSER "
-                + "WHERE dbSMS.tUSER.admin != '5' AND dbSMS.tUSER.emailuser != 'Y'";
+                + "WHERE dbSMS.tUSER.admin != '5' AND dbSMS.tUSER.smsuser = 'Y'";
 
         // Reseller query string
         String resellerQuery = "SELECT dbSMS.tUSER.id, dbSMS.tUSER.username, dbSMS.tUSER.password, dbSMS.tUSER.admin, "
@@ -53,7 +53,7 @@ public class SmsDAOImpl implements SmsDAO {
                 + "dbSMS.tUSER.email_address, dbSMS.tUSER.enable_email_alert, dbSMS.tUSER.end_date, dbSMS.tUSER.start_date, "
                 + "dbSMS.tUSER.alertThreshold, dbSMS.tUSER.cost_per_sms, dbSMS.tUSER.arrears, dbSMS.tUSER.group "
                 + "FROM dbSMS.tUSER "
-                + "WHERE dbSMS.tUSER.agent = ? AND dbSMS.tUSER.admin = '3' AND dbSMS.tUSER.emailuser != 'Y'";
+                + "WHERE dbSMS.tUSER.agent = ? AND dbSMS.tUSER.admin = '3' AND dbSMS.tUSER.smsuser = 'Y'";
         List<UserController> smsUsers = new ArrayList<>();
 
         try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(adminQuery) : connection.prepareStatement(resellerQuery)) {

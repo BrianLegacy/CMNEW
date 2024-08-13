@@ -229,7 +229,7 @@
 
                             <h:inputHidden id="previd" value="#{userScroller.current_user}"></h:inputHidden>
                             <h:form enctype="multipart/form-data">
-                                <p:fileUpload  id="photo"  fileUploadListener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" />
+                                <p:fileUpload  id="photo"  listener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" />
                                 <!--<p:messages id="messages"   />-->
                             </h:form>
 

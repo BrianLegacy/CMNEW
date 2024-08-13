@@ -128,21 +128,17 @@
 
                                                                 required="true"
                                                                 requiredMessage="Min range is required"
-                                                                validatorMessage="Only digits allowed in range"
                                                                 style="width: 45px; margin: 0; padding-left: 0; padding-right: 0 "  
                                                                 value="#{pricingService.currentPricingItem.emails_purchased_start}" 
                                                                 >
-                                                                <f:validateRegex pattern="\d+" />
-
                                                             </p:inputText></td>
                                                         <td style="border: none; text-align: center">to</td>
                                                         <td style="border: none; "> <p:inputText
                                                                 required="true"
                                                                 requiredMessage="Max range is required"
-                                                                validatorMessage="Only digits allowed in range"
                                                                 style="width: 45px; margin: 0; padding-left: 0; padding-right: 0"  
                                                                 value="#{pricingService.currentPricingItem.emails_purchased_end}" 
-                                                                >  <f:validateRegex pattern="\d+" />
+                                                                > 
                                                             </p:inputText></td>
 
                                                     </tr>

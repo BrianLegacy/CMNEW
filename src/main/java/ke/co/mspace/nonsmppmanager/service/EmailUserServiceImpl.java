@@ -1517,4 +1517,9 @@ public class EmailUserServiceImpl implements UserServiceApi {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public boolean addEmailAgentCredits(String agent, int newBalace, Connection conn) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

@@ -62,31 +62,20 @@ public class ManageCreditImpl implements ManageCreditApi {
             String sql2 = "INSERT INTO tManageCredits(username, actionType, actionTime"
                     + ", numCredits, previous_balance, new_balance,user,topupMode)"
                     + " VALUES (?, ?, now(), ?, ?, ?,?,?)";
-            System.out.println("Executing " + sql2);
-            LOG.info("persistUpdate");
-            System.out.println("Email user updated");
+           
 
             PreparedStatement pstmt2 = conn.prepareStatement(sql2);
             // Bind values to the parameters
             pstmt2.setString(1, user);
-            System.out.println("user " + user);
             pstmt2.setString(2, String.valueOf(smsCredits.isActionType()));
-            System.out.println("actionType " + String.valueOf(smsCredits.isActionType()));
 
             pstmt2.setInt(3, credit_type.equals("add")
                     ? -creditsToManage : creditsToManage);
 
-            System.out.println("numcredits " + (credit_type.equals("add")
-                    ? -creditsToManage : creditsToManage));
-
             pstmt2.setInt(4, prevBal);
-            System.out.println("prevbal " + prevBal);
             pstmt2.setInt(5, adminv == '1' ? -1 : newBal);
-            System.out.println("adminv " + (adminv == '1'
-                    ? -1 : newBal));
             //pstmt.setString(6,adminv==1?user:user);
             pstmt2.setString(6, user);
-            System.out.println("user " + user);
             pstmt2.setString(7, "ClientManager");
 
             // Execute the query
@@ -149,9 +138,6 @@ public class ManageCreditImpl implements ManageCreditApi {
 
             String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
             String sql = "INSERT INTO tManageCredits(username, actionType, actionTime, numCredits, previous_balance, new_balance,user,topupMode) VALUES (?, ?, now(), ?, ?, ?,?,?)";
-            String reseller = "INSERT INTO tManageCredits(username, actionType, actionTime, numCredits, previous_balance, new_balance,user ) VALUES (?, ?, now(), ?, ?, ?," + user + ")";
-            System.out.println("Executing " + sql);
-            LOG.info("persistUpdate");
             ////////////////////////////////////////////////////////
             //Inserting values
             ////////////////////////////////////////////////////////
@@ -159,7 +145,7 @@ public class ManageCreditImpl implements ManageCreditApi {
 
             PreparedStatement pstmt1 = conn.prepareStatement(sql);
             // Bind values to the parameters
-            pstmt1.setString(1, smsCredits.getAgent());
+            pstmt1.setString(1, user);
             pstmt1.setString(2, String.valueOf(smsCredits.isActionType()));
             pstmt1.setInt(3, -smsCredits.getNumCredits());
             pstmt1.setInt(4, smsCredits.getAgent_prevbal());
@@ -203,5 +189,119 @@ public class ManageCreditImpl implements ManageCreditApi {
     @Override
     public void persistUpdate(int emailCredits, Connection conn, int creditsToManage, int previous_balance2, int i) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void persistUpdateEmail(SMSCredits smsCredits, Connection conn, int creditsToManage, int prevBal, int newBal) {
+        System.out.println("Credits to Manage: " + creditsToManage + "  Previous Balance: " + prevBal + "  New Balance:" + newBal);
+        String credit_type = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("credit_type", "add");
+        String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
+        char adminv = this.admiValue();
+        try {
+
+            //--------------------------------
+            String sql2 = "INSERT INTO tManageCredits(username, actionType, actionTime"
+                    + ", numCredits, previous_balance, new_balance,user,topupMode, system_type)"
+                    + " VALUES (?, ?, now(), ?, ?, ?,?,?,?)";
+            System.out.println("Executing " + sql2);
+
+            PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+            pstmt2.setString(1, user);
+            pstmt2.setString(2, String.valueOf(smsCredits.isActionType()));
+
+            pstmt2.setInt(3, credit_type.equals("add")
+                    ? -creditsToManage : creditsToManage);
+
+            pstmt2.setInt(4, prevBal);
+            pstmt2.setInt(5, adminv == '1' ? -1 : newBal);
+            //pstmt.setString(6,adminv==1?user:user);
+            pstmt2.setString(6, user);
+            pstmt2.setString(7, "ClientManager");
+            pstmt2.setString(8, "Email");
+
+            // Execute the query
+            pstmt2.execute();
+            //-------------------------------------------
+            String sql = "INSERT INTO tManageCredits(username, actionType, actionTime, numCredits, previous_balance, new_balance,user,topupMode,system_type) VALUES (?, ?, now(), ?, ?, ?,?,?,?)";
+            ////////////////////////////////////////////////////////
+            //Inserting values
+            ////////////////////////////////////////////////////////
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            // Bind values to the parameters
+            pstmt.setString(1, smsCredits.getUsername());
+            pstmt.setString(2, String.valueOf(smsCredits.isActionType()));
+            pstmt.setInt(3, credit_type.equals("add") ? smsCredits.getNumCredits() : -smsCredits.getNumCredits());
+            pstmt.setInt(4, smsCredits.getPrevious_balance());
+            pstmt.setInt(5, smsCredits.getNew_balance());
+            //pstmt.setString(6,adminv==1?user:user);
+            pstmt.setString(6, user);
+            pstmt.setString(7, "ClientManager");
+            pstmt.setString(8, "Email");
+
+            // Execute the query
+            boolean count = pstmt.execute();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ManageCreditImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void newEmailPersist(SMSCredits smsCredits, Connection conn) {
+        String credit_type = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("credit_type", "add");
+
+        char adminv = this.admiValue();
+        try {
+
+            String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
+            String sql = "INSERT INTO tManageCredits(username, actionType, actionTime, numCredits, previous_balance, new_balance,user,topupMode, system_type) VALUES (?, ?, now(), ?, ?, ?,?,?,?)";
+            ////////////////////////////////////////////////////////
+            //Inserting values
+            ////////////////////////////////////////////////////////
+            //-----------------------------------------------
+
+            PreparedStatement pstmt1 = conn.prepareStatement(sql);
+            // Bind values to the parameters
+            pstmt1.setString(1, user);
+            pstmt1.setString(2, String.valueOf(smsCredits.isActionType()));
+            pstmt1.setInt(3, -smsCredits.getNumCredits());
+            pstmt1.setInt(4, smsCredits.getAgent_prevbal());
+            pstmt1.setInt(5, smsCredits.getAgent_newbal());
+            //pstmt.setString(6,adminv==1?user:user);
+            pstmt1.setString(6, user);
+            pstmt1.setString(7, "ClientManager");
+            pstmt1.setString(8, "Email");
+
+            boolean count1 = pstmt1.execute();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            // Bind values to the parameters
+            pstmt.setString(1, smsCredits.getUsername());
+            pstmt.setString(2, String.valueOf(smsCredits.isActionType()));
+            pstmt.setInt(3, smsCredits.getNumCredits());
+            pstmt.setInt(4, smsCredits.getPrevious_balance());
+            pstmt.setInt(5, smsCredits.getNew_balance());
+            //pstmt.setString(6,adminv==1?user:user);
+            pstmt.setString(6, user);
+            pstmt.setString(7, "ClientManager");
+            pstmt.setString(8, "Email");
+
+            // Execute the query
+            
+            
+            System.out.println("##############executed new email user");
+            boolean count = pstmt.execute();
+
+            String updateAlerted = "update tUSER SET alerted='0' WHERE username=?";
+
+            PreparedStatement pstmt3 = conn.prepareStatement(updateAlerted);
+
+            pstmt3.setString(1, smsCredits.getUsername());
+
+            //int count2 =
+            pstmt3.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ManageCreditImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

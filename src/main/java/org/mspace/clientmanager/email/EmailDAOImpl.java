@@ -57,13 +57,13 @@ public class EmailDAOImpl implements EmailDAO {
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert, "
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold, tUSER.cost_per_sms, tUSER.arrears, tUSER.group "
                 + "FROM tUSER "
-                + "WHERE tUSER.emailuser = 'Y'";
+                + "WHERE tUSER.emailuser = 'Y' AND tUSER.admin != 5";
 
         String resellerQuery = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total, tUSER.max_contacts, "
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert, "
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold, tUSER.cost_per_sms, tUSER.arrears, tUSER.group "
                 + "FROM tUSER "
-                + "WHERE tUSER.emailuser = 'Y' AND tUSER.agent = ?";
+                + "WHERE tUSER.emailuser = 'Y' AND tUSER.agent = ? AND tUSER.admin != 5";
 
         List<UserController> emailUsers = new ArrayList<>();
 

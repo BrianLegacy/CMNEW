@@ -70,7 +70,7 @@
                                      scrollable="true"
                                      resizableColumns="true">
                             <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
-                                      filterPlaceholder="Filter by Username">
+                                      >
                                 <h:outputText value="#{data.username}" />
                             </p:column>
 
@@ -149,7 +149,7 @@
                                 </div>
                                 <div style="display: flex; align-items: center; margin-bottom: 10px;">
                                     <p:outputLabel for="action" value="Select Action" style="margin-right: 10px; width: 150px;"/>
-                                    <p:selectOneMenu id="action" value="#{emailcontroller.currentEmailUser.creditManageType}">
+                                    <p:selectOneMenu id="action" value="#{emailcontroller.currentEmailUser.creditManageType}" >
                                         <f:selectItem itemLabel="Add Credit" itemValue="add"/>
                                         <f:selectItem itemLabel="Alter Credit" itemValue="update"/>
                                     </p:selectOneMenu>
@@ -221,7 +221,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="group" value="Group"/>
-                                        <p:selectOneMenu id="group" value="#{emailcontroller.newEmailUser.groupId}">
+                                        <p:selectOneMenu id="group" value="#{emailcontroller.newEmailUser.groupId}" filter="true">
                                             <f:selectItem itemLabel="Select Group" itemValue="" />
                                             <f:selectItems value="#{emailcontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>
@@ -304,7 +304,7 @@
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="groups" value="Group"/>
-                                        <p:selectOneMenu id="groups" value="#{emailcontroller.currentEmailUser.groupId}">
+                                        <p:selectOneMenu id="groups" value="#{emailcontroller.currentEmailUser.groupId}" filter="true">
                                             <f:selectItem itemLabel="#{emailcontroller.currentEmailUser.group}" itemValue="" />
                                             <f:selectItems value="#{emailcontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>
@@ -354,7 +354,7 @@
                         <h:form>
                             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                                 <p:outputLabel for="user" value="user"/>
-                                <p:selectOneMenu id="user" value="#{emailcontroller.username}">
+                                <p:selectOneMenu id="user" value="#{emailcontroller.username}" filter="true">
                                     <f:selectItem itemLabel="Select One existing user" itemValue=""/>
                                     <f:selectItems value="#{emailcontroller.existingUsers}"/>
                                 </p:selectOneMenu>

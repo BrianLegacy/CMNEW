@@ -44,8 +44,8 @@ public class TSmsApiKeyDAO {
 
     public List<SelectItem> getUsers() {
         List<SelectItem> users = new ArrayList<>();
-        String queryAdmin = "SELECT id, username FROM tUSER WHERE organization = '" + user + "'";
-        String queryRes = "SELECT id, username FROM tUSER WHERE agent = '" + agent + "'";
+        String queryAdmin = "SELECT id, username FROM tUSER WHERE admin != 1 AND admin != 5 ORDER BY username" ;
+        String queryRes = "SELECT id, username FROM tUSER WHERE agent = '" + agent + "' ORDER BY username";
 
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) :conn.prepareStatement(queryRes)) {
             ResultSet rs = ps.executeQuery();

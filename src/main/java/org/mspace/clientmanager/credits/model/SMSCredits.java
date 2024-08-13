@@ -22,8 +22,9 @@ public class SMSCredits {
     private String agent;
     private int agent_prevbal;
     private int agent_newbal;
+    private String system_type;
     
-    public SMSCredits(Long id, String username, char actionType, Date actionTime, int numCredits, int previous_balance, int new_balance) {
+    public SMSCredits(Long id, String username, char actionType, Date actionTime, int numCredits, int previous_balance, int new_balance, String system_type) {
         this.id = id;
         this.username = username;
         this.actionType = actionType;
@@ -31,11 +32,21 @@ public class SMSCredits {
         this.numCredits = numCredits;
         this.previous_balance = previous_balance;
         this.new_balance = new_balance;
+        this.system_type = system_type;
     }
 
     public SMSCredits() {
     }
 
+    public String getSystem_type() {
+        return system_type;
+    }
+
+    public void setSystem_type(String system_type) {
+        this.system_type = system_type;
+    }
+
+    
     public int getAgent_prevbal() {
         return agent_prevbal;
     }

@@ -76,7 +76,10 @@ public class SmsOutController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String startDate = simpleDateFormat.format(reportStartDate);
+        startDate = startDate.substring(0, 8) + "000001";
+
         String endDate = simpleDateFormat.format(reportEndDate);
+        endDate = endDate.substring(0, 8) + "235959";
 
         if (!username.isEmpty()) {
             smsUsers = smsDAO.fetchSMSReport(username, startDate, endDate);

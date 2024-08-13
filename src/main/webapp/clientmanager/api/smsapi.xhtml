@@ -28,14 +28,20 @@
 
                         <h:panelGrid columns="2" style="paddign: 1rem;">
                             <h:outputLabel for="userId" value="User:" />
-                            <p:selectOneMenu id="userId" value="#{smsApiBean.newKey.userId}" required="true">
+                            <p:selectOneMenu id="userId" value="#{smsApiBean.newKey.userId}" required="true" filter="true">
                                 <f:selectItems value="#{smsApiBean.users}" var="user" itemLabel="#{user.label}" itemValue="#{user.value}"/>
                             </p:selectOneMenu>
 
                             <h:outputLabel for="name" value="Name :" />
                             <p:inputText id="name" value="#{smsApiBean.newKey.name}" />
                         </h:panelGrid>
-                        <p:commandButton value="Create" style="margin: 1rem" actionListener="#{smsApiBean.createKey}" update=":form:messages :form:dataTable" oncomplete="PF('createDialog').hide();" />
+                        <p:commandButton value="Create" style="margin: 1rem" 
+                                         actionListener="#{smsApiBean.createKey}" 
+                                         update=":form:messages :form:dataTable :apiKeyForm:apiKeyDialog" 
+                                         oncomplete="PF('createDialog').hide();" >
+                            <p:ajax     update=":apiKeyForm:apiKeyDialog" 
+                                        event="click"/>
+                        </p:commandButton>
                     </p:dialog>
 
                     <p:dataTable id="dataTable" var="key" value="#{smsApiBean.keys}"
@@ -106,8 +112,12 @@
                                 value="Re-generate"
                                 action="#{smsApiBean.confirmUpdate}" 
                                 immediate="true"
-                                update =":form:dataTable :form:messages"
-                                />                          
+                                update =":form:dataTable :form:messages :apiKeyForm:apiKeyDialog"
+
+                                >
+                                <p:ajax     update=":apiKeyForm:apiKeyDialog"  
+                                            event="click"/>
+                            </p:commandButton>
                             <p:commandButton value="cancel" onclick="PF('confirmRegenerate').hide();" />
                         </div>
                     </p:confirmDialog>
@@ -147,12 +157,13 @@
                 <!-- Copy API Key Dialog -->
                 <h:form id="apiKeyForm">
                     <p:dialog id="apiKeyDialog" header="Copy API Key" widgetVar="apiKeyDialog" modal="true" showEffect="fade" hideEffect="fade">
+                        <p class="m-0">Once closed you will not see the key again</p>
                         <h:panelGrid columns="2" style="padding: 1rem;">
-                            <p class="m-0">Once closed you will not see the key again</p> 
-                            <f:facet name="footer" style ="display: flex; justify-content: space-between;">
-                                <p:commandButton value="Copy Key" 
-                                                 onclick="copyToClipboard('#{smsApiBean.selectedApiKey}');" 
-                                                 update=":form:messages" style="margin-top: 1rem;"/>
+
+                            <p:inputText id="txtCopy" readonly="true" value="#{smsApiBean.selectedApiKey}"/>
+                            <p:commandButton id="btnCopy" value="Copy" icon="pi pi-copy"/>
+                            <pe:clipboard id="clipCopy" trigger="btnCopy" action="copy" target="txtCopy"/>
+                            <f:facet name="footer" >
                                 <p:commandButton value="Close" onclick="PF('apiKeyDialog').hide();" 
                                                  type="button" style="margin-top: 1rem;"/>
                             </f:facet>

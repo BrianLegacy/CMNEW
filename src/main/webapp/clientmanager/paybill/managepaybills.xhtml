@@ -208,7 +208,7 @@
                             <div class="formgrid">
                                 <div class="field">
                                     <p:outputLabel for="users" value="User"/>
-                                    <p:selectOneMenu id="users" value="#{userScroller.userS}" valueChangeListener="#{userScroller.finduserId}">
+                                    <p:selectOneMenu id="users" value="#{userScroller.userS}" valueChangeListener="#{userScroller.finduserId}" filter="true">
                                         <f:ajax event="change" render="createPaybillForm"/>
                                         <f:selectItem itemLabel="Select User" itemValue=""/>
                                         <f:selectItems value="#{sMSOut.data}"/>

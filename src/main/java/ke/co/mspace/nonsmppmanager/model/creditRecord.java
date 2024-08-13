@@ -25,6 +25,8 @@ public class creditRecord {
     
     private String creditedBy;
     
+    private String system;
+    
     
 
     public creditRecord(){
@@ -32,15 +34,26 @@ public class creditRecord {
     }
     
     
-    public creditRecord(String usernC, String actionType, String actionTime, String numCredits, String previous_balance, String new_balance) {
+    public creditRecord(String usernC, String actionType, String actionTime, String numCredits, String previous_balance, String new_balance, String system) {
         this.usernC = usernC;
         this.actionType = actionType;
         this.actionTime = actionTime;
         this.numCredits = numCredits;
         this.previous_balance = previous_balance;
         this.new_balance = new_balance;
+        this.system = system;
     }
 
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
+
+    
+    
     public String getCreditedBy() {
         return creditedBy;
     }

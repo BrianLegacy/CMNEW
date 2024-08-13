@@ -69,20 +69,23 @@ public class SmsApiBean implements Serializable {
     public void createKey() {
         try {
             String key = smsApiService.createSmsApiKey(newKey);
-            this.selectedApiKey = key;
             refreshKeys();
+            selectedApiKey = key;
+            System.out.println("###########" + selectedApiKey);
             newKey = new TSmsApiKey(); // Reset the new key
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Key created successfully."));
             PrimeFaces.current().executeScript("PF('apiKeyDialog').show();");
         } catch (ApiException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", ex.getMessage()));
         }
+
     }
 
     public void updateKey(int id) {
         smsApiService.updateSmsApiKey(id);
         TSmsApiKey updatedKey = smsApiService.getSmsApiKeyById(id);
-        this.selectedApiKey = updatedKey.getApiKey();
+        selectedApiKey = updatedKey.getApiKey();
         refreshKeys();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Key updated successfully."));
         PrimeFaces.current().executeScript("PF('apiKeyDialog').show();");

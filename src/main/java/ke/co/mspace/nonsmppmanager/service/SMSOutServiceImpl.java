@@ -124,8 +124,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status = tSMSSTATUS.id "
                 + "LEFT JOIN tUSER ON tUSER.username = tSMSOUT_COMPLETE.user "
                 + "WHERE tSMSOUT_COMPLETE.user = '" + user + "' AND time_submitted BETWEEN '" + startDate + "' AND '" + endDate + "' "
-                + "ORDER BY myid DESC "
-                + "LIMIT 15000;";
+                + "ORDER BY myid DESC ";
         List<SMSOut> result = new ArrayList<>();
 
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -169,8 +168,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT_COMPLETE.tUSER_id = dbSMPPGateway.tUSER.id "
                 + "LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT_COMPLETE.status = dbSMPPGateway.tSMSSTATUS.id "
                 + "WHERE dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted >= ? AND dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted <= ? AND dbSMPPGateway.tUSER.username = ? "
-                + "ORDER BY myid DESC "
-                + "LIMIT 15000;";
+                + "ORDER BY myid DESC ";
 
         List<SMPPOut> result = new ArrayList<>();
 

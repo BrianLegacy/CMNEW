@@ -6,19 +6,13 @@
 package ke.co.mspace.nonsmppmanager.model;
 
 import org.mspace.clientmanager.user.UserController;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
-import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
 //import org.richfaces.event.UploadEvent;
 
 /**
@@ -248,6 +242,11 @@ static Connection conn;
     @Override
     public void updateUserWithoutGroup(UserController aThis, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean addEmailAgentCredits(String agent, int newBalace, Connection conn) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
 
