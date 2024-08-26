@@ -60,7 +60,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
     public SMSOutServiceImpl() {
 
     }
-    
+
     @Override
     public List<OPTOut> fetchOptOutReport(String startDate, String endDate) {
         String sqlAdmin = "SELECT dbSMPPGateway.tOPTEDOUTCUSTOMERS.id AS myid, dbSMPPGateway.tOPTEDOUTCUSTOMERS.senderID, dbSMPPGateway.tOPTEDOUTCUSTOMERS.mobile, dbSMPPGateway.tOPTEDOUTCUSTOMERS.optout_message, dbSMPPGateway.tOPTEDOUTCUSTOMERS.reply, dbSMPPGateway.tOPTEDOUTCUSTOMERS.time, dbSMPPGateway.tOPTEDOUTCUSTOMERS.emailed "
@@ -99,13 +99,56 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                     result.add(optOut);
                 }
             }
-            String sql = admin == 'Y' ? sqlAdmin:sqlReseller;
-            System.out.println("Error retrieving opt-out report: " + sql );
+            String sql = admin == 'Y' ? sqlAdmin : sqlReseller;
+            System.out.println("Error retrieving opt-out report: " + sql);
         } catch (SQLException e) {
             LOG.log(Level.SEVERE, "Error retrieving opt-out report", e);
         }
 
         return result;
+    }
+
+    @Override
+    public int getTotalSmsCount(String startDate, String endDate, String user) {
+        String sql = "SELECT message_payload "
+                + "FROM ( "
+                + "    SELECT tSMSOUT.message_payload "
+                + "    FROM tSMSOUT "
+                + "    LEFT JOIN tSMSSTATUS ON tSMSOUT.status = tSMSSTATUS.id "
+                + "    LEFT JOIN tUSER ON tUSER.username = tSMSOUT.user "
+                + "    WHERE tSMSOUT.user = ? "
+                + "      AND time_submitted BETWEEN ? AND ? "
+                + "    UNION ALL "
+                + "    SELECT tSMSOUT_COMPLETE.message_payload "
+                + "    FROM tSMSOUT_COMPLETE "
+                + "    LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status = tSMSSTATUS.id "
+                + "    LEFT JOIN tUSER ON tUSER.username = tSMSOUT_COMPLETE.user "
+                + "    WHERE tSMSOUT_COMPLETE.user = ? "
+                + "      AND time_submitted BETWEEN ? AND ? "
+                + ") AS combined_results;";
+
+        int totalSmsCount = 0;
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setString(1, user);
+            statement.setString(2, startDate);
+            statement.setString(3, endDate);
+            statement.setString(4, user);
+            statement.setString(5, startDate);
+            statement.setString(6, endDate);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    String messagePayload = rs.getString("message_payload");
+                    totalSmsCount += getSmsCount(messagePayload);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SMSOutServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return totalSmsCount;
     }
 
     @Override
@@ -124,7 +167,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "FROM tSMSOUT_COMPLETE LEFT JOIN tSMSSTATUS ON tSMSOUT_COMPLETE.status = tSMSSTATUS.id "
                 + "LEFT JOIN tUSER ON tUSER.username = tSMSOUT_COMPLETE.user "
                 + "WHERE tSMSOUT_COMPLETE.user = '" + user + "' AND time_submitted BETWEEN '" + startDate + "' AND '" + endDate + "' "
-                + "ORDER BY myid DESC ";
+                + "ORDER BY myid DESC  LIMIT 50000";
         List<SMSOut> result = new ArrayList<>();
 
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -168,7 +211,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT_COMPLETE.tUSER_id = dbSMPPGateway.tUSER.id "
                 + "LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT_COMPLETE.status = dbSMPPGateway.tSMSSTATUS.id "
                 + "WHERE dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted >= ? AND dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted <= ? AND dbSMPPGateway.tUSER.username = ? "
-                + "ORDER BY myid DESC ";
+                + "ORDER BY myid DESC LIMIT 50000";
 
         List<SMPPOut> result = new ArrayList<>();
 
@@ -200,6 +243,68 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         }
 
         return result;
+    }
+
+    @Override
+    public int getTotalSmppCount(String startDate, String endDate, String username) {
+        // SQL query to select message_payload (short_message) from both tables
+        String sql = "SELECT short_message "
+                + "FROM ( "
+                + "    SELECT dbSMPPGateway.tSMSOUT.short_message "
+                + "    FROM dbSMPPGateway.tSMSOUT "
+                + "    LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT.tUSER_id = dbSMPPGateway.tUSER.id "
+                + "    LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT.status = dbSMPPGateway.tSMSSTATUS.id "
+                + "    WHERE dbSMPPGateway.tSMSOUT.time_submitted >= ? "
+                + "      AND dbSMPPGateway.tSMSOUT.time_submitted <= ? "
+                + "      AND dbSMPPGateway.tUSER.username = ? "
+                + "    UNION ALL "
+                + "    SELECT dbSMPPGateway.tSMSOUT_COMPLETE.short_message "
+                + "    FROM dbSMPPGateway.tSMSOUT_COMPLETE "
+                + "    LEFT JOIN dbSMPPGateway.tUSER ON dbSMPPGateway.tSMSOUT_COMPLETE.tUSER_id = dbSMPPGateway.tUSER.id "
+                + "    LEFT JOIN dbSMPPGateway.tSMSSTATUS ON dbSMPPGateway.tSMSOUT_COMPLETE.status = dbSMPPGateway.tSMSSTATUS.id "
+                + "    WHERE dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted >= ? "
+                + "      AND dbSMPPGateway.tSMSOUT_COMPLETE.time_submitted <= ? "
+                + "      AND dbSMPPGateway.tUSER.username = ? "
+                + ") AS combined_results "
+                + "ORDER BY short_message;";
+
+        int totalSmsCount = 0;
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            // Set parameters for the prepared statement
+            statement.setString(1, startDate);
+            statement.setString(2, endDate);
+            statement.setString(3, username);
+            statement.setString(4, startDate);
+            statement.setString(5, endDate);
+            statement.setString(6, username);
+
+            // Execute query and process results
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    String messagePayload = rs.getString("short_message");
+                    totalSmsCount += getSmsCount(messagePayload);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SMSOutServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return totalSmsCount;
+    }
+
+    private int getSmsCount(String msg) {
+        int ret = 0;
+
+        if (msg == null || msg.length() <= 160) {
+            return 1;
+        }
+        ret = msg.length() / 134;
+        if (msg.length() % 134 > 0) {
+            ret++;
+        }
+        return ret;
     }
 
     //set sql to session

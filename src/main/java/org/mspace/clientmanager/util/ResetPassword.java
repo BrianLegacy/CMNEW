@@ -4,6 +4,7 @@
  */
 package org.mspace.clientmanager.util;
 
+import java.io.BufferedReader;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,20 +12,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
+import org.apache.commons.io.input.BufferedFileChannelInputStream;
 
 /**
  *
@@ -73,11 +74,8 @@ public class ResetPassword implements Serializable {
         Random random = new Random();
 
         for (int i = 0; i < 6; i++) {
-            int number = random.nextInt(100);
+            int number = random.nextInt(9);
             sb.append(number);
-            if (i < 5) {
-                sb.append(" ");
-            }
         }
         return sb.toString();
     }
@@ -102,9 +100,11 @@ public class ResetPassword implements Serializable {
                 pst.setString(1, hashed);
                 pst.executeUpdate();
             }
-
+            System.out.println("Temporary  password: " + tempPass + " For: " + username);
             int eresult = sendEmail(userEmail, tempPass);
             int sresult = sendSMS(userContact, tempPass);
+
+            checkBalanceAndNotify();
 
             if (eresult != 0 && sresult != 0) {
                 if (eresult == 1 && sresult == 200) {
@@ -125,7 +125,7 @@ public class ResetPassword implements Serializable {
         String emailSource = "accounts@mspace.co.ke";
         String emailReplyTo = emailSource;
         String subject = "Reset Password";
-        String emailBody = "The password is " + msg;
+        String emailBody = "This is your one time password " + msg;
         String user = "MSpaceOtp";
 
         String sql = "insert into tEMAILOUT (emailSrc, emailTo, emailReplyTo, emailBody, subject, user) "
@@ -140,6 +140,7 @@ public class ResetPassword implements Serializable {
             ps.setString(6, user);
 
             result = ps.executeUpdate();
+            LOGGER.log(Level.INFO, "success table tEMAILOUT apdated SQl" + ps.toString());
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
@@ -172,4 +173,63 @@ public class ResetPassword implements Serializable {
         return 0;
     }
 
+    public void checkBalanceAndNotify() {
+        try {
+            // Define the URL for checking the balance
+            URL url = new URL("http://api.mspace.co.ke/mspaceservice/wr/sms/balance/username=MSpaceOtp/password=Mspace@2022");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            // Get the response code and read the balance from the response
+            int responseCode = con.getResponseCode();
+            if (responseCode == 200) {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                    String inputLine;
+                    StringBuilder content = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    // Parse the balance from the response (assuming it's a plain number)
+                    double balance = Double.parseDouble(content.toString().trim());
+                    System.out.println("Balance " + balance);
+                    // Check if the balance is less than 5
+                    if (balance < 5) {
+                        // Send an email to the accountant
+                        sendBalanceLowEmail(balance);
+                    }
+                }
+            } else {
+                LOGGER.log(Level.SEVERE, "Failed to check balance. Response Code: " + responseCode);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "IO Exception", e);
+        }
+    }
+
+    private void sendBalanceLowEmail(double balance) {
+        String emailSource = "accounts@mspace.co.ke";
+        String emailReplyTo = emailSource;
+        String subject = "URGENT: Low SMS Balance for MSpaceOtp";
+        String emailBody = "Dear Ian,\n\nThe current SMS balance for the sender ID 'MSpaceOtp' is " + balance + ". Please recharge the account as soon as possible.\n\nThank you.";
+        String user = "MSpaceOtp";
+        String accountantEmail = emailSource;
+
+        String sql = "insert into tEMAILOUT (emailSrc, emailTo, emailReplyTo, emailBody, subject, user) "
+                + " values(?,?,?,?,?,?)";
+
+        try (Connection conn = util.getConnectionTodbEMAIL(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, emailSource);
+            ps.setString(2, accountantEmail);
+            ps.setString(3, emailReplyTo);
+            ps.setString(4, emailBody);
+            ps.setString(5, subject);
+            ps.setString(6, user);
+
+            ps.executeUpdate();
+            LOGGER.log(Level.INFO, "Balance low email sent to accountant.");
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to send balance low email", ex);
+        }
+    }
 }

@@ -14,6 +14,10 @@ import org.mspace.clientmanager.user.UserController;
  */
 public interface EmailDAO {
     
+    List<SelectItem> emailUsers();
+    
+    boolean changePass(String username,String newPassword);
+    
     public List<UserController> fetchEmailUsers();
     
     boolean editEmailUser(UserController user);

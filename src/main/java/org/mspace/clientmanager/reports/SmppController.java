@@ -5,7 +5,6 @@
 package org.mspace.clientmanager.reports;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -35,10 +34,19 @@ public class SmppController {
     private Date reportStartDate = new Date();
     private Date reportEndDate = new Date();
     private SMSOutServiceApi smsDAO;
+    private int rows;
 
     @PostConstruct
     public void init() {
         smsDAO = new SMSOutServiceImpl();
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
     }
 
     public List<SMPPOut> getRecords() {
@@ -84,8 +92,9 @@ public class SmppController {
 
         if (!username.isEmpty()) {
             records = smsDAO.fetchSMPPReport(username, startDate, endDate);
+            rows = smsDAO.getTotalSmppCount(startDate, endDate, username);
             if (!records.isEmpty()) {
-                JsfUtil.addSuccessMessage(records.size() + " Records retrieved.");
+                JsfUtil.addSuccessMessage(rows + " SMS sent.");
             } else {
                 JsfUtil.addSuccessMessage("No records found match search.");
             }
@@ -108,5 +117,11 @@ public class SmppController {
             Cell cell = header.getCell(i);
             cell.setCellStyle(cellStyle);
         }
+        int lastRowNum = sheet.getLastRowNum();
+        Row newRow = sheet.createRow(lastRowNum + 1);
+        Cell newCell = newRow.createCell(8);
+
+        String message = "SMS sent during this period is " + rows;
+        newCell.setCellValue(message);
     }
 }

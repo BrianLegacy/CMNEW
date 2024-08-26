@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 import org.mspace.clientmanager.user.UserController;
@@ -85,7 +86,7 @@ public class ResellerDAOImpl implements ResellerDAO {
     public boolean editReseller(UserController user) {
         String sql = "UPDATE tUSER SET "
                 + "username=?, organization=?, contact_number = ?, email_address=?"
-                + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? , password = ? WHERE id=?";
+                + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=?  WHERE id=?";
         boolean result = false;
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
@@ -95,18 +96,51 @@ public class ResellerDAOImpl implements ResellerDAO {
             pstmt.setBoolean(5, user.isEnableEmailAlertWhenCreditOver());
             pstmt.setFloat(6, user.getCost_per_sms());
             pstmt.setInt(7, user.getArrears());
-
             pstmt.setInt(8, user.getAlertThreshold());
-            String hashedPassword = PasswordUtil.encrypt(user.getPassword());
-            pstmt.setString(9, hashedPassword);
-
-            pstmt.setLong(10, user.getId());
+            pstmt.setLong(9, user.getId());
 
             result = pstmt.executeUpdate() > 0;
             LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
             return result;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "SQL error occurred", e);
+        }
+        return result;
+    }
+    
+    @Override
+    public List<SelectItem> users() {
+        List<SelectItem> users = new ArrayList<>();
+        String sql = "select username from tUSER where admin = 5 order by username";
+        
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new SelectItem(rs.getString("username")));
+            }
+        } catch (SQLException e) {
+            // Handle exceptions
+            LOGGER.log(Level.SEVERE, "Error fetching usernames", e);
+        }
+        return users;
+    }
+
+    @Override
+    public boolean changePass(String username, String password) {
+        String sql = "update tUSER set password = ? where username= ?";
+        boolean result = false;
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String hashedPass = PasswordUtil.encrypt(password);
+            pstmt.setString(1, hashedPass);
+
+            pstmt.setString(2, username);
+
+            // Execute the query
+            result = pstmt.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "SQL error occured ", ex);
         }
         return result;
     }
@@ -126,9 +160,9 @@ public class ResellerDAOImpl implements ResellerDAO {
         }
         return result;
     }
-    
+
     @Override
-    public boolean setImagePath(String username, String picPath){
+    public boolean setImagePath(String username, String picPath) {
         String sqlUpdate = "UPDATE dbTASK.tClient SET picPath = ? WHERE clientName=? ";
         boolean result = false;
         try (Connection conn = jdbcUtil.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {

@@ -41,7 +41,7 @@
                             </h:panelGroup>
                             <h:panelGroup layout="block">
                                 <p:commandLink  id="xlsx_export" >
-                                    <p:dataExporter type="xlsxstream" target="report:table" fileName="SMSOut"/>
+                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMSOut" postProcessor="#{smsout.postProcessXLSX}"/>
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
                                 </p:commandLink>
                             </h:panelGroup>
@@ -58,7 +58,7 @@
                                      rows="10"
                                      paginator="true" paginatorPosition="bottom"
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     currentPageReportTemplate="{totalRecords} records">
+                                     currentPageReportTemplate="Summary total sms sent for this period #{smsout.rows}">
                             <p:column>
                                 <f:facet name="header">
                                     <h:outputText value="Mobile"/>

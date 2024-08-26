@@ -50,6 +50,8 @@
                                          onclick="PF('createReseller').show();" />
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
+                                <p:commandButton value="Change Password" title="Click to change user password"
+                                                 onclick="PF('changepass').show();"/>
                                 <p:commandButton value =" PDF"
                                                  title="Export to PDF">
                                     <p:dataExporter type="pdf" target="table" fileName="ResellerUsers" />
@@ -150,6 +152,27 @@
                         </p:dataTable>
 
                     </h:form> 
+                    <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
+                        <h:form id="changePassform">
+                            <p:panelGrid columns="2" style="paddign: 1rem;">
+                                <p:outputLabel for="username" value="Username"/>
+                                <p:selectOneMenu id="username" value="#{resellercontroller.username}" filter="true" >
+                                    <f:selectItems value="#{resellercontroller.users}"  />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="newpass" value="New password"/>
+                                <p:inputText id="newpass" type="password" value="#{resellercontroller.newPassword}"/>
+                                
+                                <p:outputLabel for="confirmpass" value="Confirm Password"/>
+                                <p:inputText id="confirmpass" type="password" value="#{resellercontroller.confirmPassword}"/>
+
+                                <p:commandButton value="save" action="#{resellercontroller.changePass()}"
+                                                 update=":msgs"
+                                                 oncomplete="PF('changepass').hide();"/>
+                                <p:commandButton value="cancel" onclick="PF('changepass').hide();"/>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
 
                     <p:dialog header="Assign and Manage Sender IDs" widgetVar="senderId" id="senderId" modal="true" width="800">
                         <h:form id="numerics">
@@ -417,10 +440,6 @@
                                                      value="#{resellercontroller.currentReseller.username}"/>
                                     </div>
                                     <div class="field">
-                                        <p:outputLabel for="password" value="password"/>
-                                        <p:inputText id="password" type="password" value="#{resellercontroller.currentReseller.password}"/>
-                                    </div>
-                                    <div class="field">
                                         <h:outputLabel for="organization" value="Organization"/>
                                         <p:inputText id="organization" styleClass="input-field"
                                                      value="#{resellercontroller.currentReseller.organization}"/>
@@ -534,7 +553,7 @@
 
                 </p:panel>
             </div>
-          
+
         </ui:composition>
     </h:body>
 </html> 

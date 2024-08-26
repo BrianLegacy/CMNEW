@@ -22,6 +22,10 @@ public interface SMSOutServiceApi {
 
     List<OPTOut> fetchOptOutReport(String startDate, String endDate);
     
+    int getTotalSmsCount(String startDate, String endDate, String user);
+    
+    int getTotalSmppCount(String startDate, String endDate, String user);
+    
     List<SMSOut> fetchSMSReport(String user, String startDate, String endDate);
 
     List<SMPPOut> fetchSMPPReport(String user, String startDate, String endDate);

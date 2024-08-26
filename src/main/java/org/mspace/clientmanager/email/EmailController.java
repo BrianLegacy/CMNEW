@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.group.GroupDAO;
@@ -34,6 +36,9 @@ public class EmailController implements Serializable {
     private String username;
     private GroupDAO groupDAO;
     private List<SelectItem> listGroups;
+    private List<SelectItem> listUsers;
+    private String newPassword = "";
+    private String confirmPassword;
 
     @PostConstruct
     public void init() {
@@ -43,6 +48,29 @@ public class EmailController implements Serializable {
         newEmailUser = new UserController();
         currentEmailUser = new UserController();
 
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    
+    
+    public List<SelectItem> getListUsers() {
+        listUsers = emailDAO.emailUsers();
+        return listUsers;
     }
 
     public List<UserController> getEmailUsers() {
@@ -98,6 +126,25 @@ public class EmailController implements Serializable {
                 JsfUtil.addErrorMessage("Error occured while trying to create user");
             }
         }
+    }
+
+    public void changePass() {
+        if (!username.isEmpty() && !newPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
+                return;
+            }
+            if (emailDAO.changePass(username, newPassword)) {
+                JsfUtil.addSuccessMessage(username + "'s password changed successfully");
+            } else {
+                JsfUtil.addErrorMessage("Failed to change password try again");
+            }
+
+        } else {
+            JsfUtil.addErrorMessage("Enter username and Password");
+        }
+
     }
 
     public void addExistingUser() {

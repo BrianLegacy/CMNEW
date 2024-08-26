@@ -211,7 +211,8 @@
                             <!--<p:outputLabel value="upload profile photo"/>-->
                             <p:fileUpload listener="#{userScroller.uploadResImage}" mode="advanced" dragDropSupport="true"
                                           allowTypes="/(\.|\/)(gif|jpeg|jpg|png)$/"
-                                          update="messages">
+                                          update="messages"
+                                          oncomplete="window.location.reload();">
                             </p:fileUpload>
                             <p:messages id="messages" showDetail="true" />
                         </p:dialog>

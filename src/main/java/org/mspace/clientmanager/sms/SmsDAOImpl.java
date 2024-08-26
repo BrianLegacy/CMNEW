@@ -37,6 +37,27 @@ public class SmsDAOImpl implements SmsDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    
+    @Override
+    public List<SelectItem> smsUsers() {
+        List<SelectItem> users = new ArrayList<>();
+        String queryAdmin = "select username from tUSER where admin != 5 and smsuser = 'Y' order by username";
+        String queryRes = "select username from tUSER where agent = ? and smsuser='Y' and admin != 5 order by username";
+        
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+            if (admin != 'Y') {
+                ps.setLong(1, agent);
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new SelectItem(rs.getString("username")));
+            }
+        } catch (SQLException e) {
+            // Handle exceptions
+            LOGGER.log(Level.SEVERE, "Error fetching usernames", e);
+        }
+        return users;
+    }
     @Override
     public List<UserController> fetchSmsusers() {
 
@@ -128,7 +149,7 @@ public class SmsDAOImpl implements SmsDAO {
     public boolean editSmsUser(UserController user) {
         String sql = "UPDATE tUSER SET "
                 + "username= ?, organization=?, contact_number = ?, email_address=?"
-                + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,`group` =? , password = ?  WHERE id=?";
+                + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,`group` =?  WHERE id=?";
         boolean result = false;
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
@@ -141,10 +162,7 @@ public class SmsDAOImpl implements SmsDAO {
 
             pstmt.setInt(8, user.getAlertThreshold());
             pstmt.setInt(9, user.getGroupId());
-            String hashedPassword = PasswordUtil.encrypt(user.getPassword());
-            pstmt.setString(10,hashedPassword);
-
-            pstmt.setLong(11, user.getId());
+            pstmt.setLong(10, user.getId());
 
             result = pstmt.executeUpdate() > 0;
             LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
@@ -156,6 +174,9 @@ public class SmsDAOImpl implements SmsDAO {
 
     }
 
+    
+    
+    
     @Override
     public List<SelectItem> getAlphas() {
         List<SelectItem> users = new ArrayList<>();
@@ -193,5 +214,26 @@ public class SmsDAOImpl implements SmsDAO {
         }
         return result;
     }
+
+    @Override
+    public boolean changePass(String username, String password) {
+        String sql = "update tUSER set password = ? where username= ?";
+        boolean result = false;
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String hashedPass = PasswordUtil.encrypt(password);
+            pstmt.setString(1, hashedPass);
+
+            pstmt.setString(2, username);
+
+            // Execute the query
+            result = pstmt.executeUpdate() == 1;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "SQL error occured ", ex);
+        }
+        return result;
+    }
+
+   
 
 }

@@ -56,6 +56,8 @@
 
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
+                                <p:commandButton value="Change Password" title="Click to change user password"
+                                                 onclick="PF('changepass').show();"/>
                                 <p:commandButton value =" XLSX"
                                                  title="Export to PDF">
                                     <p:dataExporter type="xlsx" target="table" fileName="smsUsers" />
@@ -232,6 +234,44 @@
                         </h:form> 
                     </p:dialog>
 
+
+                    <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
+                        <h:form id="changePassform">
+                            <p:panelGrid columns="2" style="paddign: 1rem;">
+                                <p:outputLabel for="username" value="Username"/>
+                                <p:selectOneMenu id="username" value="#{smscontroller.username}" filter="true" >
+                                    <f:selectItems value="#{smscontroller.listUsers}"  />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="newpass" value="New password"/>
+                                <p:inputText id="newpass" type="password" value="#{smscontroller.newPassword}"/>
+                                
+                                <p:outputLabel for="confirmpass" value="Confirm Password"/>
+                                <p:inputText id="confirmpass" type="password" value="#{smscontroller.confirmPassword}"/>
+
+                                <p:commandButton value="save" action="#{smscontroller.changePass()}"
+                                                 update=":msgs"
+                                                 oncomplete="PF('changepass').hide();"/>
+                                <p:commandButton value="cancel" onclick="PF('changepass').hide();"/>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <h:form> 
+                        <p:confirmDialog message="Are you sure you want to Change #{smscontroller.username}'s password"
+                                         header="Change password" severity="alert"
+                                         widgetVar="confirmpasschange">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p:commandButton 
+                                    value="confirm"
+                                    action="#{smscontroller.changePass()}" 
+                                    update =":msgs"
+                                    />                          
+                                <p:commandButton value="cancel" onclick="PF('confirmpasschange').hide();"/>
+                            </div>
+                        </p:confirmDialog>
+                    </h:form>
                     <!--create new smsUser dialog--> 
                     <p:dialog header="Create New SMS User" widgetVar="createSMSUser" id="createSMSUser" modal="true" width="800">
                         <h:form id="createUserForm">
@@ -284,7 +324,7 @@
                                             <f:selectItems value="#{smscontroller.listAlphas}"  />
                                         </p:selectOneMenu>
                                     </div>
-                                    
+
                                     <div class="field">
                                         <p:outputLabel for="useremail" value="User Email"/>
                                         <p:inputText id="useremail" value="#{smscontroller.newSmsUser.userEmail}" 
@@ -404,10 +444,6 @@
                                     <div class="field">
                                         <p:outputLabel for="username" value="Username"/>
                                         <p:inputText id="username" value="#{smscontroller.currentSmsUser.username}"/>
-                                    </div>
-                                    <div class="field">
-                                        <p:outputLabel for="password" value="password"/>
-                                        <p:inputText id="password" type="password" value="#{smscontroller.currentSmsUser.password}"/>
                                     </div>
                                     <div class="field">
                                         <p:outputLabel for="organization" value="Organization"/>

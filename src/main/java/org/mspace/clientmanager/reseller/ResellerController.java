@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
@@ -50,6 +52,10 @@ public class ResellerController implements Serializable {
     private List<Alpha> senderIds;
     private List<SelectItem> listGroups;
     private GroupDAO groupDAO;
+    private String username;
+    private String newPassword;
+    private String confirmPassword;
+    private List<SelectItem> users;
 
     private final JdbcUtil jdbcUtil = new JdbcUtil();
 
@@ -64,6 +70,36 @@ public class ResellerController implements Serializable {
         newReseller = new UserController();
     }
 
+    public List<SelectItem> getUsers() {
+        users = resellerDAO.users();
+        return users;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+    
+    
     public List<UserController> getResellers() {
         return resellers;
     }
@@ -117,6 +153,24 @@ public class ResellerController implements Serializable {
             } catch (IOException e) {
                 JsfUtil.addErrorMessage("Error occured while trying to create user");
             }
+        }
+    }
+
+    public void changePass() {
+        if (!username.isEmpty() && !newPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
+                return;
+            }
+            if (resellerDAO.changePass(username, newPassword.trim())) {
+                JsfUtil.addSuccessMessage(username + "'s password changed successfully");
+            } else {
+                JsfUtil.addErrorMessage("Failed to change password try again");
+            }
+
+        } else {
+            JsfUtil.addErrorMessage("Enter username and Password");
         }
     }
 

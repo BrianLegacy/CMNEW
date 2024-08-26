@@ -76,7 +76,6 @@ public class CallbackController implements Serializable {
         int userID = finduserId(username);
         newUrl.setUserid(userID);
         if (callbackDAO.createCallback(newUrl)) {
-            System.out.println("############## "+ newUrl.isStatus() + "$$$$$$$$$$$$$ " + newUrl.isTestbed());
             refreshurls();
             newUrl = new CallbackModel();
             JsfUtil.addSuccessMessage("Success, Callback created successfully.");

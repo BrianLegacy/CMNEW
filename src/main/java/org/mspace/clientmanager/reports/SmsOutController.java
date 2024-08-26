@@ -34,6 +34,7 @@ public class SmsOutController {
     private Date reportStartDate = new Date();
     private Date reportEndDate = new Date();
     private SMSOutServiceApi smsDAO;
+    private int rows;
 
     @PostConstruct
     public void init() {
@@ -72,6 +73,14 @@ public class SmsOutController {
         this.reportEndDate = reportEndDate;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
     public void generateSMSOut() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -83,9 +92,10 @@ public class SmsOutController {
 
         if (!username.isEmpty()) {
             smsUsers = smsDAO.fetchSMSReport(username, startDate, endDate);
-            if(smsUsers.size() != 0){
-                JsfUtil.addSuccessMessage(smsUsers.size() + " Records retrieved.");
-            }else{
+            rows = smsDAO.getTotalSmsCount(startDate, endDate, username);
+            if (smsUsers.size() != 0) {
+                JsfUtil.addSuccessMessage(rows + " SMS sent.");
+            } else {
                 JsfUtil.addSuccessMessage("No records found match search.");
             }
         } else {
@@ -107,6 +117,13 @@ public class SmsOutController {
             Cell cell = header.getCell(i);
             cell.setCellStyle(cellStyle);
         }
+
+        int lastRowNum = sheet.getLastRowNum();
+        Row newRow = sheet.createRow(lastRowNum + 1);
+        Cell newCell = newRow.createCell(0);
+
+        String message = "SMS sent during this period is " + rows;
+        newCell.setCellValue(message);
     }
 
 }

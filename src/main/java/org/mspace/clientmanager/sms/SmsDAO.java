@@ -14,6 +14,8 @@ import org.mspace.clientmanager.user.UserController;
  */
 public interface SmsDAO {
 
+    List<SelectItem> smsUsers();
+    
     List<SelectItem> getAlphas();
     
     void createSmsUser(UserController user);
@@ -23,6 +25,8 @@ public interface SmsDAO {
     boolean deleteSmsUser(UserController user);
 
     boolean editSmsUser(UserController user);
+    
+    boolean changePass(String username, String password);
 
 
 }

@@ -48,8 +48,11 @@
 
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                             <div>
+
                                 <p:commandButton value="Add existing User" onclick="PF('existingUser').show();" />
 
+                                <p:commandButton value="Change Password" title="Click to change user password"
+                                                 onclick="PF('changepass').show();"/>
                                 <p:commandButton value =" XLSX"
                                                  title="Export to Excel">
                                     <p:dataExporter type="xlsx" target="table" fileName="Emailusers"/>
@@ -134,6 +137,30 @@
                             </p:column>
                         </p:dataTable>
                     </h:form>
+
+                    <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
+                        <h:form id="changePassform">
+                            <p:panelGrid columns="2" style="paddign: 1rem;">
+                                <p:outputLabel for="username" value="Username"/>
+                                <p:selectOneMenu id="username" value="#{emailcontroller.username}" filter="true" >
+                                    <f:selectItems value="#{emailcontroller.listUsers}"  />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="newpass" value="New password"/>
+                                <p:inputText id="newpass" type="password" value="#{emailcontroller.newPassword}"/>
+                                
+                                <p:outputLabel for="confirmpass" value="Confirm Password"/>
+                                <p:inputText id="confirmpass" type="password" value="#{smscontroller.confirmPassword}"/>
+
+                                <p:commandButton value="save" action="#{emailcontroller.changePass()}"
+                                                 update=":msgs"
+                                                 oncomplete="PF('changepass').hide();"/>
+                                <p:commandButton value="cancel" onclick="PF('changepass').hide();"/>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
 
                     <!--edit emailuser dialog-->
                     <p:dialog header="Edit Email Credits" widgetVar="editsmscredits" id="editsmscredits" modal="true">
@@ -289,10 +316,7 @@
                                         <p:outputLabel for="username" value="Username"/>
                                         <p:inputText id="username" value="#{emailcontroller.currentEmailUser.username}"/>
                                     </div>
-                                    <div class="field">
-                                        <p:outputLabel for="password" value="password"/>
-                                        <p:inputText id="password" type="password" value="#{emailcontroller.currentEmailUser.password}"/>
-                                    </div>
+                                    
                                     <div class="field">
                                         <p:outputLabel for="organization" value="Organization"/>
                                         <p:inputText id="organization" value="#{emailcontroller.currentEmailUser.organization}"/>
@@ -389,7 +413,7 @@
                     </p:dialog> 
                 </p:panel>
             </div>
-           
+
         </ui:composition>
     </h:body>
 </html> 

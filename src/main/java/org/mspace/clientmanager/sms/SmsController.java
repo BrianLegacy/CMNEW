@@ -46,6 +46,10 @@ public class SmsController implements Serializable {
     private List<Alpha> senderIds;
     private GroupDAO groupDAO;
     private List<SelectItem> listGroups;
+    private List<SelectItem> listUsers;
+    private String username;
+    private String newPassword;
+    private String confirmPassword;
 
     private List<SelectItem> listAlphas;
     private final JdbcUtil jdbcUtil = new JdbcUtil();
@@ -53,12 +57,39 @@ public class SmsController implements Serializable {
     @PostConstruct
     public void init() {
         smsDAO = new SmsDAOImpl();
-        alphaDAO = new AlphaServiceImpl();
-        groupDAO = new GroupDAOImpl();
         refreshUsers();
         newSmsUser = new UserController();
-        currentSmsUser = new UserController();  
-        
+        currentSmsUser = new UserController();
+
+    }
+
+    public List<SelectItem> getListUsers() {
+        listUsers = smsDAO.smsUsers();
+        return listUsers;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public List<UserController> getSmsUsers() {
@@ -71,10 +102,11 @@ public class SmsController implements Serializable {
     }
 
     public List<SelectItem> getListGroups() {
+        groupDAO = new GroupDAOImpl();
         listGroups = groupDAO.listGroups();
         return listGroups;
     }
-    
+
     public List<Alpha> getSenderIds() {
         return senderIds;
     }
@@ -137,6 +169,25 @@ public class SmsController implements Serializable {
         }
     }
 
+    public void changePass() {
+        if (!username.isEmpty() && !newPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
+                return;
+            }
+            if (smsDAO.changePass(username, newPassword)) {
+                JsfUtil.addSuccessMessage(username + "'s password changed successfully");
+                newPassword = "";
+            } else {
+                JsfUtil.addErrorMessage("Failed to change password try again");
+            }
+
+        } else {
+            JsfUtil.addErrorMessage("Enter username and Password");
+        }
+    }
+
     public void manageSmsCredit() {
         if (currentSmsUser != null) {
             if (currentSmsUser.getCreditsToManage() < 0) {
@@ -168,6 +219,7 @@ public class SmsController implements Serializable {
     }
 
     public void assignAlpha() {
+        alphaDAO = new AlphaServiceImpl();
         try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
             if (alphaDAO.findAlphanumericByUsername(currentSmsUser.getUsername(), alphanumeric, conn)) {
                 JsfUtil.addErrorMessage("Sender Id already exists for  " + currentSmsUser.getUsername());
@@ -187,6 +239,7 @@ public class SmsController implements Serializable {
     }
 
     public void deleteAlpha() {
+        alphaDAO = new AlphaServiceImpl();
         if (selectedAlpha != null) {
             try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
                 if (alphaDAO.removeUseAlpha(selectedAlpha.getName(), selectedAlpha.getUsername(), conn) > 0) {
@@ -208,6 +261,7 @@ public class SmsController implements Serializable {
     }
 
     private void refreshAlphas() {
+        alphaDAO = new AlphaServiceImpl();
         try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
             senderIds = alphaDAO.loadAlphanumerics(currentSmsUser.getUsername(), conn);
         } catch (SQLException ex) {

@@ -53,7 +53,7 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public void saveUserGroup(Group group) {
 
-        String sql = "INSERT INTO tGROUPS (groupname, description, user_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO tGROUPS (groupname, description, tuserid) VALUES (?, ?, ?)";
         try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, group.getGroupname());
             pst.setString(2, group.getDescription());
@@ -83,8 +83,13 @@ public class GroupDAOImpl implements GroupDAO {
     @Override
     public List<Group> fetchGroups() {
         String sql = "SELECT * FROM dbSMS.tGROUPS";
+        String sqlRes = "select * from tGROUPS where tuserid=?";
+
         List<Group> groups = new ArrayList<>();
-        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sqlRes)) {
+
+            stmt.setLong(1, agent);
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Group group = new Group();
@@ -118,16 +123,21 @@ public class GroupDAOImpl implements GroupDAO {
 
     @Override
     public List<SelectItem> listGroups() {
-        String sql = "select id , groupname from tGROUPS where  order by groupname";
+
+        String sqlRes = "select id , groupname from tGROUPS where tuserid = ? order by groupname";
 
         List<SelectItem> results = new ArrayList<>();
 
-        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sqlRes)) {
+
+            ps.setLong(1, agent);
+
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 results.add(new SelectItem(rs.getInt("id"), rs.getString("groupname")));
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, sql);
+            LOGGER.log(Level.SEVERE, ex.getMessage());
         }
         return results;
     }

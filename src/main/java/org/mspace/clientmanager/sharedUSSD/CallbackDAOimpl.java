@@ -53,6 +53,9 @@ public class CallbackDAOimpl implements CallbackDAO {
                 + " where id=? ";
         boolean result = false;
 
+        String testBedNumbers = callback.getTestbednumbers();
+        callback.setTestbednumbers(formatNumbers(testBedNumbers));
+        
         try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, callback.getUserid());
             ps.setString(2, callback.getCallback_url());

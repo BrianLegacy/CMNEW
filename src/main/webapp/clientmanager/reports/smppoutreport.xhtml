@@ -40,7 +40,7 @@
                             </h:panelGroup>
                             <h:panelGroup layout="block">
                                 <p:commandLink  id="xlsx_export" >
-                                    <p:dataExporter type="xlsxstream" target="report:table" fileName="SMPP report" />
+                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMPP report" postProcessor="#{smppreport.postProcessXLSX}"/>
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
                                 </p:commandLink>
                             </h:panelGroup>
@@ -56,8 +56,8 @@
                         <p:dataTable id="table" var="sMPPOut" value="#{smppreport.records}"
                                      rows="10"
                                      paginator="true" paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                     paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {NextPageLink}"
+                                     currentPageReportTemplate="Summary total sms sent for this period #{smppreport.rows}"
                                      >
                             <p:column >
                                 <f:facet name="header">
