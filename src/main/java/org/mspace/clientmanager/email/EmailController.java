@@ -129,16 +129,22 @@ public class EmailController implements Serializable {
     }
 
     public void changePass() {
-        if (!username.isEmpty() && !newPassword.isEmpty()) {
+        if (!newPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
                 return;
             }
-            if (emailDAO.changePass(username, newPassword)) {
-                JsfUtil.addSuccessMessage(username + "'s password changed successfully");
+            if (emailDAO.changePass(currentEmailUser.getUsername(), newPassword, currentEmailUser.getId())) {
+                JsfUtil.addSuccessMessage(currentEmailUser.getUsername() + "'s password changed successfully");
+                
+                newPassword="";
+                confirmPassword="";
+                
             } else {
                 JsfUtil.addErrorMessage("Failed to change password try again");
+               System.out.println("username: " + username + " \n newPassword: " + newPassword  + "\n Id: " + currentEmailUser.getId());
+
             }
 
         } else {

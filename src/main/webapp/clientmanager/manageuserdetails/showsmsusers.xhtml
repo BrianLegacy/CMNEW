@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
@@ -56,8 +55,6 @@
 
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
-                                <p:commandButton value="Change Password" title="Click to change user password"
-                                                 onclick="PF('changepass').show();"/>
                                 <p:commandButton value =" XLSX"
                                                  title="Export to PDF">
                                     <p:dataExporter type="xlsx" target="table" fileName="smsUsers" />
@@ -108,21 +105,11 @@
                                       >
                                 <h:outputText value="#{data.group}" />
                             </p:column>
-
-
+                           
                             <p:column headerText="Action" style="width:170px" exportable="false">
 
                                 <div style="display: flex; justify-content: space-between;">
-                                    <p:commandButton 
-                                        id="editbutton"
-                                        icon="fa fa-pencil-square-o"
-                                        oncomplete="PF('editgroupmodal').show();"
-                                        title="Click to edit sms ">
-                                        <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
-                                                update="editgroupmodal" 
-                                                event="click"/>
-                                    </p:commandButton>
-
+                                    
                                     <p:commandButton ajax="true"
                                                      id="managecreditsbutton"
                                                      icon="fa fa-credit-card"
@@ -140,6 +127,26 @@
                                                      title="Click to assign and manage senderIds">
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="senderId" 
+                                                event="click"/>
+                                    </p:commandButton>
+                                    
+                                    <p:commandButton 
+                                        id="changepasswrd"
+                                        icon="fa fa-pencil-square"
+                                        oncomplete="PF('changepass').show();"
+                                        title="Click to change password">
+                                        <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
+                                                update="changepass" 
+                                                event="click"/>
+                                    </p:commandButton>
+                                    
+                                    <p:commandButton 
+                                        id="editbutton"
+                                        icon="fa fa-pencil-square-o"
+                                        oncomplete="PF('editgroupmodal').show();"
+                                        title="Click to edit user details">
+                                        <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
+                                                update="editgroupmodal" 
                                                 event="click"/>
                                     </p:commandButton>
 
@@ -235,13 +242,11 @@
                     </p:dialog>
 
 
-                    <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
+                    <p:dialog id="changepass" widgetVar="changepass"  header="Change User Password" modal="true" width="600">
                         <h:form id="changePassform">
                             <p:panelGrid columns="2" style="paddign: 1rem;">
-                                <p:outputLabel for="username" value="Username"/>
-                                <p:selectOneMenu id="username" value="#{smscontroller.username}" filter="true" >
-                                    <f:selectItems value="#{smscontroller.listUsers}"  />
-                                </p:selectOneMenu>
+                                <p:outputLabel for="cpusername" value="Username"/>
+                                <h:outputLabel id="cpusername" value="#{smscontroller.currentSmsUser.username}"/>
 
                                 <p:outputLabel for="newpass" value="New password"/>
                                 <p:inputText id="newpass" type="password" value="#{smscontroller.newPassword}"/>

@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
@@ -51,8 +50,6 @@
 
                                 <p:commandButton value="Add existing User" onclick="PF('existingUser').show();" />
 
-                                <p:commandButton value="Change Password" title="Click to change user password"
-                                                 onclick="PF('changepass').show();"/>
                                 <p:commandButton value =" XLSX"
                                                  title="Export to Excel">
                                     <p:dataExporter type="xlsx" target="table" fileName="Emailusers"/>
@@ -106,6 +103,14 @@
 
                                 <div style="display: flex; justify-content: space-between;">
 
+                                    <p:commandButton ajax="true" id="editemailcredits" icon="fa fa-credit-card" 
+                                                     update="editsmscredits" 
+                                                     oncomplete="PF('editsmscredits').show();" 
+                                                     title="Click to manage email credit" >
+                                        <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
+                                                update="editsmscredits" 
+                                                event="click"/>
+                                    </p:commandButton>
 
                                     <p:commandButton ajax="true" id="editbutton" 
                                                      icon="fa fa-pencil-square-o" update="editgroupmodal" 
@@ -115,15 +120,17 @@
                                                 update="editgroupmodal" 
                                                 event="click"/>
                                     </p:commandButton>
-
-                                    <p:commandButton ajax="true" id="editemailcredits" icon="fa fa-credit-card" 
-                                                     update="editsmscredits" 
-                                                     oncomplete="PF('editsmscredits').show();" 
-                                                     title="Click to manage email credit" >
+                                    
+                                    <p:commandButton ajax="true" id="changepasswrd" 
+                                                     icon="fa fa-pencil-square" update="editgroupmodal" 
+                                                     oncomplete="PF('changepass').show();" 
+                                                     title="Click to change password" >
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
-                                                update="editsmscredits" 
+                                                update="changepass" 
                                                 event="click"/>
                                     </p:commandButton>
+
+                                    
                                     <p:commandButton ajax="true" id="deletebutton" 
                                                      update="deletegroupmodal" 
                                                      oncomplete="PF('deletegroupmodal').show();" 
@@ -141,16 +148,14 @@
                     <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
                         <h:form id="changePassform">
                             <p:panelGrid columns="2" style="paddign: 1rem;">
-                                <p:outputLabel for="username" value="Username"/>
-                                <p:selectOneMenu id="username" value="#{emailcontroller.username}" filter="true" >
-                                    <f:selectItems value="#{emailcontroller.listUsers}"  />
-                                </p:selectOneMenu>
+                                <p:outputLabel for="cpusername" value="Username"/>
+                                <p:outputLabel  id="cpusername"  value="#{emailcontroller.currentEmailUser.username}"/>
 
                                 <p:outputLabel for="newpass" value="New password"/>
                                 <p:inputText id="newpass" type="password" value="#{emailcontroller.newPassword}"/>
                                 
                                 <p:outputLabel for="confirmpass" value="Confirm Password"/>
-                                <p:inputText id="confirmpass" type="password" value="#{smscontroller.confirmPassword}"/>
+                                <p:inputText id="confirmpass" type="password" value="#{emailcontroller.confirmPassword}"/>
 
                                 <p:commandButton value="save" action="#{emailcontroller.changePass()}"
                                                  update=":msgs"

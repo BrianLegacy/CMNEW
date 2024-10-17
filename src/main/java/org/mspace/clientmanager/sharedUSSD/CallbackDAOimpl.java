@@ -1,9 +1,11 @@
 package org.mspace.clientmanager.sharedUSSD;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,9 +27,8 @@ public class CallbackDAOimpl implements CallbackDAO {
         ArrayList<CallbackModel> callbacklist = new ArrayList();
 
         try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+                while (rs.next()) {     
                     CallbackModel callback = new CallbackModel();
                     callback.setId(rs.getInt("id"));
                     callback.setUserid(rs.getInt("tUSER_id"));
@@ -36,9 +37,13 @@ public class CallbackDAOimpl implements CallbackDAO {
                     callback.setStatus(rs.getBoolean("status"));
                     callback.setTestbed(rs.getInt("type") == 0 ? true : false);
                     callback.setTestbednumbers(rs.getString("testbedmobiles"));
+                    callback.setDuedate(rs.getDate("due_date"));
+                    callback.setDisconnectDate(rs.getDate("disconnect_date"));
 
                     callbacklist.add(callback);
                 }
+            }catch(SQLException ex){
+                System.out.println("An sql exception has occured! " + ex);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -48,28 +53,31 @@ public class CallbackDAOimpl implements CallbackDAO {
 
     @Override
     public boolean editCallback(CallbackModel callback) {
-        String sql = "UPDATE tSharedUssdClients set tUSER_id=?,"
-                + "callback_url=?,ussd_assigned_code=?,status=?,type=?,testbedmobiles=?"
+        System.out.println("Inside editCallback");
+        String sql = "UPDATE tSharedUssdClients set "
+                + "callback_url=?,ussd_assigned_code=?,status=?,type=?,testbedmobiles=?, due_date=?, disconnect_date=? "
                 + " where id=? ";
         boolean result = false;
 
         String testBedNumbers = callback.getTestbednumbers();
         callback.setTestbednumbers(formatNumbers(testBedNumbers));
-        
+                
         try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, callback.getUserid());
-            ps.setString(2, callback.getCallback_url());
-            ps.setString(3, callback.getUssd_assigned_code());
-            ps.setBoolean(4, callback.isStatus());
-            ps.setInt(5, callback.isTestbed() ? 0 : 1);
-            ps.setString(6, callback.getTestbednumbers());
-            ps.setInt(7, callback.getId());
+            ps.setString(1, callback.getCallback_url());
+            ps.setString(2, callback.getUssd_assigned_code());
+            ps.setBoolean(3, callback.isStatus());
+            ps.setInt(4, callback.isTestbed() ? 0 : 1);
+            ps.setString(5, callback.getTestbednumbers());
+            ps.setDate(6,  new java.sql.Date(callback.getDuedate().getTime()));
+            ps.setDate(7, new java.sql.Date(callback.getDisconnectDate().getTime()));
+            ps.setInt(8, callback.getId());
 
             result = ps.executeUpdate() > 0;
 
             return result;
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            System.out.println("An sql exception has occured " + ex);
+//            LOGGER.log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -111,7 +119,7 @@ public class CallbackDAOimpl implements CallbackDAO {
         callback.setTestbednumbers(formatNumbers(testBedNumbers));
 
         String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
-                + "ussd_assigned_code,status,testbedmobiles,type)VALUES(?,?,?,?,?,?)";
+                + "ussd_assigned_code,status,testbedmobiles,type,due_date,disconnect_date)VALUES(?,?,?,?,?,?,?,?)";
         boolean result = false;
         try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, callback.getUserid());
@@ -120,6 +128,8 @@ public class CallbackDAOimpl implements CallbackDAO {
             ps.setBoolean(4, callback.isStatus());
             ps.setString(5, callback.getTestbednumbers());
             ps.setInt(6, callback.isTestbed() ? 0 : 1);
+            ps.setDate(7, new java.sql.Date(callback.getDuedate().getTime()));
+            ps.setDate(8, new java.sql.Date(callback.getDisconnectDate().getTime()));
             result = ps.executeUpdate() > 0;
             
             return result;

@@ -15,8 +15,11 @@ import ke.co.mspace.nonsmppmanager.invalids.Tuser;
 public interface tuserinterface {
 
     public Tuser getUser(String username, String password);
-        public Tuser getUserJDBC(String username, String password);
-public Tuser getUserWithSha256(String username, String password);
+
+    public Tuser getUserJDBC(String username, String password);
+
+    public Tuser getUserWithSha256(String username, String password);
+
     public void update(Tuser user);
 
     public void remove(Tuser user);

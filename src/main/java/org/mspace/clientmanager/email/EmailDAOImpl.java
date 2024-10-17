@@ -174,8 +174,8 @@ public class EmailDAOImpl implements EmailDAO {
     }
 
     @Override
-    public boolean changePass(String username, String password) {
-        String sql = "update tUSER set password = ? where username= ?";
+    public boolean changePass(String username, String password, Long id) {
+        String sql = "update tUSER set password = ? where username= ? AND id = ?";
         boolean result = false;
         
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -183,6 +183,9 @@ public class EmailDAOImpl implements EmailDAO {
             pstmt.setString(1, hashedPass);
             
             pstmt.setString(2, username);
+            pstmt.setLong(3, id);
+            
+            System.out.println("hashedPassword is " + hashedPass);
 
             // Execute the query
             result = pstmt.executeUpdate() == 1;

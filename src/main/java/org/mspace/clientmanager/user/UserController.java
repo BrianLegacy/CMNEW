@@ -535,7 +535,7 @@ public class UserController implements Serializable {
     public String getUserType() {
         return userType;
     }
-
+   
     public void setUserType(String userType) {
         this.userType = userType;
     }
@@ -1087,6 +1087,6 @@ public class UserController implements Serializable {
 
     public void setGroup(String group) {
         this.group = group;
-    }
+    }  
 
 }

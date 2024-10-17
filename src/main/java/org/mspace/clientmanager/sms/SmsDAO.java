@@ -26,7 +26,7 @@ public interface SmsDAO {
 
     boolean editSmsUser(UserController user);
     
-    boolean changePass(String username, String password);
+    boolean changePass(String username, String password, Long id);
 
 
 }

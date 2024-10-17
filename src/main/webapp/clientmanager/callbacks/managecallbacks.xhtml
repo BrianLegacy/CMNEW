@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
@@ -33,6 +32,12 @@
                     justify-content: center;
                     align-items: center;
                 }
+
+                .ui-panelgrid-content{
+                    border: none;
+                }
+
+
             </style>
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
@@ -72,6 +77,12 @@
                             <p:column headerText="Status">
                                 <h:outputText  value="#{data.real_status}" />
                             </p:column>
+                            <p:column headerText="Due Date">
+                                <h:outputText  value="#{data.duedate}" />
+                            </p:column>
+                            <p:column headerText="Disconnect Date">
+                                <h:outputText  value="#{data.disconnectDate}" />
+                            </p:column>
                             <p:column headerText="Action">
                                 <p:commandButton style="padding: .3em 1em;" 
                                                  id="editbutton"
@@ -109,96 +120,93 @@
                     }
                     }
                 </h:outputScript>
-                <p:dialog header="Create New Callback" widgetVar="createCallbackDialog" id="createCallbackDialog" modal="true" width="600">
+                <p:dialog header="Create New Callback" widgetVar="createCallbackDialog" id="createCallbackDialog" modal="true" width="750">
                     <h:form id="createCallbackForm">
-                        <div class="card">
-                            <div class="formgrid">
-                                <div class="field">
-                                    <p:outputLabel for="users" value="User"/>
-                                    <p:selectOneMenu id="users" value="#{callbackController.username}" filter="true">
-                                        <f:ajax event="change" render="createCallbackForm"/>
-                                        <f:selectItem itemLabel="Select User" itemValue=""/>
-                                        <f:selectItems value="#{sMSOut.data}"/>
-                                    </p:selectOneMenu>
-                                </div>
+                        <p:panelGrid columns="2">
+                            <p:panelGrid columns="2" style=" align-content: center; align-items: center">
+                                <p:outputLabel for="users" value="User"/>
+                                <p:selectOneMenu id="users" value="#{callbackController.username}" filter="true">
+                                    <f:ajax event="change" render="createCallbackForm"/>
+                                    <f:selectItem itemLabel="Select User" itemValue=""/>
+                                    <f:selectItems value="#{sMSOut.data}"/>
+                                </p:selectOneMenu>
 
-                                <div class="field">
-                                    <p:outputLabel for="code" value="Code"/>
-                                    <p:inputText id="code" value="#{callbackController.newUrl.ussd_assigned_code}" required="true" placeholder=""
-                                                 requiredMessage="Enter Code">
-                                        <f:ajax event="blur" render="msgs"/>
-                                    </p:inputText>
-                                </div>
-                                <div class="field">
-                                    <p:outputLabel for="callbackurl" value="CallBack Url"/>
-                                    <p:inputText id="callbackurl" value="#{callbackController.newUrl.callback_url}" required="true" placeholder=""
-                                                 requiredMessage="Enter Url">
-                                        <f:ajax event="blur" render="msgs"/>
-                                    </p:inputText>
-                                </div>
-                                <div class="field">
-                                    <p:outputLabel for="status" value="Status"/>
+                                <p:outputLabel for="code" value="Code"/>
+                                <p:inputText id="code" value="#{callbackController.newUrl.ussd_assigned_code}" required="true" placeholder=""
+                                             requiredMessage="Enter Code">
+                                    <f:ajax event="blur" render="msgs"/>
+                                </p:inputText>
+                                <p:outputLabel for="callbackurl" value="CallBack Url"/>
+                                <p:inputText id="callbackurl" value="#{callbackController.newUrl.callback_url}" required="true" placeholder=""
+                                             requiredMessage="Enter Url">
+                                    <f:ajax event="blur" render="msgs"/>
+                                </p:inputText>
+
+                                <p:panelGrid columns="4">
+                                    <p:outputLabel for="status: " value="Status"/>
                                     <p:selectBooleanCheckbox id="status" value="#{callbackController.newUrl.status}" />
-                                </div>
-                                <div class="field">
-                                    <p:outputLabel for="testbed" value="Testbed"/>
-                                    <p:selectBooleanCheckbox id="testbed" value="#{callbackController.newUrl.testbed}"  />
-                                </div>
-                                <div class="field">
-                                    <p:outputLabel for="testbednumbers" value="Testbed Numbers"/>
-                                    <p:inputTextarea id="testbednumbers" value="#{callbackController.newUrl.testbednumbers}"  placeholder=""
-                                                 >
-                                        <f:ajax event="blur" render="msgs"/>
-                                    </p:inputTextarea>
-                                </div>
-                                
-                                <div class="field-full align-center">
-                                    <p:commandButton value="Save" icon="fa fa-save"
-                                                     action="#{callbackController.createCallback()}"
-                                                     update=":callbacks:table :msgs"
-                                                     oncomplete="PF('createCallbackDialog').hide();" />
-                                </div>
-                            </div>
-                        </div>
+                                    <p:outputLabel for="testbed: " value="Testbed"/>
+                                    <p:selectBooleanCheckbox id="testbed" value="#{callbackController.newUrl.testbed}"  style="margin-left: 10px" />
+                                </p:panelGrid>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="2">
+                                <p:outputLabel for="duedate" value="Due Date: "/>
+                                <p:calendar id="duedate" pattern="yyyy-MM-dd"  value="#{callbackController.newUrl.duedate}" />
+                                <p:outputLabel for="disconnectdate" value="Disconnect Date"/>
+                                <p:calendar id="disconnectdate" value="#{callbackController.newUrl.disconnectDate}" pattern="yyyy-MM-dd" />
+                                <p:outputLabel for="testbednumbers" value="Testbed Numbers"/>
+                                <p:inputTextarea id="testbednumbers" value="#{callbackController.newUrl.testbednumbers}"  placeholder="">
+                                    <f:ajax event="blur" render="msgs"/>
+                                </p:inputTextarea>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="1">
+                                <p:commandButton value="Save" icon="fa fa-save"
+                                                 action="#{callbackController.createCallback()}"
+                                                 update=":callbacks:table :msgs"
+                                                 oncomplete="PF('createCallbackDialog').hide();" />
+                            </p:panelGrid>
+
+                        </p:panelGrid>
                     </h:form>
                 </p:dialog>
                 <!--end create callback dialog-->
 
-                <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true" width="750">
                     <h:form id ="editCallback">
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <p:outputLabel for="userid" value="User ID" style="margin-right: 10px; width: 150px;"/>
+                        <p:panelGrid columns="2" style=" padding: 0; background: green">
+                            <p:panelGrid  columns="2" style="">
+                                <p:outputLabel for="userid" value="User ID: " style="margin-right: 0; width: 150px;"/>
                                 <p:inputText id="userid" value="#{callbackController.currentUrl.getUserid()}" disabled="true" readonly="true"/>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <p:outputLabel for="username" value="Code" style="margin-right: 10px; width: 150px;"/>
+                                <p:outputLabel for="username" value="Code: " style="margin-right: 10px; width: 150px;"/>
                                 <p:inputText id="username" value="#{callbackController.currentUrl.ussd_assigned_code}" disabled="true" readonly="true"/>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <p:outputLabel for="paybill" value="Callback"  style="margin-right: 10px; width: 150px;"/>
+                                <p:outputLabel for="paybill" value="Callback: "  style="margin-right: 10px; width: 150px;"/>
                                 <p:inputText id="paybill" value="#{callbackController.currentUrl.callback_url}"/>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <p:outputLabel for="status" value="Status" style="margin-right: 10px; width: 150px;"/>
+                                <p:outputLabel for="status" value="Status: " style="margin-right: 10px; width: 150px;"/>
                                 <p:selectBooleanCheckbox  id="status"    value="#{callbackController.currentUrl.status}" />
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <p:outputLabel for="testbed" value="Testbed"  style="margin-right: 10px; width: 150px;"/>
+                                <p:outputLabel for="testbed" value="Testbed: "  style="margin-right: 10px; width: 150px;"/>
                                 <p:selectBooleanCheckbox id="testbed" value="#{callbackController.currentUrl.testbed}"/>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            </p:panelGrid>
+                            <p:panelGrid columns="2">
                                 <p:outputLabel for="testmobilestextarea" value="Testbed Mobiles"  style="margin-right: 10px; width: 150px;"/>
                                 <p:inputTextarea  id="testmobilestextarea" value="#{callbackController.currentUrl.testbednumbers}"/>
-                            </div>
-                            <div class="field-full align-center">
-                                <p:commandButton value="Save"
-                                                 action="#{callbackController.editCallback()}"
-                                                 update=":callbacks:table :msgs"
-                                                 oncomplete="PF('editgroupmodal').hide();"/>
-                                <p:commandButton value="Cancel" onclick="PF('editgroupmodal').hide();"/>
-                            </div>
-                        </div>
+                                <p:outputLabel for="duedate" value="Due Date"  style="margin-right: 10px; width: 150px;"/>
+                                <p:calendar id="duedate" pattern="yyyy-MM-dd" value="#{callbackController.currentUrl.duedate}"  mode="Popup"/>
+                                <p:outputLabel for="disconnectdate" value="Disconnect Date"  style="margin-right: 10px; width: 150px;"/>
+                                <p:calendar id="disconnectdate" pattern="yyyy-MM-dd" value="#{callbackController.currentUrl.disconnectDate}" mode="Popup"/>
+                            </p:panelGrid>
+
+                        </p:panelGrid>
+                        <p:panelGrid columns="2">
+                            <p:commandButton value="Save"
+                                             action="#{callbackController.editCallback()}"
+                                             update=":callbacks:table :msgs"
+                                             oncomplete="PF('editgroupmodal').hide();"/>
+                            <p:commandButton value="Cancel" onclick="PF('editgroupmodal').hide();"/>
+                        </p:panelGrid>
                     </h:form>
                 </p:dialog> 
 

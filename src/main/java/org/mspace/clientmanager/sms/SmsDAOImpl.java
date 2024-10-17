@@ -216,8 +216,8 @@ public class SmsDAOImpl implements SmsDAO {
     }
 
     @Override
-    public boolean changePass(String username, String password) {
-        String sql = "update tUSER set password = ? where username= ?";
+    public boolean changePass(String username, String password, Long id) {
+        String sql = "update tUSER set password = ? where username= ? AND id = ?";
         boolean result = false;
 
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -225,6 +225,7 @@ public class SmsDAOImpl implements SmsDAO {
             pstmt.setString(1, hashedPass);
 
             pstmt.setString(2, username);
+            pstmt.setLong(3, id);
 
             // Execute the query
             result = pstmt.executeUpdate() == 1;

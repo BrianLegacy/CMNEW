@@ -16,7 +16,7 @@ public interface EmailDAO {
     
     List<SelectItem> emailUsers();
     
-    boolean changePass(String username,String newPassword);
+    boolean changePass(String username,String newPassword, Long id);
     
     public List<UserController> fetchEmailUsers();
     

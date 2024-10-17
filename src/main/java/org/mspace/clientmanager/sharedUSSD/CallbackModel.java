@@ -4,6 +4,9 @@
  */
 package org.mspace.clientmanager.sharedUSSD;
 
+import java.util.Date;
+
+
 /**
  *
  * @author olal
@@ -19,6 +22,8 @@ public class CallbackModel {
     private boolean status;
     private boolean testbed;
     private String real_status;
+    private Date duedate;
+    private Date disconnectDate;
 
     public int getId() {
         return id;
@@ -76,6 +81,22 @@ public class CallbackModel {
         this.testbed = testbed;
     }
 
+    public Date getDuedate() {
+        return duedate;
+    }
+
+    public void setDuedate(Date duedate) {
+        this.duedate = duedate;
+    }
+
+    public Date getDisconnectDate() {
+        return disconnectDate;
+    }
+
+    public void setDisconnectDate(Date disconnectDate) {
+        this.disconnectDate = disconnectDate;
+    }
+
     public String getReal_status() {
         if (status == true) {
             real_status = "Active";
@@ -89,16 +110,18 @@ public class CallbackModel {
         this.real_status = real_status;
     }
 
-    public CallbackModel(int userid, String callback_url,  String ussd_assigned_code, boolean status, String real_status) {
+    public CallbackModel(int userid, String callback_url,  String ussd_assigned_code, boolean status, String real_status, Date duedate, Date disconnectDate ) {
         this.userid = userid;
         this.callback_url = callback_url;
         this.ussd_assigned_code = ussd_assigned_code;
         this.status = status;
         this.real_status = real_status;
+        this.duedate = duedate;
+        this.disconnectDate = disconnectDate;
     }
 
     public CallbackModel() {
     }
-    
+
     
 }

@@ -170,17 +170,23 @@ public class SmsController implements Serializable {
     }
 
     public void changePass() {
-        if (!username.isEmpty() && !newPassword.isEmpty()) {
+        if (!newPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
                 return;
             }
-            if (smsDAO.changePass(username, newPassword)) {
-                JsfUtil.addSuccessMessage(username + "'s password changed successfully");
+
+            if (smsDAO.changePass(currentSmsUser.getUsername(), newPassword, currentSmsUser.getId())) {
+                JsfUtil.addSuccessMessage(currentSmsUser.getUsername() + "'s password changed successfully");
+                System.out.println("username: " + currentSmsUser.getUsername() + " \n newPassword: " + newPassword + "\n Id: " + currentSmsUser.getId() );
+                
                 newPassword = "";
+                confirmPassword = "";
             } else {
                 JsfUtil.addErrorMessage("Failed to change password try again");
+                 newPassword = "";
+                 confirmPassword = "";
             }
 
         } else {
