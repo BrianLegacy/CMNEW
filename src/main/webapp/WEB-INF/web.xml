@@ -44,10 +44,9 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            60
         </session-timeout>
     </session-config>
-
 
     
     <!-- Start mime Mapping-->

@@ -28,4 +28,6 @@ public interface EmailDAO {
     
     boolean addExisting (String username);
     
+    public boolean verify(UserController user);
+    
 }

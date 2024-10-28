@@ -14,10 +14,11 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
+import ke.co.mspace.nonsmppmanager.model.SmsLazyDataModel;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
@@ -25,14 +26,17 @@ import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.group.GroupDAO;
 import org.mspace.clientmanager.group.GroupDAOImpl;
 import org.mspace.clientmanager.user.UserController;
+import org.primefaces.model.LazyDataModel;
 
 /**
  *
  * @author olal
  */
 @ManagedBean(name = "smscontroller")
-@ViewScoped
+@SessionScoped
 public class SmsController implements Serializable {
+
+    private LazyDataModel<UserController> lazyModel;
 
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +54,7 @@ public class SmsController implements Serializable {
     private String username;
     private String newPassword;
     private String confirmPassword;
+    private List<SelectItem> existingUsers;
 
     private List<SelectItem> listAlphas;
     private final JdbcUtil jdbcUtil = new JdbcUtil();
@@ -57,12 +62,26 @@ public class SmsController implements Serializable {
     @PostConstruct
     public void init() {
         smsDAO = new SmsDAOImpl();
-        refreshUsers();
         newSmsUser = new UserController();
         currentSmsUser = new UserController();
+        lazyModel = new SmsLazyDataModel((SmsDAOImpl) smsDAO);
+    }
+   
 
+       public LazyDataModel<UserController> getLazyModel() {
+        return lazyModel;
     }
 
+    public List<SelectItem> getExistingUsers() {
+        existingUsers = smsDAO.getExistingUsers();
+        return existingUsers;
+    }
+
+    public void setExistingUsers(List<SelectItem> existingUsers) {
+        this.existingUsers = existingUsers;
+    }
+
+       
     public List<SelectItem> getListUsers() {
         listUsers = smsDAO.smsUsers();
         return listUsers;
@@ -148,7 +167,6 @@ public class SmsController implements Serializable {
         if (newSmsUser != null) {
             try {
                 newSmsUser.saveUser();
-                refreshUsers();
             } catch (IOException e) {
                 JsfUtil.addErrorMessage("Error occured while trying to create user");
             }
@@ -162,10 +180,8 @@ public class SmsController implements Serializable {
             } else {
                 JsfUtil.addErrorMessage("Error while editing user");
             }
-            refreshUsers();
         } else {
             JsfUtil.addErrorMessage("No User selected for update.");
-
         }
     }
 
@@ -179,14 +195,14 @@ public class SmsController implements Serializable {
 
             if (smsDAO.changePass(currentSmsUser.getUsername(), newPassword, currentSmsUser.getId())) {
                 JsfUtil.addSuccessMessage(currentSmsUser.getUsername() + "'s password changed successfully");
-                System.out.println("username: " + currentSmsUser.getUsername() + " \n newPassword: " + newPassword + "\n Id: " + currentSmsUser.getId() );
-                
+                System.out.println("username: " + currentSmsUser.getUsername() + " \n newPassword: " + newPassword + "\n Id: " + currentSmsUser.getId());
+
                 newPassword = "";
                 confirmPassword = "";
             } else {
                 JsfUtil.addErrorMessage("Failed to change password try again");
-                 newPassword = "";
-                 confirmPassword = "";
+                newPassword = "";
+                confirmPassword = "";
             }
 
         } else {
@@ -201,7 +217,6 @@ public class SmsController implements Serializable {
             } else {
                 try {
                     currentSmsUser.manageCredit();
-                    refreshUsers();
                 } catch (IOException e) {
                     JsfUtil.addErrorMessage("Error reading the form try again");
                 }
@@ -213,7 +228,6 @@ public class SmsController implements Serializable {
     public void deleteUser() {
         if (currentSmsUser != null) {
             if (smsDAO.deleteSmsUser(currentSmsUser)) {
-                refreshUsers();
                 JsfUtil.addSuccessMessage("User was deleted successfully. ");
             } else {
                 JsfUtil.addSuccessMessage("Try again Something went wrong. ");
@@ -262,10 +276,6 @@ public class SmsController implements Serializable {
         }
     }
 
-    private void refreshUsers() {
-        smsUsers = smsDAO.fetchSmsusers();
-    }
-
     private void refreshAlphas() {
         alphaDAO = new AlphaServiceImpl();
         try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
@@ -273,10 +283,28 @@ public class SmsController implements Serializable {
         } catch (SQLException ex) {
             Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
-
+    
     public void resetSmsUser() {
         newSmsUser = new UserController();
     }
+    
+   public void addExistingUser(){
+       if(username != null){
+           if(smsDAO.addExisting(username)){
+                  JsfUtil.addSuccessMessage("Success, User updated successfully.");
+            } else {
+                JsfUtil.addErrorMessage("Error while Adding user");
+            }
+           init();
+        } else {
+            JsfUtil.addErrorMessage("No User selected.");
+        }
+       
+     }
+   
 }
+
+
+
+

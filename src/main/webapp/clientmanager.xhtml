@@ -8,10 +8,10 @@
         <link href="./images/mspac.ico" rel="shortcut icon" type="image/x-icon" />
         <title>Mspace::</title>
     </h:head>
+
     <h:body>
         <!--      <p:panel style="height:1000px">-->
         <h:outputStylesheet library="css" name="stylesheet.css" > </h:outputStylesheet>
-        <script src="resources/js/functions.js" type="text/javascript"></script>
         <div id="page">
 
             <div id="header-container">
@@ -67,7 +67,6 @@
                     </p>
                     <f:facet name="footer">
                         <p:commandButton value="Cancel"  onclick="PF('mySubVar').hide()" ajax="false"   icon="fa fa-times" />                                 
-                        <p:commandButton value="START" actionListener="#{menuView1.subscribeToFreeTrail()}" oncomplete="PF('mySubVar').hide();"  ajax="false"  icon="fa fa-send-o"  />
                     </f:facet>  
                 </h:panelGrid>
             </h:form>

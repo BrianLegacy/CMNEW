@@ -50,11 +50,13 @@
                                          background-repeat: no-repeat;
                                          background-position:  0.5rem center;" 
                                          onclick="PF('createSMSUser').show();" 
-                                         actionListener="#{smscontroller.resetSmsUser()}"/>
+                                         actionListener="#{smscontroller.resetSmsUser()}" />
 
 
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
+                                <p:commandButton value="Add existing User" onclick="PF('existingUser').show();" />
+
                                 <p:commandButton value =" XLSX"
                                                  title="Export to PDF">
                                     <p:dataExporter type="xlsx" target="table" fileName="smsUsers" />
@@ -65,7 +67,7 @@
                                 </p:commandButton>
                             </div>
                         </div>
-                        <p:dataTable id="table" var="data" value="#{smscontroller.smsUsers}"
+                        <p:dataTable id="table" var="data" value="#{smscontroller.lazyModel}"
                                      rows="10"
                                      rowsPerPageTemplate="10, 15, 25"
                                      pageLinks="3"
@@ -73,9 +75,8 @@
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="{totalRecords} records"
                                      scrollable="true"
-                                     resizableColumns="true">
-                            <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
-                                      >
+                                     resizableColumns="true" >
+                            <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains">
                                 <h:outputText value="#{data.username}" />
                             </p:column>
                             <p:column headerText="SMS Per Day">
@@ -167,6 +168,28 @@
                             </p:column>
                         </p:dataTable>
                     </h:form>
+                    
+                    <!-- Add existing user -->
+                    <p:dialog widgetVar="existingUser"  id="existingUser"  modal="true" width="350" >
+                        <h:form>
+                            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                                 <p:outputLabel for="user" value="user"/>
+                                 <p:selectOneMenu id="user" value="#{smscontroller.username}" filter="true">
+                                    <f:selectItem itemLabel="Select One existing user" itemValue=""/>
+                                    <f:selectItems value="#{smscontroller.existingUsers}"/>
+                                </p:selectOneMenu>
+                                 
+                                <p:commandButton value ="Add"
+                                                 action ="#{smscontroller.addExistingUser()}"
+                                                 update =":showusers:table :msgs"
+                                                 oncomplete="PF('existingUser').hide();" 
+                                                 >
+                                </p:commandButton>
+                               
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
                     <!--assign and update sender IDs-->
                     <p:dialog header="Assign and Manage Sender IDs" widgetVar="senderId" id="senderId" modal="true" width="800">
                         <h:form id = "numerics">
@@ -195,7 +218,6 @@
                                                      style="margin-left:auto; margin-right:auto;" >
                                             <f:facet name="header">
                                                 <h:outputText value="Available Sender IDs" />
-
                                             </f:facet>
 
                                             <p:column>

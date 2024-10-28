@@ -55,7 +55,7 @@ public class EmailDAOImpl implements EmailDAO {
         List<SelectItem> users = new ArrayList<>();
         String queryAdmin = "select username from tUSER where admin != 5 and emailuser = 'Y' order by username";
         String queryRes = "select username from tUSER where agent = ? and emailuser='Y' and admin != 5 order by username";
-        
+
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             if (admin != 'Y') {
                 ps.setLong(1, agent);
@@ -69,7 +69,6 @@ public class EmailDAOImpl implements EmailDAO {
             LOGGER.log(Level.SEVERE, "Error fetching usernames", e);
         }
         return users;
-
     }
 
     @Override
@@ -79,7 +78,7 @@ public class EmailDAOImpl implements EmailDAO {
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert, "
                 + "tUSER.end_date, tUSER.start_date, tUSER.alertThreshold, tUSER.cost_per_sms, tUSER.arrears, tUSER.group "
                 + "FROM tUSER "
-                + "WHERE tUSER.emailuser = 'Y' AND tUSER.admin != 5";
+                + "WHERE tUSER.emailuser = 'Y' AND tUSER.admin != 5 LIMIT 50000";
 
         String resellerQuery = "SELECT tUSER.id, tUSER.username, tUSER.password, tUSER.admin, tUSER.max_total, tUSER.max_contacts, "
                 + "tUSER.organization, tUSER.contact_number, tUSER.email_address, tUSER.enable_email_alert, "
@@ -177,14 +176,14 @@ public class EmailDAOImpl implements EmailDAO {
     public boolean changePass(String username, String password, Long id) {
         String sql = "update tUSER set password = ? where username= ? AND id = ?";
         boolean result = false;
-        
+
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String hashedPass = PasswordUtil.encrypt(password);
             pstmt.setString(1, hashedPass);
-            
+
             pstmt.setString(2, username);
             pstmt.setLong(3, id);
-            
+
             System.out.println("hashedPassword is " + hashedPass);
 
             // Execute the query
@@ -193,8 +192,8 @@ public class EmailDAOImpl implements EmailDAO {
             LOGGER.log(Level.SEVERE, "SQL error occured ", ex);
         }
         return result;
-    }  
-    
+    }
+
     @Override
     public boolean editEmailUser(UserController user) {
         String sql = "UPDATE tUSER SET username = ?, max_total = ?, organization = ?, "
@@ -239,6 +238,25 @@ public class EmailDAOImpl implements EmailDAO {
             LOGGER.log(Level.SEVERE, "SQL error occured ", ex);
         }
         return result;
+    }
+
+    @Override
+    public boolean verify(UserController user) {
+        String sql = "UPDATE tUSER SET verifiedEmail = 1 WHERE username=? and id=?";
+
+        try (Connection con = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, user.getUsername());
+            ps.setLong(2, user.getId());
+            if (ps.executeUpdate() > 0) {
+                System.out.println(user.getUsername() + " is successfully verified");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("An sql exception occured " + e);
+        }
+        return false;
     }
 
 }

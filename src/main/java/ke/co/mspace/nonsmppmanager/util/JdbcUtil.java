@@ -25,7 +25,7 @@ public class JdbcUtil implements Serializable{
     boolean DEBUG = true;
     boolean GATEWAY = false;
     boolean WEBSITE = false;
-
+    
     public String databaseType = "mysql";
     public String dbSMS = "dbSMS";
     public String alert = "alerts";
@@ -68,7 +68,7 @@ public class JdbcUtil implements Serializable{
     private final String clientManagerMySQLHost = "10.164.0.5";
     private final String websiteHost = "10.164.0.5";
 
-    private final String mysqlOptions = "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true";
+    private final String mysqlOptions = "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&useUnicode=false";
 
     private final int portNumber = 3306;
     //             192.168.1.51

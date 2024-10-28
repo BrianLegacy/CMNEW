@@ -17,6 +17,7 @@ public class CallbackModel {
     private int userid;
     private String callback_url;
     private String testbednumbers;
+    private String username;
 
     private String ussd_assigned_code;
     private boolean status;
@@ -109,6 +110,15 @@ public class CallbackModel {
     public void setReal_status(String real_status) {
         this.real_status = real_status;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
 
     public CallbackModel(int userid, String callback_url,  String ussd_assigned_code, boolean status, String real_status, Date duedate, Date disconnectDate ) {
         this.userid = userid;

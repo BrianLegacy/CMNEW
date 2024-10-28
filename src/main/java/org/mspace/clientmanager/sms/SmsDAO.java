@@ -20,13 +20,19 @@ public interface SmsDAO {
     
     void createSmsUser(UserController user);
 
-    List<UserController> fetchSmsusers();
+    List<UserController> fetchSmsusers(int limit, int offset, String usernameFilter);
 
     boolean deleteSmsUser(UserController user);
 
     boolean editSmsUser(UserController user);
     
     boolean changePass(String username, String password, Long id);
-
-
+    
+    public int countSmsUsers();
+    
+    public int countFilteredSmsUsers(String usernameFilter);
+    
+    public List<SelectItem> getExistingUsers();
+    
+    public boolean addExisting (String username);
 }

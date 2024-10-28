@@ -209,4 +209,15 @@ public class EmailController implements Serializable {
     private void refreshUsers() {
         emailUsers = emailDAO.fetchEmailUsers();
     }
+    
+    public void verify(){
+        if(currentEmailUser != null){
+            boolean verified = emailDAO.verify(currentEmailUser);
+            if(verified){
+                  JsfUtil.addSuccessMessage("Success, User verified successfully.");
+            } else {
+                JsfUtil.addErrorMessage("Error while verifying user");
+            }
+        }
+    }
 }

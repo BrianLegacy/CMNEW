@@ -50,17 +50,19 @@
                                          background-image: url('#{resource['images/addcallback.png']}');
                                          background-size: 1.5rem 1.5rem;
                                          background-repeat: no-repeat;
-                                         background-position:  0.5rem center;"/>
+                                         background-position:  0.5rem center;" ajax="true"/>
 
                         <p:dataTable id ="table" var="data" value="#{callbackController.callbacks}"
-                                     rows="15"
+                                     rows="10"
+                                     rowsPerPageTemplate="5, 10, 15"
                                      paginator="true" paginatorPosition="bottom"
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="{totalRecords} records"
                                      >
-                            <p:column headerText="UserID">
-                                <h:outputText value="#{data.userid}"/>
+                            <p:column headerText="Username" filterBy="#{data.username}">
+                                <h:outputText value="#{data.username}"/>
                             </p:column>
+
                             <p:column headerText="Codes">
                                 <h:outputText  value="#{data.ussd_assigned_code}" />
                             </p:column>
@@ -74,7 +76,7 @@
                             <p:column headerText="Testbed">
                                 <h:outputText value="#{data.testbed==true?'Active':'Inactive'}" />
                             </p:column>
-                            <p:column headerText="Status">
+                            <p:column headerText="Status" filterBy="#{data.real_status}">
                                 <h:outputText  value="#{data.real_status}" />
                             </p:column>
                             <p:column headerText="Due Date">
@@ -120,12 +122,14 @@
                     }
                     }
                 </h:outputScript>
+
+                <!--start create callback dialog-->
                 <p:dialog header="Create New Callback" widgetVar="createCallbackDialog" id="createCallbackDialog" modal="true" width="750">
                     <h:form id="createCallbackForm">
                         <p:panelGrid columns="2">
-                            <p:panelGrid columns="2" style=" align-content: center; align-items: center">
+                            <p:panelGrid columns="2">
                                 <p:outputLabel for="users" value="User"/>
-                                <p:selectOneMenu id="users" value="#{callbackController.username}" filter="true">
+                                <p:selectOneMenu id="users" value="#{callbackController.username}" filter="true" style=" min-width:100px !important">
                                     <f:ajax event="change" render="createCallbackForm"/>
                                     <f:selectItem itemLabel="Select User" itemValue=""/>
                                     <f:selectItems value="#{sMSOut.data}"/>
@@ -142,11 +146,20 @@
                                     <f:ajax event="blur" render="msgs"/>
                                 </p:inputText>
 
-                                <p:panelGrid columns="4">
-                                    <p:outputLabel for="status: " value="Status"/>
-                                    <p:selectBooleanCheckbox id="status" value="#{callbackController.newUrl.status}" />
-                                    <p:outputLabel for="testbed: " value="Testbed"/>
-                                    <p:selectBooleanCheckbox id="testbed" value="#{callbackController.newUrl.testbed}"  style="margin-left: 10px" />
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel for="status" value="Status" style="margin-left: 2rem !important; margin-top: 1rem !important"/>
+                                    <p:selectOneMenu id="status" value="#{callbackController.newUrl.status}"   style="margin-left: 1.5rem !important">
+                                        <f:selectItem  itemLabel="Select One" />
+                                        <f:selectItem itemLabel="Active" itemValue="true"/>
+                                        <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel for="testbed" value="Testbed" style="margin-left: 2rem !important; margin-top: 1rem !important"/>
+                                    <p:selectOneMenu id="testbed" value="#{callbackController.newUrl.testbed}" style="margin-left: 1.5rem !important">
+                                        <f:selectItem  itemLabel="Select One" />
+                                        <f:selectItem itemLabel="Active" itemValue="true"/>
+                                        <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                                    </p:selectOneMenu>
+                                   
                                 </p:panelGrid>
 
                             </p:panelGrid>
@@ -175,20 +188,30 @@
                 </p:dialog>
                 <!--end create callback dialog-->
 
-                <p:dialog header="Edit Paybill/Till Number" widgetVar="editgroupmodal" id="editgroupmodal" modal="true" width="750">
+                <p:dialog header="Edit Callback/" widgetVar="editgroupmodal" id="editgroupmodal" modal="true" width="750">
                     <h:form id ="editCallback">
                         <p:panelGrid columns="2" style=" padding: 0; background: green">
                             <p:panelGrid  columns="2" style="">
                                 <p:outputLabel for="userid" value="User ID: " style="margin-right: 0; width: 150px;"/>
                                 <p:inputText id="userid" value="#{callbackController.currentUrl.getUserid()}" disabled="true" readonly="true"/>
-                                <p:outputLabel for="username" value="Code: " style="margin-right: 10px; width: 150px;"/>
-                                <p:inputText id="username" value="#{callbackController.currentUrl.ussd_assigned_code}" disabled="true" readonly="true"/>
-                                <p:outputLabel for="paybill" value="Callback: "  style="margin-right: 10px; width: 150px;"/>
-                                <p:inputText id="paybill" value="#{callbackController.currentUrl.callback_url}"/>
+
+                                <p:outputLabel for="username" value="Username: " style="margin-right: 0; width: 150px;"/>
+                                <p:inputText id="username" value="#{callbackController.currentUrl.username}" disabled="true" readonly="true"/>   
+
+                                <p:outputLabel for="code" value="Code: " style="margin-right: 10px; width: 150px;"/>
+                                <p:inputText id="code" value="#{callbackController.currentUrl.ussd_assigned_code}" disabled="true" readonly="true"/>
+                                <p:outputLabel for="callback_" value="Callback: "  style="margin-right: 10px; width: 150px;"/>
+                                <p:inputText id="callback_" value="#{callbackController.currentUrl.callback_url}"/>
                                 <p:outputLabel for="status" value="Status: " style="margin-right: 10px; width: 150px;"/>
-                                <p:selectBooleanCheckbox  id="status"    value="#{callbackController.currentUrl.status}" />
+                                <p:selectOneMenu id="status" value="#{callbackController.currentUrl.status}">
+                                    <f:selectItem itemLabel="Active" itemValue="true"/>
+                                    <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                                </p:selectOneMenu>
                                 <p:outputLabel for="testbed" value="Testbed: "  style="margin-right: 10px; width: 150px;"/>
-                                <p:selectBooleanCheckbox id="testbed" value="#{callbackController.currentUrl.testbed}"/>
+                                <p:selectOneMenu id="testbed" value="#{callbackController.currentUrl.testbed}">
+                                    <f:selectItem itemLabel="Active" itemValue="true"/>
+                                    <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                                </p:selectOneMenu>
                             </p:panelGrid>
                             <p:panelGrid columns="2">
                                 <p:outputLabel for="testmobilestextarea" value="Testbed Mobiles"  style="margin-right: 10px; width: 150px;"/>
@@ -198,7 +221,6 @@
                                 <p:outputLabel for="disconnectdate" value="Disconnect Date"  style="margin-right: 10px; width: 150px;"/>
                                 <p:calendar id="disconnectdate" pattern="yyyy-MM-dd" value="#{callbackController.currentUrl.disconnectDate}" mode="Popup"/>
                             </p:panelGrid>
-
                         </p:panelGrid>
                         <p:panelGrid columns="2">
                             <p:commandButton value="Save"
@@ -209,7 +231,6 @@
                         </p:panelGrid>
                     </h:form>
                 </p:dialog> 
-
 
                 <p:dialog header="Delete  CallBack" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
                     <h:form>

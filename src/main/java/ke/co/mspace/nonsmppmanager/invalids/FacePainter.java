@@ -6,18 +6,19 @@
 package ke.co.mspace.nonsmppmanager.invalids;
 
 import java.io.Serializable;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 
 /**
  *
  * @author mspace
  */
+
 @ManagedBean(name = "facePainter")
-@SessionScoped
+@ApplicationScoped
 public class FacePainter implements Serializable {
 
-    private String mainContent = "landing.xhtml";
+    private String mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
 
     public String getMainContent() {
 
@@ -43,3 +44,6 @@ public class FacePainter implements Serializable {
     }
 
 }
+
+
+

@@ -23,7 +23,7 @@ public class CallbackDAOimpl implements CallbackDAO {
 
     @Override
     public List<CallbackModel> fetchCallbacks() {
-        String sql = "SELECT * FROM tSharedUssdClients";
+        String sql = "SELECT * FROM dbUSSD.tSharedUssdClients LEFT JOIN dbSMS.tUSER ON dbUSSD.tSharedUssdClients.tuser_id = dbSMS.tUSER.id";
         ArrayList<CallbackModel> callbacklist = new ArrayList();
 
         try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -39,6 +39,7 @@ public class CallbackDAOimpl implements CallbackDAO {
                     callback.setTestbednumbers(rs.getString("testbedmobiles"));
                     callback.setDuedate(rs.getDate("due_date"));
                     callback.setDisconnectDate(rs.getDate("disconnect_date"));
+                    callback.setUsername(rs.getString("username"));
 
                     callbacklist.add(callback);
                 }
@@ -139,3 +140,5 @@ public class CallbackDAOimpl implements CallbackDAO {
         return result;
     }
 }
+
+

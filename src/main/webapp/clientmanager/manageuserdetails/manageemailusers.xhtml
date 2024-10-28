@@ -120,8 +120,8 @@
                                                 update="editgroupmodal" 
                                                 event="click"/>
                                     </p:commandButton>
-                                    
-                                    <p:commandButton ajax="true" id="changepasswrd" 
+
+                                    <p:commandButton ajax="true" id="wrd" 
                                                      icon="fa fa-pencil-square" update="editgroupmodal" 
                                                      oncomplete="PF('changepass').show();" 
                                                      title="Click to change password" >
@@ -130,7 +130,15 @@
                                                 event="click"/>
                                     </p:commandButton>
 
-                                    
+
+                                    <p:commandButton ajax="true" id="verify" 
+                                                     icon="fa fa-key" update="verifyuser" 
+                                                     oncomplete="PF('verifyuser').show();" 
+                                                     title="Click to verify user" >
+                                        <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
+                                                event="click"/>
+                                    </p:commandButton>
+
                                     <p:commandButton ajax="true" id="deletebutton" 
                                                      update="deletegroupmodal" 
                                                      oncomplete="PF('deletegroupmodal').show();" 
@@ -139,6 +147,8 @@
                                                 update="deletegroupmodal" 
                                                 event="click"/>
                                     </p:commandButton>
+
+
                                 </div>
 
                             </p:column>
@@ -147,13 +157,13 @@
 
                     <p:dialog id="changepass" widgetVar="changepass" header="Change User Password" modal="true" width="600">
                         <h:form id="changePassform">
-                            <p:panelGrid columns="2" style="paddign: 1rem;">
+                            <p:panelGrid columns="2" style="padding: 1rem; border: none !important">
                                 <p:outputLabel for="cpusername" value="Username"/>
                                 <p:outputLabel  id="cpusername"  value="#{emailcontroller.currentEmailUser.username}"/>
 
                                 <p:outputLabel for="newpass" value="New password"/>
                                 <p:inputText id="newpass" type="password" value="#{emailcontroller.newPassword}"/>
-                                
+
                                 <p:outputLabel for="confirmpass" value="Confirm Password"/>
                                 <p:inputText id="confirmpass" type="password" value="#{emailcontroller.confirmPassword}"/>
 
@@ -166,8 +176,17 @@
                     </p:dialog>
 
 
+                     <p:dialog id="verifyuser" widgetVar="verifyuser" header="Verify User" modal="true" width="350">
+                        <h:form>
+                            <p:outputLabel> Are you sure you want to verify #{emailcontroller.currentEmailUser.username}'s account</p:outputLabel>
+                            <div>
+                                <p:commandButton value="Proceed" action="#{emailcontroller.verify()}"  style=" margin: 10px"  ajax="false" update=":showusers:table :msgs :maintab"/>
+                                <p:commandButton value="Cancel" onclick="PF('verifyuser').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
 
-                    <!--edit emailuser dialog-->
+                    <!--edit email-user dialog-->
                     <p:dialog header="Edit Email Credits" widgetVar="editsmscredits" id="editsmscredits" modal="true">
                         <h:form id="editEmailCreditsForm">
                             <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -321,7 +340,7 @@
                                         <p:outputLabel for="username" value="Username"/>
                                         <p:inputText id="username" value="#{emailcontroller.currentEmailUser.username}"/>
                                     </div>
-                                    
+
                                     <div class="field">
                                         <p:outputLabel for="organization" value="Organization"/>
                                         <p:inputText id="organization" value="#{emailcontroller.currentEmailUser.organization}"/>
