@@ -31,7 +31,10 @@
                     justify-content: center;
                     align-items: center;
                 }
+                
             </style>
+            
+            
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
             <div align="center">
@@ -132,9 +135,9 @@
 
 
                                     <p:commandButton ajax="true" id="verify" 
-                                                     icon="fa fa-key" update="verifyuser" 
+                                                     icon="fa fa-check-circle" update="verifyuser" 
                                                      oncomplete="PF('verifyuser').show();" 
-                                                     title="Click to verify user" >
+                                                     title="Click to verify email user" >
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
                                                 event="click"/>
                                     </p:commandButton>
@@ -147,7 +150,6 @@
                                                 update="deletegroupmodal" 
                                                 event="click"/>
                                     </p:commandButton>
-
 
                                 </div>
 
@@ -178,7 +180,7 @@
 
                      <p:dialog id="verifyuser" widgetVar="verifyuser" header="Verify User" modal="true" width="350">
                         <h:form>
-                            <p:outputLabel> Are you sure you want to verify #{emailcontroller.currentEmailUser.username}'s account</p:outputLabel>
+                            <p:outputLabel> Are you sure you want to verify #{emailcontroller.currentEmailUser.username}'s email account</p:outputLabel>
                             <div>
                                 <p:commandButton value="Proceed" action="#{emailcontroller.verify()}"  style=" margin: 10px"  ajax="false" update=":showusers:table :msgs :maintab"/>
                                 <p:commandButton value="Cancel" onclick="PF('verifyuser').hide()"/>
