@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 import org.mspace.clientmanager.user.UserController;
@@ -24,7 +25,7 @@ import org.mspace.clientmanager.user.UserController;
 public class ResellerDAOImpl implements ResellerDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ResellerDAOImpl.class.getName());
-    private JdbcUtil jdbcUtil = new JdbcUtil();
+//    private JdbcUtil jdbcUtil = new JdbcUtil();
 
     @Override
     public List<UserController> fetchResellers() {
@@ -36,7 +37,7 @@ public class ResellerDAOImpl implements ResellerDAO {
                 + "WHERE tUSER.admin = '5'";
 
         List<UserController> resellers = new ArrayList<>();
-        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
             LOGGER.log(Level.INFO, "Executing SQL query");
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -88,7 +89,7 @@ public class ResellerDAOImpl implements ResellerDAO {
                 + "username=?, organization=?, contact_number = ?, email_address=?"
                 + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=?  WHERE id=?";
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getOrganization());
             pstmt.setString(3, user.getUserMobile());
@@ -113,7 +114,7 @@ public class ResellerDAOImpl implements ResellerDAO {
         List<SelectItem> users = new ArrayList<>();
         String sql = "select username from tUSER where admin = 5 order by username";
         
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -131,7 +132,7 @@ public class ResellerDAOImpl implements ResellerDAO {
         String sql = "update tUSER set password = ? where username= ?";
         boolean result = false;
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String hashedPass = PasswordUtil.encrypt(password);
             pstmt.setString(1, hashedPass);
 
@@ -150,7 +151,7 @@ public class ResellerDAOImpl implements ResellerDAO {
 
         String sql = "DELETE from tUSER where username =?";
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
 
             // Execute the query
@@ -165,7 +166,7 @@ public class ResellerDAOImpl implements ResellerDAO {
     public boolean setImagePath(String username, String picPath) {
         String sqlUpdate = "UPDATE dbTASK.tClient SET picPath = ? WHERE clientName=? ";
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {
             pstm.setString(1, picPath);
             pstm.setString(2, username);
             result = pstm.executeUpdate() > 0;

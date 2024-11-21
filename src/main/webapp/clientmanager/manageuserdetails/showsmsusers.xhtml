@@ -113,9 +113,10 @@
                                     
                                     <p:commandButton ajax="true"
                                                      id="managecreditsbutton"
-                                                     icon="fa fa-credit-card"
+                                                     icon="pi pi-credit-card"
                                                      oncomplete="PF('editsmscredits').show();"
-                                                     title="Click to manage sms credit">
+                                                     title="Click to manage sms credit"
+                                                     style="font-size: 1.4em;" >
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="editsmscredits" 
                                                 event="click"/>
@@ -123,9 +124,11 @@
 
                                     <p:commandButton ajax="true"
                                                      id="assignSenderId"
-                                                     icon="fa-regular fa-paper-plane"
+                                                     icon="pi pi-send"
                                                      oncomplete="PF('senderId').show();"
-                                                     title="Click to assign and manage senderIds">
+                                                     title="Click to assign and manage senderIds"
+                                                     style="font-size: 1.3em;"
+                                                     >
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="senderId" 
                                                 event="click"/>
@@ -133,9 +136,10 @@
                                     
                                     <p:commandButton 
                                         id="changepasswrd"
-                                        icon="fa fa-pencil-square"
+                                        icon="pi pi-pencil"
                                         oncomplete="PF('changepass').show();"
-                                        title="Click to change password">
+                                        title="Click to change password" 
+                                        style="font-size: 1.3em;">
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="changepass" 
                                                 event="click"/>
@@ -143,9 +147,9 @@
                                     
                                     <p:commandButton 
                                         id="editbutton"
-                                        icon="fa fa-pencil-square-o"
+                                        icon="pi pi-user-edit"
                                         oncomplete="PF('editgroupmodal').show();"
-                                        title="Click to edit user details">
+                                        title="Click to edit user details" style="font-size: 1.5em;">
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="editgroupmodal" 
                                                 event="click"/>
@@ -153,9 +157,10 @@
 
                                     <p:commandButton ajax="true"
                                                      id="deletebutton"
-                                                     icon="fa fa-trash"
+                                                     icon="pi pi-trash"
                                                      oncomplete="PF('deletegroupmodal').show();"
-                                                     title="Click to delete user">
+                                                     title="Click to delete user"
+                                                     style="font-size: 1.3em;">
                                         <p:ajax listener="#{smscontroller.setCurrentSmsUser(data)}"
                                                 update="deletegroupmodal" 
                                                 event="click"/>
@@ -250,7 +255,6 @@
                                             </p:column>
 
                                             <f:facet name="footer">
-
 
                                             </f:facet>
                                         </p:dataTable> 

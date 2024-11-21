@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 import ke.co.mspace.nonsmppmanager.service.PaybillServiceApi;
 import ke.co.mspace.nonsmppmanager.service.PaybillServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -207,7 +208,7 @@ public class Paybill {
     public List<Paybill> listPaybill() {
         List<Paybill> paybills = null;
         
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
 
             PaybillServiceApi paybillService = new PaybillServiceImpl();
             paybills = paybillService.getAllPaybill(this.conn);
@@ -219,14 +220,14 @@ public class Paybill {
 
     Connection conn2;
 
-    final JdbcUtil util = new JdbcUtil();
+//    final JdbcUtil util = new JdbcUtil();
 
     public Paybill() {
     }
 
     public void addPaybill() {
        
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
             UserServiceImpl paybill = new UserServiceImpl();
             paybill.persistPaybill(this, this.conn, this.conn2);
             JsfUtil.addSuccessMessage("Paybill added successfully!");
@@ -238,7 +239,7 @@ public class Paybill {
 
     public void addTillNumber() {
        
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
             UserServiceImpl paybill = new UserServiceImpl();
             paybill.persistPaybill(this, this.conn, this.conn2);
             JsfUtil.addSuccessMessage("Paybill/Till Number added successfully!");
@@ -261,7 +262,7 @@ public class Paybill {
 
     public void deletePaybill() {
         try {
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
             UserServiceImpl paybill2 = new UserServiceImpl();
             paybill2.deletePaybill(this, conn);
             List<Paybill> list = UserServiceImpl.getPayBill();
@@ -269,16 +270,15 @@ public class Paybill {
                 System.out.println(bill.getPaybillz());
             }
             JsfUtil.addSuccessMessage("Paybill deleted successfully!");
-
             JdbcUtil.closeConnection(this.conn);
-        } catch (SQLException e) {
-            JdbcUtil.printSQLException(e);
+        } catch (SQLException ex) {
+            Logger.getLogger(Paybill.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void finduserid() {
         try {
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
             UserServiceImpl id = new UserServiceImpl();
             id.getAllUsers(this.conn, this.name);
 
@@ -306,7 +306,7 @@ ArrayList<Paybill> paybill;
             UserServiceImpl paybill = new UserServiceImpl();
             System.out.println("Selected User: " + selectedUser);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedUserCombo", selectedUser);
-//        if (selectedUser.isEmpty()) {
+            //        if (selectedUser.isEmpty()) {
 //            return new ArrayList<>();
 //        } else {
 this.paybill= UserServiceImpl.getPayBill();
@@ -324,7 +324,7 @@ this.paybill= UserServiceImpl.getPayBill();
 
     @Override
     public String toString() {
-        return "Paybill{" + "k=" + k + ", paybillz=" + paybillz + ", currentrow=" + currentrow + ", userid=" + userid + ", message=" + message + ", default_message=" + default_message + ", email=" + email + ", transID=" + transID + ", accNo=" + accNo + ", ammount=" + ammount + ", mobile=" + mobile + ", name=" + name + ", accBalance=" + accBalance + ", time_received=" + time_received + ", listPaybill=" + listPaybill + ", sender_id=" + sender_id + ", keys=" + keys + ", conn=" + conn + ", selectedUser=" + selectedUser + ", conn2=" + conn2 + ", util=" + util + '}';
+        return "Paybill{" + "k=" + k + ", paybillz=" + paybillz + ", currentrow=" + currentrow + ", userid=" + userid + ", message=" + message + ", default_message=" + default_message + ", email=" + email + ", transID=" + transID + ", accNo=" + accNo + ", ammount=" + ammount + ", mobile=" + mobile + ", name=" + name + ", accBalance=" + accBalance + ", time_received=" + time_received + ", listPaybill=" + listPaybill + ", sender_id=" + sender_id + ", keys=" + keys + ", conn=" + conn + ", selectedUser=" + selectedUser + ", conn2=" + conn2 + ", util=" + '}';
     }
     
     

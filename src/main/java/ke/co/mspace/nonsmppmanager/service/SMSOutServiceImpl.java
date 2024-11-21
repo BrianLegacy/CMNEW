@@ -24,15 +24,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import ke.co.mspace.nonsmppmanager.model.OPTOut;
 import ke.co.mspace.nonsmppmanager.model.SMPPOut;
 import ke.co.mspace.nonsmppmanager.model.SMSOut;
-import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 
 /**
  *
@@ -51,7 +50,6 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
     private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user_id").toString();
     private int limit = 500;
-    private final JdbcUtil jdbcUtil = new JdbcUtil();
     HttpSession session = getsession.getSession();
 
     char admin = (Character) session.getAttribute("taskAdmin");
@@ -77,7 +75,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
         List<OPTOut> result = new ArrayList<>();
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = admin == 'Y' ? conn.prepareStatement(sqlAdmin) : conn.prepareStatement(sqlReseller)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = admin == 'Y' ? conn.prepareStatement(sqlAdmin) : conn.prepareStatement(sqlReseller)) {
 
             pstmt.setString(1, startDate);
             pstmt.setString(2, endDate);
@@ -129,7 +127,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
         int totalSmsCount = 0;
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
             statement.setString(1, user);
             statement.setString(2, startDate);
@@ -170,7 +168,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
                 + "ORDER BY myid DESC  LIMIT 50000";
         List<SMSOut> result = new ArrayList<>();
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     SMSOut smsOut = new SMSOut();
@@ -215,7 +213,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
         List<SMPPOut> result = new ArrayList<>();
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, startDate);
             pstmt.setString(2, endDate);
             pstmt.setString(3, user);
@@ -270,7 +268,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
         int totalSmsCount = 0;
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
             // Set parameters for the prepared statement
             statement.setString(1, startDate);

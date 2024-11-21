@@ -19,6 +19,7 @@ import org.primefaces.model.file.UploadedFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -61,7 +62,7 @@ public class UploadLogo {
 
     public void setImagePath(long id, String picPath) throws SQLException {
         String sqlUpdate = "UPDATE dbTASK.tClient SET picPath= ? WHERE id= ?";
-        try (Connection conn = util.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbTask(); PreparedStatement pstm = conn.prepareStatement(sqlUpdate)) {
             pstm.setString(1, picPath);
             pstm.setLong(2, id);
             pstm.executeUpdate();

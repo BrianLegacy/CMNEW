@@ -44,7 +44,7 @@ public class SmsDAOImpl implements SmsDAO {
         String queryAdmin = "select username from tUSER where admin != 5 and smsuser = 'Y' order by username";
         String queryRes = "select username from tUSER where agent = ? and smsuser='Y' and admin != 5 order by username";
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             if (admin != 'Y') {
                 ps.setLong(1, agent);
             }
@@ -81,7 +81,7 @@ public class SmsDAOImpl implements SmsDAO {
         String filterValue = (usernameFilter != null && !usernameFilter.trim().isEmpty() ? "%" + usernameFilter + "%" : "%");
 
 //        Connection connection = HikariJDBCDataSource.getConnection();
-        Connection connection = jdbcUtil.getConnectionTodbSMS();
+        Connection connection = HikariJDBCDataSource.getConnectionTodbSMS();
 
         try (PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(adminQuery) : connection.prepareStatement(resellerQuery)) {
 
@@ -144,7 +144,8 @@ public class SmsDAOImpl implements SmsDAO {
         String sql = " select groupname from tGROUPS where id= ?";
         String groupName = null;
 
-        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); ) {
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -165,7 +166,7 @@ public class SmsDAOImpl implements SmsDAO {
                 + "username= ?, organization=?, contact_number = ?, email_address=?"
                 + ", enable_email_alert=?,cost_per_sms=?,arrears=?,alertThreshold=? ,`group` =?  WHERE id=?";
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getOrganization());
             pstmt.setString(3, user.getUserMobile());
@@ -195,7 +196,7 @@ public class SmsDAOImpl implements SmsDAO {
         String queryRes = "SELECT t.short_code, t.sid_type FROM tSDPNew t INNER JOIN tUSER u ON t.agent_id = u.id "
                 + "WHERE t.short_code_type = 2 AND t.agent_id = ? ORDER BY short_code  ";
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             if (admin != 'Y') {
                 ps.setLong(1, agent);
             }
@@ -215,7 +216,7 @@ public class SmsDAOImpl implements SmsDAO {
     ) {
         String sql = "DELETE from tUSER where username =?";
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
 
             // Execute the query
@@ -231,7 +232,7 @@ public class SmsDAOImpl implements SmsDAO {
         String sql = "update tUSER set password = ? where username= ? AND id = ?";
         boolean result = false;
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String hashedPass = PasswordUtil.encrypt(password);
             pstmt.setString(1, hashedPass);
 
@@ -255,7 +256,7 @@ public class SmsDAOImpl implements SmsDAO {
         }
 
         System.out.println(query);
-        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 return rs.getInt(1);  // Return total record count
@@ -277,8 +278,8 @@ public class SmsDAOImpl implements SmsDAO {
 
     int count = 0;  // To store the total count of records
 
-    try (Connection connection = jdbcUtil.getConnectionTodbSMS();
-         PreparedStatement ps = connection.prepareStatement(sql)) {
+    try(Connection connection = HikariJDBCDataSource.getConnectionTodbSMS();) {
+         PreparedStatement ps = connection.prepareStatement(sql);
 
         // If there's a username filter, set it as a parameter in the query
         if (usernameFilter != null && !usernameFilter.trim().isEmpty()) {
@@ -291,6 +292,7 @@ public class SmsDAOImpl implements SmsDAO {
                 count = rs.getInt(1);  // Get the count from the first column
             }
         }
+        connection.close();
 
     } catch (SQLException e) {
         // Handle any SQL exceptions
@@ -306,7 +308,7 @@ public class SmsDAOImpl implements SmsDAO {
         String queryAdmin = "SELECT username FROM tUSER WHERE smsuser= 'N'";
         String queryRes = "SELECT username FROM tUSER WHERE agent = '" + agent + "' AND emailuser= 'N'";
         
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 users.add(new SelectItem(rs.getString("username")));
@@ -323,7 +325,7 @@ public class SmsDAOImpl implements SmsDAO {
         String sql = "UPDATE tUSER SET smsuser = 'Y' WHERE username= ?";
         
          boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
 
             result = pstmt.executeUpdate() > 0;

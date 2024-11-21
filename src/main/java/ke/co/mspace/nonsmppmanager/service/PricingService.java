@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.CallBack;
 import ke.co.mspace.nonsmppmanager.model.EmailPricingTable;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -95,7 +96,7 @@ public class PricingService {
         System.out.println("ids" + (int) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid"));
         int updateId = (int) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid");
         try {
-            this.conn = this.util.getConnectionTodbEMAIL();
+            this.conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
             String sql = "UPDATE tEMAILPRICING  set emails_purchased=?, price=?,expiry=? where id=?";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setString(1, currentPricingItem.getEmails_purchased());
@@ -133,7 +134,7 @@ public class PricingService {
         System.out.println("current pricing id" + currentPricingId);
 
         try {
-            conn = util.getConnectionTodbEMAIL();;
+            conn = HikariJDBCDataSource.getConnectionTodbEMAIL();;
             String sql = "DELETE from tEMAILPRICING where id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, currentPricingId);
@@ -164,7 +165,7 @@ public class PricingService {
 //                     System.out.println("ids" +(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid"));
 //                     int updateId=(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid");
         try {
-            this.conn = this.util.getConnectionTodbEMAIL();
+            this.conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
             String sql = "insert into tEMAILPRICING(emails_purchased,price, expiry) values (?,?,?)";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setString(1, currentPricingItem.getEmails_purchased());

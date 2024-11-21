@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcUtil implements Serializable{
 
-    boolean DATA_CENTER_NEW = false;
-    boolean DATA_CENTER_LIVE = false;
-    boolean DEBUG = true;
+    boolean DATA_CENTER_NEW = false;       //dc
+    boolean DATA_CENTER_LIVE = false;     //gateway .5
+    boolean DEBUG = true;              //local
+    boolean DEV_SERVER = false;   //dev
     boolean GATEWAY = false;
     boolean WEBSITE = false;
     
@@ -47,6 +48,11 @@ public class JdbcUtil implements Serializable{
     public String dataCenterUserNew = "clientmanager";
     public String dataCenterPasswordNew="ClientManager@2024#";
     private final String dataCenterHostNew="192.168.10.49";
+    
+//    dev server
+    public String devUser = "clientmanager";
+    public String devPassword ="ClientManager@2024#";
+    private final String devHost= "192.168.10.199";
     
     public String testMySQLUser = "test";
     public String testMySQLUser64 = "mysql";
@@ -90,6 +96,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+//            Dev_Server
+            Properties DevProperties = new Properties();
+            DevProperties.put("user", this.devUser);
+            DevProperties.put("password", this.devPassword);  
+            
 //            Data Center New
             Properties DataCenterPropsNew = new Properties();
             DataCenterPropsNew.put("user", this.dataCenterUserNew);
@@ -105,7 +116,7 @@ public class JdbcUtil implements Serializable{
             testConnectionProps.put("user", this.testMySQLUser);
             testConnectionProps.put("password", this.testMySQLPassword);
 
-            //             server 64
+            // server 64
             Properties testConnectionProps64 = new Properties();
             testConnectionProps64.put("user", this.testMySQLUser64);
             testConnectionProps64.put("password", this.testMySQLPassword64);
@@ -133,13 +144,20 @@ public class JdbcUtil implements Serializable{
                                     localDataCenterProps);
                         }
                         
+//                        DevServer
+                        if (DEV_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    DevProperties);
+                        }
+                        
+//                        Data center new
                         if(DATA_CENTER_NEW){
                               conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHostNew
                                     + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
                                     DataCenterPropsNew);
                         }
-//                    
-
+//                  
 //                    Local
                         if (DEBUG) {
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + localMySQLHost
@@ -197,6 +215,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+//          Dev_Server
+            Properties DevProperties = new Properties();
+            DevProperties.put("user", this.devUser);
+            DevProperties.put("password", this.devPassword); 
+            
             //            Data Center New
             Properties DataCenterPropsNew = new Properties();
             DataCenterPropsNew.put("user", this.dataCenterUserNew);
@@ -238,6 +261,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+//                    DevServer
+                        if (DEV_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    DevProperties);
                         }
                         
                           if(DATA_CENTER_NEW){
@@ -304,6 +334,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+            //            Dev_Server
+            Properties DevProperties = new Properties();
+            DevProperties.put("user", this.devUser);
+            DevProperties.put("password", this.devPassword);  
+            
             //            Data Center New
             Properties DataCenterPropsNew = new Properties();
             DataCenterPropsNew.put("user", this.dataCenterUserNew);
@@ -345,6 +380,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+                        //  DevServer
+                        if (DEV_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    DevProperties);
                         }
                         
                          if(DATA_CENTER_NEW){
@@ -410,6 +452,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+            //Dev_Server
+            Properties DevProperties = new Properties();
+            DevProperties.put("user", this.devUser);
+            DevProperties.put("password", this.devPassword);  
+            
              //Data Center New
             Properties DataCenterPropsNew = new Properties();
             DataCenterPropsNew.put("user", this.dataCenterUserNew);
@@ -451,6 +498,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbPAYMENTS + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+                        //DevServer
+                        if (DEV_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    DevProperties);
                         }
                         
                          if(DATA_CENTER_NEW){
@@ -515,6 +569,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+            // Dev_Server
+            Properties DevProperties = new Properties();
+            DevProperties.put("user", this.devUser);
+            DevProperties.put("password", this.devPassword);  
+            
             //Data Center New
             Properties DataCenterPropsNew = new Properties();
             DataCenterPropsNew.put("user", this.dataCenterUserNew);
@@ -556,6 +615,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+                        // DevServer
+                        if (DEV_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    DevProperties);
                         }
                         
                           if(DATA_CENTER_NEW){

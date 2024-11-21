@@ -30,6 +30,7 @@ import ke.co.mspace.nonsmppmanager.model.Facet;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.model.GroupTemp;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 //import org.richfaces.model.SortField;
@@ -315,7 +316,7 @@ public class CallBackScroller {
             System.out.println("Code: " +code);
         }
         try {
-             conn = util.getConnectionTodbUSSD();
+             conn = HikariJDBCDataSource.getConnectionTodbUSSD();
 //            String sql = "DELETE from tSharedUssdClients where ussd_assigned_code =?";
              String sql = "DELETE from tSharedUssdClients where id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -346,7 +347,7 @@ public class CallBackScroller {
         System.out.println("current pricing id"+ currentPricingId);
         
         try {
-             conn = util.getConnectionTodbEMAIL();;
+             conn = HikariJDBCDataSource.getConnectionTodbEMAIL();;
              String sql = "DELETE from tEMAILPRICING where id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, currentPricingId);
@@ -367,7 +368,7 @@ public class CallBackScroller {
      public void deleteGroup(int id) {
 
         try {
-             conn = util.getConnectionTodbSMS();;
+             conn = HikariJDBCDataSource.getConnectionTodbSMS();;
              String sql = "DELETE from tGROUPS where id=?";
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setInt(1, id);
@@ -409,7 +410,7 @@ public class CallBackScroller {
             System.out.println("Id: "+tUser_id);
         }
         try {
-            this.conn = this.util.getConnectionTodbUSSD();
+            this.conn = HikariJDBCDataSource.getConnectionTodbUSSD();
             String sql = "UPDATE tSharedUssdClients set tUSER_id=?,"
                     + "callback_url=?,ussd_assigned_code=?,status=?,type=?,testbedmobiles=?"
                     + " where tUser_id=? and ussd_assigned_code=?";
@@ -458,7 +459,7 @@ public class CallBackScroller {
             System.out.println("Id: "+tUser_id);
         }
         try {
-            this.conn = this.util.getConnectionTodbUSSD();
+            this.conn = HikariJDBCDataSource.getConnectionTodbUSSD();
             String sql = "UPDATE tSharedUssdClients set tUSER_id=?,"
                     + "callback_url=?,ussd_assigned_code=?,status=?,type=?,testbedmobiles=?"
                     + " where tUser_id=? and ussd_assigned_code=?";
@@ -495,7 +496,7 @@ public class CallBackScroller {
                   return;
               }
         try {
-            this.conn = this.util.getConnectionTodbSMS();
+            this.conn = HikariJDBCDataSource.getConnectionTodbSMS();
             String sql = "update tGROUPS set groupname = ?,description=? where id =?";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setInt(3, currentGroupItem1.getId());
@@ -523,7 +524,7 @@ public class CallBackScroller {
                      System.out.println("ids" +(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid"));
                      int updateId=(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid");
         try {
-            this.conn = this.util.getConnectionTodbEMAIL();
+            this.conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
             String sql = "UPDATE tEMAILPRICING  set emails_purchased=?, price=?,expiry=? where id=?";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setString(1,  currentPricingItem.getEmails_purchased());
@@ -549,7 +550,7 @@ public class CallBackScroller {
 //                     System.out.println("ids" +(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid"));
 //                     int updateId=(int)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("storedpricingid");
         try {
-            this.conn = this.util.getConnectionTodbEMAIL();
+            this.conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
             String sql = "insert into tEMAILPRICING(emails_purchased,price, expiry) values (?,?,?)";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setString(1,  currentPricingItem.getEmails_purchased());
@@ -573,7 +574,7 @@ public class CallBackScroller {
         int ussdid=0;
         System.out.println("Session mapped code is "+code);
         try {
-         this.conn = this.util.getConnectionTodbUSSD();
+         this.conn = HikariJDBCDataSource.getConnectionTodbUSSD();
          PreparedStatement ps=this.conn.prepareStatement(sql);
          //ps.setInt(1, userid);
          ps.setString(1, code);

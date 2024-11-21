@@ -9,7 +9,6 @@
     </h:head>
     <h:body>
         <ui:composition>
-            <script src="https://kit.fontawesome.com/94d660d228.js" crossorigin="anonymous"></script>
             <h:outputScript library="js" name="#{tusercontroller.diftChat}" target="body" />
 
 
@@ -88,7 +87,7 @@
                                     background-repeat: no-repeat;
                                     background-position: left;
                                     padding-left: 20px;"/>
-                        <p:menuitem value="View Alphanumerics" id="dobS"    actionListener="#{userInfo.viewalphanumerics()}" ajax="false"  icon="fa fa-keyboard-o"/>
+                        <p:menuitem value="View Alphanumerics" id="dobS"    actionListener="#{userInfo.viewalphanumerics()}" ajax="false"  icon="pi pi-eye" />
                     </p:submenu>
 
                     <p:submenu label="Manage Re-sellers" style="display:#{userScroller.show()}" expanded="true">
@@ -99,7 +98,7 @@
                                     background-size: 1rem 1rem;
                                     background-repeat: no-repeat;
                                     background-position: left;
-                                    padding-left: 20px;"/>
+                                    padding-left: 20px;"/>                        
                     </p:submenu>
 
                     <p:submenu  label="Pricing Table" expanded="true" style="display:#{userScroller.show()}">
@@ -154,15 +153,14 @@
                     </p:submenu>
 
                     <p:submenu label="Summary and Reports" expanded="true">
-                        <p:menuitem  value="SMS Out Report" actionListener="#{userInfo.smsoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-
-                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="SMPP Out Report" actionListener="#{userInfo.smppoutreport()}"  ajax="false" icon="fa fa-newspaper-o" />
-                        <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="fa-solid fa-file-export" />
+                        <p:menuitem  value="SMS Out Report" actionListener="#{userInfo.smsoutreport()}"  ajax="false" icon="pi pi-server" />
+                        <p:menuitem value="Email Out Report" actionListener="#{userInfo.emailoutreport}" ajax="false" icon="pi pi-envelope" />
+                        <p:menuitem rendered="#{userScroller.amIResellersUser()}" value="SMPP Out Report" actionListener="#{userInfo.smppoutreport()}"  ajax="false" icon="pi pi-server" />
+                        <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="pi pi-sign-out"/>
                         <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}" 
-                                     ajax="false" icon="fa-solid fa-file-invoice-dollar " />
+                                     ajax="false" icon="pi pi-book " />
                         <!--<p:menuitem  value="Single User Visual Report" actionListener="{userInfo.singleuservisualreport()}"  ajax="false" icon="fa-solid fa-file-image" />-->
                         <!--<p:menuitem  value="All Users VIsual Report" actionListener="{userInfo.alluservisualreport()}"  ajax="false" icon="fa-solid fa-photo-film" />-->
-
                     </p:submenu>
 
 

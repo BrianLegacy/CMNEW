@@ -6,8 +6,11 @@
 package ke.co.mspace.nonsmppmanager.invalids;
 
 import java.io.Serializable;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -19,7 +22,7 @@ import javax.faces.bean.ManagedBean;
 public class FacePainter implements Serializable {
 
     private String mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
-
+    
     public String getMainContent() {
 
         return mainContent;
@@ -42,8 +45,11 @@ public class FacePainter implements Serializable {
         } catch (Exception ex) {
         }
     }
+    
+    public void resetMainContent() {
+        this.mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
+    }
 
 }
-
 
 

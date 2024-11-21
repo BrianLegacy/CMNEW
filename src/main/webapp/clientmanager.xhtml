@@ -10,6 +10,7 @@
     </h:head>
 
     <h:body>
+        <p:growl id="growl"  showDetail="true" />
         <!--      <p:panel style="height:1000px">-->
         <h:outputStylesheet library="css" name="stylesheet.css" > </h:outputStylesheet>
         <div id="page">
@@ -25,7 +26,6 @@
                 </div>  
 
             </div >
-
 
             <div id="sidebar"   >   
                 <p:panel  toggleable="true" toggleOrientation="horizontal" toggleSpeed="500" closeSpeed="500" widgetVar="panel" style="height: 95vh;overflow: auto;">
@@ -71,6 +71,9 @@
                 </h:panelGrid>
             </h:form>
         </p:dialog> 
+        <p:idleMonitor timeout="600000">
+            <p:ajax event="idle"  listener="#{tusercontroller.timeout()}"  update="growl"/>
+        </p:idleMonitor>
     </h:body>
 </html>
 

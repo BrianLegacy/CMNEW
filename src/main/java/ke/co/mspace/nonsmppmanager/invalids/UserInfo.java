@@ -63,6 +63,10 @@ public class UserInfo implements Serializable {
     public void smsoutreport() {
         facePainter.setMainContent("clientmanager/reports/smsoutreport.xhtml");
     }
+    
+    public void emailoutreport(){
+        facePainter.setMainContent("clientmanager/reports/emailoutreport.xhtml");
+    }
 
     public void smppoutreport() {
         facePainter.setMainContent("clientmanager/reports/smppoutreport.xhtml");

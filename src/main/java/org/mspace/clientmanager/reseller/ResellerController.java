@@ -24,6 +24,7 @@ import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.group.GroupDAO;
@@ -145,7 +146,7 @@ public class ResellerController implements Serializable {
         this.selectedAlpha = selectedAlpha;
     }
 
-    public void addReseller() {
+    public void addReseller() throws SQLException {
         if (newReseller != null) {
             try {
                 newReseller.saveReseller();
@@ -188,7 +189,7 @@ public class ResellerController implements Serializable {
         }
     }
 
-    public void manageCredit() {
+    public void manageCredit() throws SQLException {
         if (currentReseller != null) {
             try {
                 currentReseller.manageCredit();
@@ -199,7 +200,7 @@ public class ResellerController implements Serializable {
         }
     }
 
-    public void manageEmailCredit() {
+    public void manageEmailCredit() throws SQLException {
         if (currentReseller != null) {
             try {
                 currentReseller.manageEmailCredit();
@@ -233,7 +234,7 @@ public class ResellerController implements Serializable {
     }
 
     public void assignAlpha() {
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
             if (alphaDAO.updateAgentAlphas(currentReseller.getId().toString(), alphanumeric, conn)) {
                 refreshAlphas();
                 JsfUtil.addSuccessMessage("Sender ID assigned successfully. ");
@@ -249,7 +250,7 @@ public class ResellerController implements Serializable {
     public void delAlpha() {
         if (selectedAlpha != null) {
 
-            try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
                 if (alphaDAO.removeAgentAlpha(selectedAlpha, conn)) {
                     refreshAlphas();
                     JsfUtil.addSuccessMessage("Successfully deleted Sender ID");
@@ -269,7 +270,7 @@ public class ResellerController implements Serializable {
 
     public void refreshAlphas() {
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
             senderIds = alphaDAO.getAgentAlphas(conn, currentReseller.getId().toString());
         } catch (SQLException ex) {
             Logger.getLogger(ResellerController.class.getName()).log(Level.SEVERE, null, ex);

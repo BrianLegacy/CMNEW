@@ -71,7 +71,8 @@
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="{totalRecords} records"
                                      scrollable="true"
-                                     resizableColumns="true">
+                                     resizableColumns="true"
+                                       lazy="false">
                             <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains" 
                                       >
                                 <h:outputText value="#{data.username}" />
@@ -106,17 +107,17 @@
 
                                 <div style="display: flex; justify-content: space-between;">
 
-                                    <p:commandButton ajax="true" id="editemailcredits" icon="fa fa-credit-card" 
+                                    <p:commandButton ajax="true" id="editemailcredits" icon="pi pi-credit-card" 
                                                      update="editsmscredits" 
                                                      oncomplete="PF('editsmscredits').show();" 
-                                                     title="Click to manage email credit" >
+                                                     title="Click to manage email credit" style=" font-size: 1.4em" >
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
                                                 update="editsmscredits" 
                                                 event="click"/>
                                     </p:commandButton>
 
-                                    <p:commandButton ajax="true" id="editbutton" 
-                                                     icon="fa fa-pencil-square-o" update="editgroupmodal" 
+                                    <p:commandButton ajax="true" id="editbutton"  style="font-size: 1.5em; font-weight: bold"
+                                                     icon="pi pi-user-edit" update="editgroupmodal" 
                                                      oncomplete="PF('editgroupmodal').show();" 
                                                      title="Click to edit" >
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
@@ -125,9 +126,9 @@
                                     </p:commandButton>
 
                                     <p:commandButton ajax="true" id="wrd" 
-                                                     icon="fa fa-pencil-square" update="editgroupmodal" 
+                                                     icon="pi pi-pencil" update="editgroupmodal" 
                                                      oncomplete="PF('changepass').show();" 
-                                                     title="Click to change password" >
+                                                     title="Click to change password"  style="font-size: 1.3em; font-weight: bolder">
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
                                                 update="changepass" 
                                                 event="click"/>
@@ -135,9 +136,9 @@
 
 
                                     <p:commandButton ajax="true" id="verify" 
-                                                     icon="fa fa-check-circle" update="verifyuser" 
+                                                     icon="pi pi-check-circle" update="verifyuser" 
                                                      oncomplete="PF('verifyuser').show();" 
-                                                     title="Click to verify email user" >
+                                                     title="Click to verify email user" style="font-size: 1.3em;">
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
                                                 event="click"/>
                                     </p:commandButton>
@@ -145,7 +146,7 @@
                                     <p:commandButton ajax="true" id="deletebutton" 
                                                      update="deletegroupmodal" 
                                                      oncomplete="PF('deletegroupmodal').show();" 
-                                                     title="Click to delete user" icon="fa fa-trash" >
+                                                     title="Click to delete user" icon="pi pi-trash" style="font-size: 1.3em;">
                                         <p:ajax listener="#{emailcontroller.setCurrentEmailUser(data)}"
                                                 update="deletegroupmodal" 
                                                 event="click"/>

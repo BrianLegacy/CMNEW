@@ -6,6 +6,7 @@ package org.mspace.clientmanager.email;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -117,7 +118,7 @@ public class EmailController implements Serializable {
         this.existingUsers = existingUsers;
     }
 
-    public void addEmailUser() {
+    public void addEmailUser() throws SQLException {
         if (newEmailUser != null) {
             try {
                 newEmailUser.saveEmailUser();
@@ -180,7 +181,7 @@ public class EmailController implements Serializable {
         }
     }
 
-    public void manageCredit() {
+    public void manageCredit() throws SQLException {
         if (currentEmailUser != null) {
             try {
                 currentEmailUser.manageEmailCredit();

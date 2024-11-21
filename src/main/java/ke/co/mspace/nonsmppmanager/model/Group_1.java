@@ -22,6 +22,7 @@ import org.mspace.clientmanager.credits.services.ManageCreditApi;
 import org.mspace.clientmanager.credits.services.ManageCreditImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -73,7 +74,7 @@ private String description;
       public void saveUserGroup() throws IOException {
          
         try {
-            conn = util.getConnectionTodbSMS();
+            conn = HikariJDBCDataSource.getConnectionTodbSMS();
              String sql = "insert into tGROUPS (groupname,description) values ('"+this.groupname+"','"+this.description+"')";
               System.out.println(sql);
         PreparedStatement pst = conn.prepareStatement(sql);

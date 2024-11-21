@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Alpnumeric;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
@@ -25,7 +26,6 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
     private static final Logger LOG = Logger.getLogger(AlphaServiceImpl.class.getName());
     private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
-    private JdbcUtil jdbcutil = new JdbcUtil();
 //    private final String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 //    private final String user = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
     private final String user = SessionUtil.getAUTH_KEY();
@@ -50,7 +50,7 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
         List<SelectItem> selectItems = new ArrayList<>();
 
-        try (Connection conn = jdbcutil.getConnectionTodbSMS() ;PreparedStatement stmt = conn.prepareStatement(SessionUtil.getReseller().equalsIgnoreCase("none") ? sql : sqlReseller)) {
+        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS() ;PreparedStatement stmt = conn.prepareStatement(SessionUtil.getReseller().equalsIgnoreCase("none") ? sql : sqlReseller)) {
             if (!SessionUtil.getReseller().equalsIgnoreCase("none")) {
                 stmt.setString(1, user_id);
             }
@@ -269,7 +269,7 @@ public class AlphaServiceImpl implements AlphaServiceApi {
 
                 result.add(alpha);
             }
-            JdbcUtil.closeConnection(conn);
+            conn.close();
         } catch (SQLException ex) {
             JdbcUtil.printSQLException(ex);
         }

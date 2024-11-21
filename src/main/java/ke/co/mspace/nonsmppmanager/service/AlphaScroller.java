@@ -25,6 +25,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.Facet;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
@@ -107,7 +108,7 @@ public class AlphaScroller {
            synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
-                    conn = util.getConnectionTodbSMS();
+                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
                   
                     allUsers = new ArrayList<>();
                     AlphaServiceApi service = new AlphaServiceImpl();
@@ -138,7 +139,7 @@ public class AlphaScroller {
             if (allUsers == null || allUsers.isEmpty()) {
               
                     //String username=currentItem.getUsername();
-                    conn = util.getConnectionTodbSMS();
+                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
                     LOG.info("getAllAlphas");
                     allUsers = new ArrayList<>();
                     AlphaServiceApi service = new AlphaServiceImpl();
@@ -348,7 +349,7 @@ public class AlphaScroller {
         System.out.println("INside alpha "+currentItem);
         try {
 
-            conn = util.getConnectionTodbSMS();
+            conn = HikariJDBCDataSource.getConnectionTodbSMS();
 //            LOG.info("saveOrUpdateAlpha");
             AlphaServiceImpl service = new AlphaServiceImpl();
             String username = currentItem.getUsername();
@@ -384,7 +385,7 @@ public class AlphaScroller {
     public void deleteAlphanumeric() {
         try {
 
-            conn = util.getConnectionTodbSMS();
+            conn = HikariJDBCDataSource.getConnectionTodbSMS();
 
             LOG.info("deleteAlphanumeric"+currentItem);
             AlphaServiceImpl service = new AlphaServiceImpl();

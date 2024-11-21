@@ -102,9 +102,9 @@
                             <p:column headerText="Action" style="width:170px" exportable="false">
                                 <div style="display: flex; justify-content: space-between;">
                                     <p:commandButton id="edituserbutton" ajax="true" 
-                                                     icon="fas fa-edit" 
+                                                     icon="pi pi-user-edit" 
                                                      title="Click to edit user"
-                                                     oncomplete="PF('editgroupmodal').show();">
+                                                     oncomplete="PF('editgroupmodal').show();" style="font-size: 1.3em;">
                                         <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
                                                 update="editgroupmodal" 
                                                 event="click" 
@@ -112,26 +112,26 @@
                                     </p:commandButton>
 
                                     <p:commandButton id="managesmscredits"  
-                                                     icon="fas fa-credit-card" 
+                                                     icon="pi pi-wallet" 
                                                      title="Click to manage SMS credits"
-                                                     oncomplete="PF('editsmscredits').show();">
+                                                     oncomplete="PF('editsmscredits').show();" style="font-size: 1.3em;">
                                         <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
                                                 update="editsmscredits" 
                                                 event="click" 
                                                 />
                                     </p:commandButton>
                                     <p:commandButton id="manageemailcredits"  
-                                                     icon="fas fa-voicemail" 
+                                                     icon="pi pi-envelope" 
                                                      title="Click to manage Email credits"
-                                                     oncomplete="PF('editemailcredits').show();">
+                                                     oncomplete="PF('editemailcredits').show();" style="font-size: 1.3em;">
                                         <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
                                                 update="editemailcredits" 
                                                 event="click" 
                                                 />
                                     </p:commandButton>
                                     <p:commandButton id="assignSenderId"
-                                                     icon="fa-regular fa-paper-plane"
-                                                     title="Click to assign and manage senderIds">
+                                                     icon="pi pi-send"
+                                                     title="Click to assign and manage senderIds" style="font-size: 1.3em;">
                                         <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}"
                                                 update="senderId" 
                                                 event="click"
@@ -139,9 +139,9 @@
                                     </p:commandButton>
 
                                     <p:commandButton id="deletebutton" ajax="true" 
-                                                     icon="fas fa-trash-alt" 
+                                                     icon="pi pi-trash" 
                                                      title="Click to delete user"
-                                                     oncomplete="PF('deletegroupmodal').show();">
+                                                     oncomplete="PF('deletegroupmodal').show();" style="font-size: 1.3em;">
                                         <p:ajax listener="#{resellercontroller.setCurrentReseller(data)}" 
                                                 update="deletegroupmodal"
                                                 event="click" />

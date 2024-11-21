@@ -15,6 +15,7 @@ import javax.faces.bean.ViewScoped;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -53,7 +54,7 @@ public class creditController {
     }
 
     public void generateCreditHistory() {
-        Connection conn = jdbcUtil.getConnectionTodbSMS();
+        Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
         try {
             records = creditDAO.getAllUsersCred(conn, username);
 

@@ -86,22 +86,22 @@
                                 <h:outputText  value="#{data.disconnectDate}" />
                             </p:column>
                             <p:column headerText="Action">
-                                <p:commandButton style="padding: .3em 1em;" 
+                                <p:commandButton style="padding: .3em 1em; font-size: 1.3em" 
                                                  id="editbutton"
                                                  update="editgroupmodal"
                                                  oncomplete="PF('editgroupmodal').show();"
-                                                 icon="fa fa-pencil-square-o">
+                                                 icon="pi pi-pencil">
                                     <p:ajax listener="#{callbackController.setCurrentUrl(data)}" 
                                             update="editgroupmodal"
                                             event="click"/>
                                     <p:tooltip for="editbutton" value="Click to edit callback"/>
                                 </p:commandButton>
 
-                                <p:commandButton style="padding: .3em 1em;" 
+                                <p:commandButton style="padding: .3em 1em; font-size: 1.3em" 
                                                  id="deletebutton"
                                                  update="deletegroupmodal"
                                                  oncomplete="PF('deletegroupmodal').show();"
-                                                 icon="fa fa-trash">
+                                                 icon="pi pi-trash" >
                                     <p:ajax listener="#{callbackController.setCurrentUrl(data)}" 
                                             update="deletegroupmodal"
                                             event="click"/>

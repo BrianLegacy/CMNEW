@@ -16,35 +16,165 @@ import java.util.logging.Logger;
  * @author amos
  */
 public class HikariJDBCDataSource {
+    
+    static boolean DATA_CENTER_NEW = false;       //dc
+    static boolean DATA_CENTER_LIVE = false;     //gateway .5
+    static boolean DEBUG = true;              //local
+    static boolean DEV_SERVER = false;   //dev
+    static boolean GATEWAY = false;
+    static boolean WEBSITE = false;
 
-    private static HikariConfig config = new HikariConfig();
-    private static HikariDataSource ds;
+     private static final Logger logger = Logger.getLogger(HikariJDBCDataSource.class.getName());
+    
+    private static HikariDataSource smsDataSource;
+    private static HikariDataSource emailDataSource;
+    private static HikariDataSource taskDataSource;
+    private static HikariDataSource ussdDataSource;
+    private static HikariDataSource paymentsDataSource;
 
-    public static Connection getConnection() {
-        Connection con=null;
+    public static HikariDataSource initializeDataSource(String jdbcUrl, String username, String password) {
+           HikariConfig config = new HikariConfig();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            config.setJdbcUrl("jdbc:mysql://localhost:3306/dbSMS");
-            config.setUsername("mysql");
-            config.setPassword("mysql123");
+
+            config.setJdbcUrl(jdbcUrl);
+            config.setUsername(username);
+            config.setPassword(password);
             config.addDataSourceProperty("encrypt", "false");
             config.addDataSourceProperty("cachePrepStmts", "true");
             config.addDataSourceProperty("prepStmtCacheSize", "250");
             config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
             config.setMaximumPoolSize(20);
-            config.setConnectionTimeout(900000);
-            config.setLeakDetectionThreshold(300000);
-            config.setIdleTimeout(900000);
-            config.setMaxLifetime(3600000);
-            ds = new HikariDataSource(config);
-            con=ds.getConnection();
+//            config.setMinimumIdle(5);
+//            config.setConnectionTimeout(900000);
+//            config.setLeakDetectionThreshold(300000);
+//            config.setIdleTimeout(900000);
+//            config.setMaxLifetime(3600000);
+
+            return new HikariDataSource(config);
             
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(HikariJDBCDataSource.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Failed to innitialize datasoucre " + e);
+            return  null;
+    }
         }
-        return con;
+
+
+    private static HikariDataSource getSmsDataSource(){
+        if(smsDataSource == null){
+            if(DEV_SERVER){
+                smsDataSource = initializeDataSource("jdbc:mysql://192.168.10.199/dbSMS", "clientmanager", "ClientManager@2024#");
+            }else if(DEBUG){
+                smsDataSource = initializeDataSource("jdbc:mysql://localhost/dbSMS", "mysql", "mysql123");
+            }else if(DATA_CENTER_NEW){
+                smsDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbSMS", "clientmanager", "ClientManager@2024#");
+            }
+        }
+        return smsDataSource;
+    }
+    
+     // initialization for dbTASK
+    private static HikariDataSource getTaskDataSource() {
+        if (taskDataSource == null) {
+            if(DEV_SERVER){
+                taskDataSource = initializeDataSource("jdbc:mysql://192.168.10.199/dbTASK", "clientmanager", "ClientManager@2024#");
+            }else if(DEBUG){
+                taskDataSource = initializeDataSource("jdbc:mysql://localhost/dbTASK", "mysql", "mysql123");
+            }else if(DATA_CENTER_NEW){
+                taskDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbTASK", "clientmanager", "ClientManager@2024#");
+            }
+        }
+        return taskDataSource;
     }
 
+    // initialization for dbEMAIL
+    private static HikariDataSource getEmailDataSource() {
+        if (emailDataSource == null) {
+            if(DEV_SERVER){
+                emailDataSource = initializeDataSource("jdbc:mysql://192.168.10.199/dbEMAIL", "clientmanager", "ClientManager@2024#");
+            }else if(DEBUG){
+                emailDataSource = initializeDataSource("jdbc:mysql://localhost/dbEMAIL", "mysql", "mysql123");
+            }else if(DATA_CENTER_NEW){
+                emailDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbEMAIL", "clientmanager", "ClientManager@2024#");
+            }
+        }
+        return emailDataSource;
+    }
+
+    //  initialization for dbUSSD
+    private static HikariDataSource getUSSDDataSource() {
+        if (ussdDataSource == null) {
+            if(DEV_SERVER){
+                  ussdDataSource = initializeDataSource("jdbc:mysql://192.168.10.199/dbUSSD", "clientmanager", "Clientmanager@2024#");
+            }else if(DEBUG){
+                  ussdDataSource = initializeDataSource("jdbc:mysql://localhost/dbUSSD", "mysql", "mysql123");
+            }else if(DATA_CENTER_NEW){
+              ussdDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbUSSD", "clientmanager", "Clientmanager@2024#");
+            }
+        }
+        return ussdDataSource;
+    }
+    
+        private static HikariDataSource getPaymentsDataSource(){
+        if(paymentsDataSource == null){
+            if(DEV_SERVER){
+                 paymentsDataSource = initializeDataSource("jdbc:mysql://192.168.10.199/dbPAYMENTS", "clientmanager", "ClientManager@2024#");
+            }else if(DEBUG){
+                 paymentsDataSource = initializeDataSource("jdbc:mysql://localhost/dbPAYMENTS", "mysql", "mysql123");
+            }else if(DATA_CENTER_NEW){
+                paymentsDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbPAYMENTS", "clientmanager", "ClientManager@2024#");
+            }
+        }
+        return smsDataSource;
+    }
+   
+   
+        
+//        GET CONNECTIONS
+
+    public static Connection getConnectionTodbSMS() {
+        try {
+            return getSmsDataSource().getConnection();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error getting connection to dbSMS", e);
+            return null;
+        }
+    }
+
+    public static Connection getConnectionTodbTask() {
+        try {
+            return getTaskDataSource().getConnection();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error getting connection to dbTASK", e);
+            return null;
+        }
+    }
+
+    public static Connection getConnectionTodbEMAIL() {
+        try {
+            return getEmailDataSource().getConnection();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error getting connection to dbEMAIL", e);
+            return null;
+        }
+    }
+
+    public static Connection getConnectionTodbUSSD() {
+        try {
+            return getUSSDDataSource().getConnection();
+        } catch (SQLException e) {
+            System.out.println("Error getting connection to dbUSSD");
+            return null;
+        }
+    }
+      public static Connection getConnectionTodbPAYMENT() {
+        try {
+            return getPaymentsDataSource().getConnection();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error getting connection to dbSMS", e);
+            return null;
+        }
+    }
+    
 }

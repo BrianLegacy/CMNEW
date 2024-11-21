@@ -74,13 +74,13 @@
                             <p:commandButton icon="fa fa-power-off" title="Activate" 
                                              rendered="#{key.status eq 0}" action="#{smsApiBean.showActivateDialog(key.id)}" />
 
-                            <p:commandButton icon="fa fa-toggle-on" title="Deactivate" 
-                                             rendered="#{key.status eq 1}" action="#{smsApiBean.showDeactivateDialog(key.id)}" />
+                            <p:commandButton icon="pi pi-stop-circle" title="Deactivate" 
+                                             rendered="#{key.status eq 1}" style=" font-size: 1.3em" action="#{smsApiBean.showDeactivateDialog(key.id)}" />
 
-                            <p:commandButton icon="fa fa-refresh" action="#{smsApiBean.showUpdateDialog(key.id)}"/>
+                            <p:commandButton icon="pi pi-refresh" title="Regenerate" style=" font-size: 1.3em" action="#{smsApiBean.showUpdateDialog(key.id)}"/>
 
 
-                            <p:commandButton icon="fa fa-trash" action="#{smsApiBean.showDeleteDialog(key.id)}"/>
+                            <p:commandButton icon="pi pi-trash" style=" font-size: 1.3em" action="#{smsApiBean.showDeleteDialog(key.id)}"/>
                         </p:column>
 
 

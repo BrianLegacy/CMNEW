@@ -18,6 +18,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -30,7 +31,7 @@ public class logo_client implements Serializable {
 
     HttpSession session = getsession.getSession();
     client_logo clnt = new client_logo();
-    JdbcUtil jdbcUtil = new JdbcUtil();
+//    JdbcUtil jdbcUtil = new JdbcUtil();
 
     private String linkLabel;
     private String link;
@@ -227,7 +228,7 @@ public class logo_client implements Serializable {
         boolean result = false;
         String lclientName = "";
         try {
-            conn = jdbcUtil.getConnectionTodbTask();
+            conn = HikariJDBCDataSource.getConnectionTodbTask();
             String sql = "select * from tClient where id =?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -237,11 +238,10 @@ public class logo_client implements Serializable {
                 lclientName = rs.getString("clientName");
             }
 
-            JdbcUtil.closeConnection(conn);
+            conn.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            JdbcUtil.closeConnection(conn);
         }
         return lclientName;
 
@@ -253,7 +253,7 @@ public class logo_client implements Serializable {
         boolean result = false;
         String lclientContact = "";
         try {
-            conn = jdbcUtil.getConnectionTodbSMS();
+            conn = HikariJDBCDataSource.getConnectionTodbSMS();
             String sql = "select contact_number from tUSER wherer id =?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -265,12 +265,11 @@ public class logo_client implements Serializable {
             }
             getsession.getSession().setAttribute("clientContact", lclientContact);
 
-            JdbcUtil.closeConnection(conn);
-
+            conn.close();
+            
         } catch (SQLException e) {
 
             e.printStackTrace();
-            JdbcUtil.closeConnection(conn);
             return "";
         }
         return lclientContact;

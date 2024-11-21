@@ -5,6 +5,7 @@
  */
 package ke.co.mspace.nonsmppmanager.model;
 
+import com.zaxxer.hikari.HikariConfig;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 
 /**
  *
@@ -155,7 +157,7 @@ public class CallBack {
         try {
             //        if (!checkDulicity(userid, callback_url)) {
             
-            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
             UserServiceImpl callback = new UserServiceImpl();
             callback.persistCallBack(this, conn, ussd_assigned_code);
             
@@ -226,7 +228,7 @@ public class CallBack {
     }
 
     public void fetchGroups() {
-        groups = UserServiceImpl.getGroups(util.getConnectionTodbSMS());
+        groups = UserServiceImpl.getGroups(HikariJDBCDataSource.getConnectionTodbSMS());
     }
     ArrayList<EmailPricingTable> pricingtable;
 
@@ -260,7 +262,7 @@ public class CallBack {
         String sql = "SELECT * from tSharedUssdClients WHERE tuser_id=? and callback_url=?";
         System.out.println("Seearching for existing records to prevent duplicity for " + userID + "and" + callback + "sql:" + sql);
         try {
-            this.conn = this.util.getConnectionTodbUSSD();
+            this.conn = HikariJDBCDataSource.getConnectionTodbUSSD();
             PreparedStatement ps = this.conn.prepareStatement(sql);
             //ps.setInt(1, userid);
             ps.setInt(1, userID);
@@ -284,7 +286,7 @@ public class CallBack {
     public ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
-        Connection conn = util.getConnectionTodbEMAIL();
+        Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
 
         String sql = "select * from tEMAILPRICING te";
         System.out.println("sql " + sql);

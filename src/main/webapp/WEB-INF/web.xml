@@ -25,6 +25,7 @@
         <url-pattern>/sms.jsf</url-pattern>
         <url-pattern>/smses.jsf</url-pattern>
     </filter-mapping>
+    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -44,7 +45,7 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            60
+            30
         </session-timeout>
     </session-config>
 

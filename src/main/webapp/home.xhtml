@@ -17,7 +17,6 @@
         </script>
     </h:head>
 
-
     <h:body style="padding-top:100px;  font: 11px georgia;">
         <div style="height: 550px">
             <center>
@@ -40,11 +39,12 @@
                             <p:graphicImage name="/images/ajax-loader.gif" />
                         </p:dialog>
                         <p:growl id="messa" showDetail="true" />
+                        <h:outputLabel value="Your session timedout. Please login to continue" style="color:red; font-size: 16px; font-weight:  600" rendered="#{flash.timedout}"/>
                         <h:panelGrid id="grid" columns="4" style="float: inside">
                             <p:outputLabel  for="username" value=" Username:"  style=" margin-left: -8%" class="fa fa-user"/>
                             <p:inputText id="username" value="#{tusercontroller.username}" required="true" validatorMessage="username is too short" requiredMessage="username required">
                                 <f:validateLength minimum="4" />
-                            </p:inputText> 
+                            </p:inputText>
                             <pe:tooltip for="username" value="Enter your username" showEffect="slideToggle"  
                                         hideEffect="slideToggle" showDelay="0" myPosition="left center" atPosition="right center"/>  
                             <p:message for="username" display="message" />
@@ -84,11 +84,13 @@
                                   icon="fa fa-user-plus" target="_blank" href="signup.jsf"/>
                     </h:form>
 
-                    <noscript>   <div>   
+                    <noscript>   
+                        <div>   
                             <h3 style="color: red;">For full functionality of this page it is necessary to enable JavaScript. Here are the 
                                 <a href="http://www.enable-javascript.com" target="_blank"> 
                                     instructions how to enable JavaScript in your web browser</a></h3>
-                        </div> </noscript>
+                        </div> 
+                    </noscript>
 
                 </p:panel>
 
