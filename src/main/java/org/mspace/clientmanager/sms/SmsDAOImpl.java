@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
 import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.user.UserController;
-import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+//import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
 /**
@@ -31,7 +31,7 @@ public class SmsDAOImpl implements SmsDAO {
     Long agent = (Long) session.getAttribute("id");
 
     private static final Logger LOGGER = Logger.getLogger(SmsDAOImpl.class.getName());
-    private JdbcUtil jdbcUtil = new JdbcUtil();
+//    private JdbcUtil jdbcUtil = new JdbcUtil();
 
     @Override
     public void createSmsUser(UserController user) {

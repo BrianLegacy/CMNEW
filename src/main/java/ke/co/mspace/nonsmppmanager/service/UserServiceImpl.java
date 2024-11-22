@@ -33,6 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
 import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
@@ -1210,6 +1211,7 @@ public class UserServiceImpl implements UserServiceApi {
 
     public static ArrayList<Paybill> getPayBill() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
+        JdbcUtil util = new JdbcUtil();
         Connection conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
 
         String sql = "SELECT * FROM tUSERPAYBILL";
@@ -1231,7 +1233,6 @@ public class UserServiceImpl implements UserServiceApi {
             bill.setName(rs.getString("username"));
             bill.setSender_id(rs.getString("sender_id"));
             paybilllist.add(bill);
-
         }
         return paybilllist;
     }

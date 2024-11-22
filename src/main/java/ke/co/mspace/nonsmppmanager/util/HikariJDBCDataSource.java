@@ -126,7 +126,7 @@ public class HikariJDBCDataSource {
                 paymentsDataSource = initializeDataSource("jdbc:mysql://192.168.10.49/dbPAYMENTS", "clientmanager", "ClientManager@2024#");
             }
         }
-        return smsDataSource;
+        return paymentsDataSource;
     }
    
    
@@ -172,7 +172,7 @@ public class HikariJDBCDataSource {
         try {
             return getPaymentsDataSource().getConnection();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error getting connection to dbSMS", e);
+            logger.log(Level.SEVERE, "Error getting connection to dbPayments", e);
             return null;
         }
     }
