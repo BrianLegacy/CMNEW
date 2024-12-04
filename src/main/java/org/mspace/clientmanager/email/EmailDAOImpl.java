@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 import org.mspace.clientmanager.user.UserController;
@@ -31,7 +30,7 @@ public class EmailDAOImpl implements EmailDAO {
     Long agent = (Long) session.getAttribute("id");
 
     private static final Logger LOGGER = Logger.getLogger(EmailDAOImpl.class.getName());
-//    private final JdbcUtil jdbcUtil = new JdbcUtil();
+    private final JdbcUtil jdbcUtil = new JdbcUtil();
 
     @Override
     public List<SelectItem> getExistingUsers() {
@@ -39,8 +38,7 @@ public class EmailDAOImpl implements EmailDAO {
         String queryAdmin = "SELECT username FROM tUSER WHERE emailuser= 'N'";
         String queryRes = "SELECT username FROM tUSER WHERE agent = '" + agent + "' AND emailuser= 'N'";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();) {
-            PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes);
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 users.add(new SelectItem(rs.getString("username")));
@@ -58,7 +56,7 @@ public class EmailDAOImpl implements EmailDAO {
         String queryAdmin = "select username from tUSER where admin != 5 and emailuser = 'Y' order by username";
         String queryRes = "select username from tUSER where agent = ? and emailuser='Y' and admin != 5 order by username";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) : conn.prepareStatement(queryRes)) {
             if (admin != 'Y') {
                 ps.setLong(1, agent);
             }
@@ -90,7 +88,7 @@ public class EmailDAOImpl implements EmailDAO {
 
         List<UserController> emailUsers = new ArrayList<>();
 
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(adminQuery) : connection.prepareStatement(resellerQuery)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(adminQuery) : connection.prepareStatement(resellerQuery)) {
             if (admin != 'Y') {
                 ps.setLong(1, agent);
             }
@@ -143,7 +141,7 @@ public class EmailDAOImpl implements EmailDAO {
         String sql = " select groupname from tGROUPS where id= ?";
         String groupName = null;
 
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -163,7 +161,7 @@ public class EmailDAOImpl implements EmailDAO {
         String sql = "UPDATE tUSER SET emailuser = 'Y' WHERE username= ? ";
 
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
 
             result = pstmt.executeUpdate() > 0;
@@ -179,7 +177,7 @@ public class EmailDAOImpl implements EmailDAO {
         String sql = "update tUSER set password = ? where username= ? AND id = ?";
         boolean result = false;
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String hashedPass = PasswordUtil.encrypt(password);
             pstmt.setString(1, hashedPass);
 
@@ -203,7 +201,7 @@ public class EmailDAOImpl implements EmailDAO {
                 + "alertThreshold = ?, `group` = ?  WHERE id = ?";
 
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getUsername());
             pstmt.setLong(2, user.getSmsCredits());
@@ -231,7 +229,7 @@ public class EmailDAOImpl implements EmailDAO {
     ) {
         String sql = "DELETE from tUSER where username =?";
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
 
             // Execute the query
@@ -246,7 +244,7 @@ public class EmailDAOImpl implements EmailDAO {
     public boolean verify(UserController user) {
         String sql = "UPDATE tUSER SET verifiedEmail = 1 WHERE username=? and id=?";
 
-        try (Connection con = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, user.getUsername());
             ps.setLong(2, user.getId());

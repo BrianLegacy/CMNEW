@@ -21,8 +21,7 @@ import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.SmsLazyDataModel;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
-//import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.group.GroupDAO;
 import org.mspace.clientmanager.group.GroupDAOImpl;
@@ -58,7 +57,7 @@ public class SmsController implements Serializable {
     private List<SelectItem> existingUsers;
 
     private List<SelectItem> listAlphas;
-//    private final JdbcUtil jdbcUtil = new JdbcUtil();
+    private final JdbcUtil jdbcUtil = new JdbcUtil();
 
     @PostConstruct
     public void init() {
@@ -167,11 +166,7 @@ public class SmsController implements Serializable {
     public void addSmsUser() {
         if (newSmsUser != null) {
             try {
-                try {
-                    newSmsUser.saveUser();
-                } catch (SQLException ex) {
-                    Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                newSmsUser.saveUser();
             } catch (IOException e) {
                 JsfUtil.addErrorMessage("Error occured while trying to create user");
             }
@@ -221,11 +216,7 @@ public class SmsController implements Serializable {
                 JsfUtil.addErrorMessage("Credit has to be positive value.");
             } else {
                 try {
-                    try {
-                        currentSmsUser.manageCredit();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    currentSmsUser.manageCredit();
                 } catch (IOException e) {
                     JsfUtil.addErrorMessage("Error reading the form try again");
                 }
@@ -249,7 +240,7 @@ public class SmsController implements Serializable {
 
     public void assignAlpha() {
         alphaDAO = new AlphaServiceImpl();
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
             if (alphaDAO.findAlphanumericByUsername(currentSmsUser.getUsername(), alphanumeric, conn)) {
                 JsfUtil.addErrorMessage("Sender Id already exists for  " + currentSmsUser.getUsername());
             } else {
@@ -270,7 +261,7 @@ public class SmsController implements Serializable {
     public void deleteAlpha() {
         alphaDAO = new AlphaServiceImpl();
         if (selectedAlpha != null) {
-            try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
+            try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
                 if (alphaDAO.removeUseAlpha(selectedAlpha.getName(), selectedAlpha.getUsername(), conn) > 0) {
                     refreshAlphas();
                     JsfUtil.addSuccessMessage("Successfully deleted Sender ID");
@@ -287,7 +278,7 @@ public class SmsController implements Serializable {
 
     private void refreshAlphas() {
         alphaDAO = new AlphaServiceImpl();
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
             senderIds = alphaDAO.loadAlphanumerics(currentSmsUser.getUsername(), conn);
         } catch (SQLException ex) {
             Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);

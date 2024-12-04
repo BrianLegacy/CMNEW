@@ -34,7 +34,7 @@ import org.mspace.clientmanager.credits.services.ManageCreditImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
 import org.hibernate.validator.constraints.Length;
@@ -95,6 +95,7 @@ public class EmailUser {
     private String surName="";
     private int emailPlan=1;
     private Connection conn = null;
+    final JdbcUtil util = new JdbcUtil();
     private static final Logger LOG = Logger.getLogger(UserController.class.getName());
 
     public EmailUser() {
@@ -141,25 +142,25 @@ public class EmailUser {
 //        return selectItems;
 //    }
 
-    public List<String> getAirComboAlphanumerics() throws SQLException {
+    public List<String> getAirComboAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         List<String> myAlphanumerics = new ArrayList<>();
        
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             myAlphanumerics = asi.getAirTelAlphas(conn);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
        
         return myAlphanumerics;
     }
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    public List<String> getUnusignedAlphanumerics() throws SQLException {
+    public List<String> getUnusignedAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         List<String> myAlphanumerics = new ArrayList<>();
         
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             myAlphanumerics = asi.getUnusagnedphanumericsNames(conn);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
        
         return myAlphanumerics;
     }
@@ -421,7 +422,7 @@ public class EmailUser {
         FacesContext.getCurrentInstance().getExternalContext().redirect("ControlPage.jsf");
     }
 
-    public void manageCredit() throws IOException, SQLException {
+    public void manageCredit() throws IOException {
         ManageCreditImpl mcr = new ManageCreditImpl();
         char adminv = mcr.admiValue();
 
@@ -432,7 +433,7 @@ public class EmailUser {
 
         try {
             String agent = ac.currentUSer();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             //========================>
             //System.out.println("Getting here or not"+us.availableCredits(conn));
             int current = Math.round(us.availableCredits(conn)[0]);
@@ -513,9 +514,9 @@ public class EmailUser {
                     break;
             }
             this.updateAdminBal();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         }
         // FacesContext.getCurrentInstance().getExternalContext().redirect(toRedirect);
     }
@@ -523,9 +524,9 @@ public class EmailUser {
     public void updateAdminBal() {
         AlphaScroller ac = new AlphaScroller();
         String sql = "UPDATE tUSER set max_total = '-1' where admin=1";
-        
+        JdbcUtil util = new JdbcUtil();
         try {
-            Connection con = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection con = util.getConnectionTodbSMS();
             Statement st = con.createStatement();
             //System.out.println(sql);
             st.executeUpdate(sql);
@@ -587,7 +588,7 @@ public class EmailUser {
         int current = Math.round(us.availableCredits(conn)[0]);
         String getRes = "SELECT admin,max_total from tUSER where username='" + agent + "'";
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
 
@@ -619,7 +620,7 @@ public class EmailUser {
         int current =Math.round(us.availableCredits(conn)[0]);
         String getRes = "SELECT admin,max_total from tUSER where username='" + agent + "'";
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
 
@@ -682,9 +683,9 @@ public class EmailUser {
             userService.updateCredits(username, credits.getNumCredits(), conn);
             this.updateAdminBal();
             clearAll();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            
+            JdbcUtil.printSQLException(e);
         }
 
     }
@@ -781,9 +782,9 @@ public class EmailUser {
     }
 
     //=======================================================================================
-    public void saveReseller() throws IOException, SQLException {
+    public void saveReseller() throws IOException {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("saveUser");
             UserServiceApi service = new UserServiceImpl();
             ManageCreditApi creditManager = new ManageCreditImpl();
@@ -823,9 +824,9 @@ public class EmailUser {
 //           FacesContext facesContext = FacesContext.getCurrentInstance();
 //            facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext,null, "viewUserperAgent.jsf");
             //FacesContext.getCurrentInstance().getExternalContext().redirect("viewNewReseller.jsf");
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
 
     }
@@ -834,7 +835,7 @@ public class EmailUser {
     public void updateUser() {
 
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("updateUser");
             UserServiceApi service = new UserServiceImpl();
             AlphaServiceApi alphaService = new AlphaServiceImpl();
@@ -845,15 +846,15 @@ public class EmailUser {
             alphaService.updateAlphaByUsername(previousUsername, username, conn);
             service.updateEmailUser(this, conn);
             JsfUtil.addSuccessMessage("User info updated succssfully.");
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            System.out.println("An sql exception has occured");
+            JdbcUtil.printSQLException(e);
         }
     }
 
     public void fullProfile() {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             UserServiceApi userService = new UserServiceImpl();
             UserController aUser = userService.loadCustomerByUsername(username, conn);
             this.id = aUser.getId();
@@ -863,22 +864,22 @@ public class EmailUser {
             this.password = aUser.getPassword();
             this.smsCredits = aUser.getSmsCredits();
             this.organization = aUser.getOrganization();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            System.out.println("An sql exception error has occured " + e);
+            JdbcUtil.printSQLException(e);
         }
 
     }
 
     public void generateXSL() {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("generateXSL");
             UserServiceApi service = new UserServiceImpl();
             service.generateXSL(conn);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            System.out.println("An error has occured " + e);
+            JdbcUtil.printSQLException(e);
         }
     }
 

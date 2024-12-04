@@ -24,7 +24,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Facet;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
@@ -306,7 +305,7 @@ public void psetCurrentItemForEdit(Paybill data){
         System.out.println("save or "+currentItem);
         
         try {
-            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+            this.conn = this.util.getConnectionTodbPAYMENT();
             String sql = "UPDATE tUSERPAYBILL set tUSER_id=?,paybill=?,default_reply=?,email=? where tUSER_id=? and paybill=?";
             PreparedStatement ps = this.conn.prepareStatement(sql);
             ps.setInt(1, id);
@@ -318,7 +317,7 @@ public void psetCurrentItemForEdit(Paybill data){
             int count = ps.executeUpdate();
             ps.close();
             conn.close();
-            Connection conn2 = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn2 = this.util.getConnectionTodbSMS();
             String fetchSql = "Select username from tUSER where id=" + id;
             Statement st = conn2.createStatement();
             ResultSet rs = st.executeQuery(fetchSql);
@@ -361,7 +360,7 @@ public void psetCurrentItemForEdit(Paybill data){
 //  System.out.println("THE ID TO DELETE: "+id);
         try {
             // conn = util.getConnectionTodbPAYMENT();
-            Connection conn2 = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+            Connection conn2 = this.util.getConnectionTodbPAYMENT();
             String sql = "DELETE from tUSERPAYBILL where paybill =?";
 
             PreparedStatement psmt = conn2.prepareStatement(sql);
@@ -390,7 +389,7 @@ public void psetCurrentItemForEdit(Paybill data){
         System.out.println("deleting paybill "+id);
         try {
             // conn = util.getConnectionTodbPAYMENT();
-            Connection conn2 = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+            Connection conn2 = this.util.getConnectionTodbPAYMENT();
             String sql = "DELETE from tUSERPAYBILL where paybill =?";
 
             PreparedStatement psmt = conn2.prepareStatement(sql);
@@ -400,7 +399,7 @@ public void psetCurrentItemForEdit(Paybill data){
             conn2.close();
 
             String sql2 = "DELETE from tRULES where RuleName=? and dest=?";
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = this.util.getConnectionTodbSMS();
             int uid = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("delid");
 
             String fetchSql = "Select username from tUSER where id=" + uid;

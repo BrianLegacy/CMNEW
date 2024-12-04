@@ -15,7 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
 /**
@@ -26,23 +26,23 @@ import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 public class ValidateCredits implements Validator {
 
     private static final Logger LOG = Logger.getLogger(ValidateCredits.class.getName());
+    final JdbcUtil util = new JdbcUtil();
     Connection conn;
 
     @Override
     public void validate(FacesContext fc, UIComponent uic, Object value) throws ValidatorException {
         
-        try {
             UserScroller us = new UserScroller();
 
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("kvalidate 21");
             System.out.println("validate "+uic.getId());
-            // System.out.println("Credits to Allocate" + inputValue);
-            int adminv = Character.getNumericValue((char) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("admin"));
-            
-            System.out.println("validate "+adminv);
-            if (uic.getId().equals("smscredits")) {
-                System.out.println("smskuredits");
+           // System.out.println("Credits to Allocate" + inputValue);
+             int adminv = Character.getNumericValue((char) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("admin"));
+           
+             System.out.println("validate "+adminv);
+             if (uic.getId().equals("smscredits")) {
+                 System.out.println("smskuredits");
                 int availableCredits = Math.round(us.availableCredits(conn)[0]);
                 int inputValue=(Integer) value;
                 System.out.println("kvalidate available "+availableCredits);
@@ -52,23 +52,21 @@ public class ValidateCredits implements Validator {
                     facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
                     //FacesContext.getCurrentInstance().addMessage("message", new FacesMessage("hola"));
 //                    JsfUtil.addErrorMessage("Insuficient Credits to allocate this Ammount");
-throw new ValidatorException(facesMessage);
+                    throw new ValidatorException(facesMessage);
                 }
             }else if(uic.getId().equals("costpersms")){
                 float costPersoms = us.availableCredits(conn)[1];
-                if((Float)value <= costPersoms  && adminv != 1){
-                    FacesMessage facesMessage = new FacesMessage("User cost per SMS cant be below Agent's cost per sms");
+              if((Float)value <= costPersoms  && adminv != 1){
+                   FacesMessage facesMessage = new FacesMessage("User cost per SMS cant be below Agent's cost per sms");
                     facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
 //                    JsfUtil.addErrorMessage("Cost per sms too low");
-throw new ValidatorException(facesMessage);
-                }
+                    throw new ValidatorException(facesMessage);
+              }
             }
 
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(ValidateCredits.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            JdbcUtil.closeConnection(conn);
 
+       
     }
 
 }

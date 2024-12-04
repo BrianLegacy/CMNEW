@@ -13,7 +13,6 @@ import ke.co.mspace.nonsmppmanager.invalids.TuserRights;
 import org.mspace.clientmanager.util.getsession;
 import java.util.List;
 import javax.servlet.http.HttpSession;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import org.hibernate.Session;
 
@@ -22,6 +21,7 @@ import org.hibernate.Session;
  * @author George Kibira
  */
 public class UserRightsDao {
+  private final JdbcUtil util=new JdbcUtil();
     public UserRightsDao() {
 
     }
@@ -36,7 +36,7 @@ public class UserRightsDao {
         Connection conn = null;
         boolean result = false;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             String sql = "select * from tUSERRIGHTS where id =?";
 
             PreparedStatement pst = conn.prepareStatement(sql);

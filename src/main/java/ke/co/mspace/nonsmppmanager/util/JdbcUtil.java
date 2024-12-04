@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcUtil implements Serializable{
 
-    boolean DATA_CENTER_NEW = false;       //dc
+    boolean DATA_CENTER_NEW = false;     //dc
     boolean DATA_CENTER_LIVE = false;     //gateway .5
     boolean DEBUG = true;              //local
     boolean DEV_SERVER = false;   //dev

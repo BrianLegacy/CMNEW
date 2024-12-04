@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
  *
@@ -19,13 +19,14 @@ import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 public class CallbackDAOimpl implements CallbackDAO {
 
     private static final Logger LOGGER = Logger.getLogger(CallbackDAOimpl.class.getName());
+    private final JdbcUtil jdbcUtil = new JdbcUtil();
 
     @Override
     public List<CallbackModel> fetchCallbacks() {
         String sql = "SELECT * FROM dbUSSD.tSharedUssdClients LEFT JOIN dbSMS.tUSER ON dbUSSD.tSharedUssdClients.tuser_id = dbSMS.tUSER.id";
         ArrayList<CallbackModel> callbacklist = new ArrayList();
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {     
                     CallbackModel callback = new CallbackModel();
@@ -62,7 +63,7 @@ public class CallbackDAOimpl implements CallbackDAO {
         String testBedNumbers = callback.getTestbednumbers();
         callback.setTestbednumbers(formatNumbers(testBedNumbers));
                 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, callback.getCallback_url());
             ps.setString(2, callback.getUssd_assigned_code());
             ps.setBoolean(3, callback.isStatus());
@@ -87,7 +88,7 @@ public class CallbackDAOimpl implements CallbackDAO {
 
         String sql = "DELETE from tSharedUssdClients where id=?";
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbUSSD(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, callback.getId());
 
             // Execute the query
@@ -121,7 +122,7 @@ public class CallbackDAOimpl implements CallbackDAO {
         String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
                 + "ussd_assigned_code,status,testbedmobiles,type,due_date,disconnect_date)VALUES(?,?,?,?,?,?,?,?)";
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbUSSD(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, callback.getUserid());
             ps.setString(2, callback.getCallback_url());
             ps.setString(3, callback.getUssd_assigned_code());

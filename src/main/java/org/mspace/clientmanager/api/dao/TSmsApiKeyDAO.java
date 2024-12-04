@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 
 import org.mspace.clientmanager.api.model.TSmsApiKey;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
@@ -41,14 +40,14 @@ public class TSmsApiKeyDAO {
     private static final Logger LOGGER = Logger.getLogger(TSmsApiKeyDAO.class.getName());
 
     private static final String INSERT = "INSERT INTO tApiKeys (tUserId, name, apiKey, dateCreated, expiryDate, status) VALUES (?, ?, ?, ?, ?, ?)";
-//    private JdbcUtil jdbcUtil = new JdbcUtil();
+    private JdbcUtil jdbcUtil = new JdbcUtil();
 
     public List<SelectItem> getUsers() {
         List<SelectItem> users = new ArrayList<>();
         String queryAdmin = "SELECT id, username FROM tUSER WHERE admin != 1 AND admin != 5 ORDER BY username" ;
         String queryRes = "SELECT id, username FROM tUSER WHERE agent = '" + agent + "' ORDER BY username";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) :conn.prepareStatement(queryRes)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) :conn.prepareStatement(queryRes)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 users.add(new SelectItem(rs.getInt("id"), rs.getString("username")));
@@ -65,7 +64,7 @@ public class TSmsApiKeyDAO {
         String queryAdmin = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent IS NOT NULL;";
         List<TSmsApiKey> keys = new ArrayList<>();
 
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(queryAdmin) : connection.prepareStatement(queryRes)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(queryAdmin) : connection.prepareStatement(queryRes)) {
 
             if ('Y' != admin) {
                 ps.setLong(1, agent);
@@ -89,7 +88,7 @@ public class TSmsApiKeyDAO {
     }
 
     public String insert(TSmsApiKey key) throws ApiException {
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(INSERT)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(INSERT)) {
             Date now = new Date();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
@@ -116,7 +115,7 @@ public class TSmsApiKeyDAO {
     }
 
     public void update(int id) {
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS()) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS()) {
             // Fetch the existing key details
             String selectQuery = "SELECT * FROM tApiKeys WHERE id = ?";
             try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
@@ -150,7 +149,7 @@ public class TSmsApiKeyDAO {
     public TSmsApiKey getSmsApiKeyById(int id) {
         TSmsApiKey apiKey = null;
         String query = "SELECT id, tUserId, name, apiKey FROM tApiKeys WHERE id = ?";
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(query)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, id);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -168,7 +167,7 @@ public class TSmsApiKeyDAO {
 
     public void updateStatus(int id, int newStatus) {
         String UPDATE_STATUS = "UPDATE tApiKeys SET status = ? WHERE id = ?";
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(UPDATE_STATUS)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(UPDATE_STATUS)) {
             ps.setInt(1, newStatus);
             ps.setInt(2, id);
             ps.executeUpdate();
@@ -180,7 +179,7 @@ public class TSmsApiKeyDAO {
 
     public void delete(int id) {
         String DELETE = "DELETE FROM tApiKeys WHERE id = ?";
-        try (Connection connection = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(DELETE)) {
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(DELETE)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {

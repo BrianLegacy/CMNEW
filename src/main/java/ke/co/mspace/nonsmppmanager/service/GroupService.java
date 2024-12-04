@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.group.Group;
@@ -48,7 +47,7 @@ public class GroupService {
     }
 
     public void fetchGroups() {
-        groups = UserServiceImpl.getGroups(HikariJDBCDataSource.getConnectionTodbSMS());
+        groups = UserServiceImpl.getGroups(util.getConnectionTodbSMS());
     }
 
     public Group getCurrentGroupItem1() {
@@ -66,7 +65,7 @@ public class GroupService {
             return;
         }
         String sql = "UPDATE tGROUPS SET groupname = ?, description = ? WHERE id = ?";
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, currentGroupItem1.getGroupname());
             ps.setString(2, currentGroupItem1.getDescription());
             ps.setInt(3, currentGroupItem1.getId());
@@ -83,7 +82,7 @@ public class GroupService {
 
     public void deleteGroup(int id) {
         String sql = "DELETE FROM tGROUPS WHERE id = ?";
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
             LOGGER.log(Level.INFO, sql);

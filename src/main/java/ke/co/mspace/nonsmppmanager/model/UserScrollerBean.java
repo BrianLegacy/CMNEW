@@ -14,7 +14,6 @@ import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -55,7 +54,7 @@ public class UserScrollerBean {
         UserScroller sc = new UserScroller();
         List<UserController> users = null;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("getUsers");
             UserServiceApi userService = new UserServiceImpl();
             users = userService.getAllUsers(conn, sc.userS);
@@ -70,7 +69,7 @@ public class UserScrollerBean {
     public void saveOrUpdateAlpha() {
 
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("saveOrUpdateAlpha");
             AlphaServiceImpl service = new AlphaServiceImpl();
             String username = currentUser.getUsername();

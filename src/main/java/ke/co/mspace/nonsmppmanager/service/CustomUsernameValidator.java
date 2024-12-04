@@ -18,8 +18,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.user.UserController;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
  * source : www.javabeat.net
@@ -33,25 +33,26 @@ public class CustomUsernameValidator implements Validator {
     public void validate(FacesContext facesContext, UIComponent arg1, Object value) throws ValidatorException {
         String inputValue = (String) value;
         try{
-            try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS()) {
-                LOG.info("validate");
+            JdbcUtil util = new JdbcUtil();
+            Connection conn = util.getConnectionTodbSMS();
+            LOG.info("validate");
+         
+        UserServiceApi service = new UserServiceImpl();
+        UserController user = service.loadCustomerByUsername(inputValue, conn);
+        boolean isValid = (user.getUsername()==null);
+           
+            if (!isValid) {
+                FacesMessage facesMessage = new FacesMessage("Username already in use", "Username already in use");
                 
-                UserServiceApi service = new UserServiceImpl();
-                UserController user = service.loadCustomerByUsername(inputValue, conn);
-                boolean isValid = (user.getUsername()==null);
+                facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
                 
-                if (!isValid) {
-                    FacesMessage facesMessage = new FacesMessage("Username already in use", "Username already in use");
-                    
-                    facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    
-                    
-                    
-                    throw new ValidatorException(facesMessage);
-                }
+                
+
+			throw new ValidatorException(facesMessage);
             }
+            JdbcUtil.closeConnection(conn);
         }catch(SQLException e){
-            System.out.println("An exception has occured " + e);
+            JdbcUtil.printSQLException(e);
         }
 //        @Override
 //        public void validate(FacesContext facesContext, UIComponent arg1, Object value) throws ValidatorException {

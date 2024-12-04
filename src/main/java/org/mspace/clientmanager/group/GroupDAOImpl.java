@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -35,7 +34,7 @@ public class GroupDAOImpl implements GroupDAO {
         Connection conn = null;
         boolean result = false;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             String sql = "SELECT COUNT(*) FROM dbSMS.tGROUPS tg WHERE tg.groupname = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, groupName);
@@ -55,7 +54,7 @@ public class GroupDAOImpl implements GroupDAO {
     public void saveUserGroup(Group group) {
 
         String sql = "INSERT INTO tGROUPS (groupname, description, tuserid) VALUES (?, ?, ?)";
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, group.getGroupname());
             pst.setString(2, group.getDescription());
             pst.setLong(3, agent);
@@ -71,7 +70,7 @@ public class GroupDAOImpl implements GroupDAO {
     public boolean deleteGroup(int id) {
         String sql = "DELETE FROM tGROUPS WHERE id = ?";
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             result = ps.executeUpdate() > 0;
             LOGGER.log(Level.INFO, sql);
@@ -87,7 +86,7 @@ public class GroupDAOImpl implements GroupDAO {
         String sqlRes = "select * from tGROUPS where tuserid=?";
 
         List<Group> groups = new ArrayList<>();
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sqlRes)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sqlRes)) {
 
             stmt.setLong(1, agent);
 
@@ -110,7 +109,7 @@ public class GroupDAOImpl implements GroupDAO {
     public boolean updateGroup(int id, String groupname, String description) {
         String sql = "UPDATE tGROUPS SET groupname = ?, description = ? WHERE id = ?";
         boolean result = false;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, groupname);
             ps.setString(2, description);
             ps.setInt(3, id);
@@ -129,7 +128,7 @@ public class GroupDAOImpl implements GroupDAO {
 
         List<SelectItem> results = new ArrayList<>();
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sqlRes)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sqlRes)) {
 
             ps.setLong(1, agent);
 

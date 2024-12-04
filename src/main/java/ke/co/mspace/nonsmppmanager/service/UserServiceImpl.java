@@ -28,12 +28,11 @@ import ke.co.mspace.nonsmppmanager.model.EmailUser;
 import org.mspace.clientmanager.group.Group;
 import ke.co.mspace.nonsmppmanager.model.UserProfile;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import ke.co.mspace.nonsmppmanager.model.Paybill;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
-import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
@@ -263,7 +262,6 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public void persistUser(UserController user, Connection conn) throws SQLException {
-        System.out.println("inside persistuser");
         UserScroller us = new UserScroller();
         UserController userl = new UserController();
         AlphaScroller ac = new AlphaScroller();
@@ -301,7 +299,6 @@ public class UserServiceImpl implements UserServiceApi {
         // Execute the query
         int count = pstmt.executeUpdate();
         userService.updateAgentCredits(agent, Math.round(us.availableCredits(conn)[0]), user.getSmsCredits(), user.getSmsCredits(), conn);
-        
         userl.updateAdminBal();
     }
 
@@ -432,11 +429,12 @@ public class UserServiceImpl implements UserServiceApi {
     public String filelocsure;
 
     public String retrivePhotosure(String user) {
+        JdbcUtil jdb = new JdbcUtil();
         Connection con;
         //FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(con).toString();
         String sql = "select u.id, t.picPath from dbSMS.tUSER u inner join  dbTASK.tClient t on u.id = t.id where u.username='" + user + "'";
         try {
-            con = HikariJDBCDataSource.getConnectionTodbTask();
+            con = jdb.getConnectionTodbTask();
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
@@ -458,6 +456,7 @@ public class UserServiceImpl implements UserServiceApi {
 
     public int getLoggedinID() {
         AlphaScroller as = new AlphaScroller();
+        JdbcUtil dbcon = new JdbcUtil();
         Connection con;
         // String loggedInus=FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(AUTH_KEY).toString();
         String loggedInus = as.currentUSer();
@@ -465,7 +464,7 @@ public class UserServiceImpl implements UserServiceApi {
 
         //System.out.println("Loggedin user from tclient " + loggedInus);
         try {
-            con = HikariJDBCDataSource.getConnectionTodbSMS();
+            con = dbcon.getConnectionTodbSMS();
             Statement stm = con.createStatement();
 
             ResultSet rs = stm.executeQuery(sql);
@@ -494,6 +493,7 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
 
     public boolean authenticateUser(String username, String password) {
+        JdbcUtil util = new JdbcUtil();
         String id = "SELECT id from tUSER where username='" + username + "'";
 
         boolean authenticated = false;
@@ -504,7 +504,7 @@ public class UserServiceImpl implements UserServiceApi {
         this.retrivePhotosure(username);
         try {
 
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
 
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, username);
@@ -544,9 +544,9 @@ public class UserServiceImpl implements UserServiceApi {
                 }
 
             }
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException ex) {
-            System.out.println("An sql exception has occured " + ex );
+            JdbcUtil.printSQLException(ex);
         }
 
         return authenticated;
@@ -597,12 +597,14 @@ public class UserServiceImpl implements UserServiceApi {
         UserScroller us = new UserScroller();
         String current = us.current_user;
 
+        JdbcUtil util = new JdbcUtil();
+
         String sql = "select sum(sms_count_today) as dailyt, sum(sms_count_week) as weeklyt, sum(sms_count_month) as montht,sum(sms_count_total) as grandTotal from tUSER where agent='" + agent + "'and id!='" + us.agentID() + "'";
 
         try {
             //System.err.println(sql);
 
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
 
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -626,10 +628,11 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
 
     public UserProfile refreshProfile(String user) {
+        JdbcUtil util = new JdbcUtil();
 
         String sql = "SELECT * FROM tUSER WHERE username='" + user + "'";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             //System.err.println(sql);
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -909,7 +912,8 @@ public class UserServiceImpl implements UserServiceApi {
     public void pesistUserInfo(UserController user) throws SQLException {
 
         String sqlimg = "INSERT INTO dbTASK.tClient (clientName, email, systemType, picPath) VALUES (?, ?, ?, ?)";
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbTask(); PreparedStatement ps2 = conn.prepareStatement(sqlimg)) {
+        JdbcUtil util = new JdbcUtil();
+        try (Connection conn = util.getConnectionTodbTask(); PreparedStatement ps2 = conn.prepareStatement(sqlimg)) {
             ps2.setString(1, user.getUsername());
             ps2.setString(2, user.getUserEmail());
             ps2.setString(3, "web");
@@ -1062,8 +1066,7 @@ public class UserServiceImpl implements UserServiceApi {
                 }
             }
         } catch (SQLException ex) {
-//            JdbcUtil.printSQLException(ex);
-            System.out.println("An exception has occured" + ex);
+            JdbcUtil.printSQLException(ex);
         }
 
         return result;
@@ -1110,9 +1113,10 @@ public class UserServiceImpl implements UserServiceApi {
 
     public void persistPaybill(Paybill paybill, Connection conn, Connection conn2) {
         try {
+            JdbcUtil util = new JdbcUtil();
 
-            conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
-            String sql = "INSERT INTO dbPAYMENTS.tUSERPAYBILL(tUSER_id,paybill,default_reply,email,username,sender_id)VALUES(?,?,?,?,?,?)";
+            conn = util.getConnectionTodbPAYMENT();
+            String sql = "INSERT INTO tUSERPAYBILL(tUSER_id,paybill,default_reply,email,username,sender_id)VALUES(?,?,?,?,?,?)";
 
             PreparedStatement ps = conn.prepareStatement(sql);
             // System.out.println("UserController ID : "+paybill.getUserid()+"Username:"+paybill.getName());
@@ -1128,7 +1132,7 @@ public class UserServiceImpl implements UserServiceApi {
 
             conn.close();
 
-            conn2 = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn2 = util.getConnectionTodbSMS();
             //System.out.print("wwwwwwwwwwwwwwwwwwwww");
             String sql2 = "INSERT INTO  tRULES(RuleName,RuleType,Filename,dest,ex_order)VALUES(?,?,?,?,7)";
             int ruletype = 1;
@@ -1164,8 +1168,9 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     public void updatePaybill(Paybill paybill, Connection conn) throws SQLException {
+        JdbcUtil util = new JdbcUtil();
         UserController user = null;
-        conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+        conn = util.getConnectionTodbPAYMENT();
         String sql = "UPDATE tUSERPAYBILL set paybill=?, reply=?, email=? where id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(4, paybill.getUserid());
@@ -1177,7 +1182,8 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     public int getUserId(Paybill paybill, Connection conn) throws SQLException {
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        JdbcUtil util = new JdbcUtil();
+        conn = util.getConnectionTodbSMS();
         String sql = "SELECT id from tUSER where username=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, paybill.getName());
@@ -1189,7 +1195,8 @@ public class UserServiceImpl implements UserServiceApi {
     }
 
     public static int getUserIdByUsername(String username, Connection conn) throws SQLException {
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        JdbcUtil util = new JdbcUtil();
+        conn = util.getConnectionTodbSMS();
         String sql = "SELECT id from tUSER where username=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
@@ -1205,14 +1212,15 @@ public class UserServiceImpl implements UserServiceApi {
 
     public void editPaybill(Paybill paybill, Connection conn)
             throws SQLException {
-        conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+        JdbcUtil util = new JdbcUtil();
+        conn = util.getConnectionTodbPAYMENT();
         String sql = "";
     }
 
     public static ArrayList<Paybill> getPayBill() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
-        Connection conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+        Connection conn = util.getConnectionTodbPAYMENT();
 
         String sql = "SELECT * FROM tUSERPAYBILL";
         if (!username.isEmpty()) {
@@ -1233,12 +1241,14 @@ public class UserServiceImpl implements UserServiceApi {
             bill.setName(rs.getString("username"));
             bill.setSender_id(rs.getString("sender_id"));
             paybilllist.add(bill);
+
         }
         return paybilllist;
     }
 
     public static ArrayList<Paybill> getPaybillUserId() throws SQLException {
-        Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        JdbcUtil util = new JdbcUtil();
+        Connection conn = util.getConnectionTodbSMS();
         String sql = "SELECT id FROM tUSER";
         PreparedStatement ps = conn.prepareStatement(sql);
         ArrayList<Paybill> paybillIdList = new ArrayList();
@@ -1257,8 +1267,9 @@ public class UserServiceImpl implements UserServiceApi {
         PreparedStatement pstmt = null;
         try {
             String sql = "Update tUSER set max_contacts=?,start_date=?,end_date=? where username=?";
+            JdbcUtil util = new JdbcUtil();
             //System.out.println("The querry" + sql);
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             pstmt = conn.prepareStatement(sql);
             // Bind values to the parameters
             pstmt.setInt(1, MaxContacts);
@@ -1321,12 +1332,13 @@ public class UserServiceImpl implements UserServiceApi {
 
     @Override
     public List<Alpnumeric> getUserAlphas(Connection conn, String name) {
+        JdbcUtil util = new JdbcUtil();
 //        String sqlReseller = "Select short_code, contactEmail from tSDP where agent_id= '" + user + "'";
         String sql = "Select id,username,alphanumeric, sid_type from tAllowedAlphanumerics  where username= '" + name + "'";
         // System.out.println("*******************" + sql);
         List<Alpnumeric> result = new ArrayList<>();
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -1339,9 +1351,9 @@ public class UserServiceImpl implements UserServiceApi {
 
                 result.add(alpha);
             }
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException ex) {
-            System.out.println("Sql exception occured " + ex);
+            JdbcUtil.printSQLException(ex);
         }
 
         return result;
@@ -1367,7 +1379,8 @@ public class UserServiceImpl implements UserServiceApi {
             String testBedNumbers = callback.getTestbednumbers();
             callback.setTestbednumbers(formatNumbers(testBedNumbers));
 
-            conn = HikariJDBCDataSource.getConnectionTodbUSSD();
+            JdbcUtil util = new JdbcUtil();
+            conn = util.getConnectionTodbUSSD();
             String sql = "INSERT INTO tSharedUssdClients(tuser_id,callback_url,"
                     + "ussd_assigned_code,status,testbedmobiles,type)VALUES(?,?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1389,7 +1402,8 @@ public class UserServiceImpl implements UserServiceApi {
 
     public static ArrayList<CallBack> getCallBack() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
-        Connection conn = HikariJDBCDataSource.getConnectionTodbUSSD();
+        JdbcUtil util = new JdbcUtil();
+        Connection conn = util.getConnectionTodbUSSD();
 
         String sql = "SELECT * FROM tSharedUssdClients";
         if (!username.isEmpty()) {
@@ -1417,7 +1431,8 @@ public class UserServiceImpl implements UserServiceApi {
 
     public static ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
-        Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL();
+        JdbcUtil util = new JdbcUtil();
+        Connection conn = util.getConnectionTodbEMAIL();
 
         String sql = "select * from tEMAILPRICING te";
         PreparedStatement ps = conn.prepareStatement(sql);

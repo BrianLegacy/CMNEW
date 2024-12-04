@@ -12,7 +12,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
@@ -28,7 +27,7 @@ public class CustomCallBackCodeValidator {
         String inputValue = (String) value;
         try{
             JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             LOG.info("validate");
         UserServiceImpl service = new UserServiceImpl();
         UserController user = service.loadCustomerByUsername(inputValue, conn);

@@ -40,7 +40,7 @@ import org.mspace.clientmanager.credits.services.ManageCreditImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -117,7 +117,7 @@ public class UserController implements Serializable {
     private int emailPlan = 1;
     private Connection conn = null;
     List<SelectItem> selectItems;
-//    final JdbcUtil util = new JdbcUtil();
+    final JdbcUtil util = new JdbcUtil();
     private static final Logger LOG = Logger.getLogger(UserController.class.getName());
     @ManagedProperty(value = "#{facePainter}")
     public FacePainter facePainter;
@@ -191,15 +191,14 @@ public class UserController implements Serializable {
 //        return selectItems;
 //    }
 
-    public List<SelectItem> getComboGroups() throws SQLException {
+    public List<SelectItem> getComboGroups() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         selectItems = new ArrayList();
         List<SelectItem> mygroups = new ArrayList<>();
 
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         mygroups = asi.getGroups(conn);
-        
-        conn.close();
+        JdbcUtil.closeConnection(conn);
 
         return mygroups;
     }
@@ -211,43 +210,37 @@ public class UserController implements Serializable {
         return types;
     }
 
-    public List<String> getAirComboAlphanumerics() throws SQLException {
-        try {
-            AlphaServiceImpl asi = new AlphaServiceImpl();
-            List<String> myAlphanumerics = new ArrayList<>();
-            
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
-            myAlphanumerics = asi.getAirTelAlphas(conn);
-            conn.close();
-            
-            return myAlphanumerics;
-        } catch (SQLException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-            conn.close();
-        }
-        return null;
-    }
-
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    public List<String> getUnusignedAlphanumerics() throws SQLException {
+    public List<String> getAirComboAlphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
         List<String> myAlphanumerics = new ArrayList<>();
 
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
-        myAlphanumerics = asi.getUnusagnedphanumericsNames(conn);
-        conn.close();
+        conn = util.getConnectionTodbSMS();
+        myAlphanumerics = asi.getAirTelAlphas(conn);
+        JdbcUtil.closeConnection(conn);
 
         return myAlphanumerics;
     }
 
-    public void addResellerALphanumerics() throws SQLException {
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    public List<String> getUnusignedAlphanumerics() {
+        AlphaServiceImpl asi = new AlphaServiceImpl();
+        List<String> myAlphanumerics = new ArrayList<>();
+
+        conn = util.getConnectionTodbSMS();
+        myAlphanumerics = asi.getUnusagnedphanumericsNames(conn);
+        JdbcUtil.closeConnection(conn);
+
+        return myAlphanumerics;
+    }
+
+    public void addResellerALphanumerics() {
         AlphaServiceImpl asi = new AlphaServiceImpl();
 
         List<String> myAlphanumerics = new ArrayList<>();
 
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
 //            asi.updateAgentAlphas(username, alphanumeric, conn);
-        conn.close();
+        JdbcUtil.closeConnection(conn);
 
 //        return myAlphanumerics;
     }
@@ -549,7 +542,7 @@ public class UserController implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", smsCredits=" + smsCredits + ", emailCredits=" + emailCredits + ", organization=" + organization + ", userMobile=" + userMobile + ", userEmail=" + userEmail + ", comboAlphanumerics=" + comboAlphanumerics + ", startDate=" + startDate + ", endDate=" + endDate + ", enableEmailAlertWhenCreditOver=" + enableEmailAlertWhenCreditOver + ", reseller=" + reseller + ", selectedUsername=" + selectedUsername + ", previousUsername=" + previousUsername + ", message=" + message + ", alphanumeric=" + alphanumeric + ", group=" + group + ", selectedGroup=" + selectedGroup + ", airalphanumeric=" + airalphanumeric + ", alphaId=" + alphaId + ", creditsToManage=" + creditsToManage + ", emailCreditsToManage=" + emailCreditsToManage + ", admin=" + admin + ", userType=" + userType + ", createAccount=" + createAccount + ", creditManageType=" + creditManageType + ", simpleStatistics=" + simpleStatistics + ", alertThreshold=" + alertThreshold + ", arrears=" + arrears + ", cost_per_sms=" + cost_per_sms + ", maxContacts=" + maxContacts + ", maxTotal=" + maxTotal + ", firstName=" + firstName + ", surName=" + surName + ", emailPlan=" + emailPlan + ", conn=" + conn + ", util=" + ", facePainter=" + facePainter + ", selectItems=" + selectItems + ", impl=" + impl + ", us=" + us + ", ab=" + ab + '}';
+        return "User{" + "id=" + id + ", username=" + username + ", password=" + password + ", smsCredits=" + smsCredits + ", emailCredits=" + emailCredits + ", organization=" + organization + ", userMobile=" + userMobile + ", userEmail=" + userEmail + ", comboAlphanumerics=" + comboAlphanumerics + ", startDate=" + startDate + ", endDate=" + endDate + ", enableEmailAlertWhenCreditOver=" + enableEmailAlertWhenCreditOver + ", reseller=" + reseller + ", selectedUsername=" + selectedUsername + ", previousUsername=" + previousUsername + ", message=" + message + ", alphanumeric=" + alphanumeric + ", group=" + group + ", selectedGroup=" + selectedGroup + ", airalphanumeric=" + airalphanumeric + ", alphaId=" + alphaId + ", creditsToManage=" + creditsToManage + ", emailCreditsToManage=" + emailCreditsToManage + ", admin=" + admin + ", userType=" + userType + ", createAccount=" + createAccount + ", creditManageType=" + creditManageType + ", simpleStatistics=" + simpleStatistics + ", alertThreshold=" + alertThreshold + ", arrears=" + arrears + ", cost_per_sms=" + cost_per_sms + ", maxContacts=" + maxContacts + ", maxTotal=" + maxTotal + ", firstName=" + firstName + ", surName=" + surName + ", emailPlan=" + emailPlan + ", conn=" + conn + ", util=" + util + ", facePainter=" + facePainter + ", selectItems=" + selectItems + ", impl=" + impl + ", us=" + us + ", ab=" + ab + '}';
     }
 
     UserServiceImpl impl = new UserServiceImpl();
@@ -558,14 +551,14 @@ public class UserController implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("ControlPage.jsf");
     }
 
-    public void manageCredit() throws IOException, SQLException {
+    public void manageCredit() throws IOException {
         ManageCreditImpl mcr = new ManageCreditImpl();
         char adminv = mcr.admiValue();
 
         AlphaScroller ac = new AlphaScroller();
         UserScroller us = new UserScroller();
         String agent = ac.currentUSer();
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         int current = Math.round(us.availableCredits(conn)[0]);
 
         CreditRequestObject creditRequestObject = new CreditRequestObject.Builder()
@@ -586,10 +579,11 @@ public class UserController implements Serializable {
         manageCreditsOperations.execute(creditRequestObject);
         this.updateAdminBal();
 
-        conn.close();
+        JdbcUtil.closeConnection(conn);
+
     }
 
-    public void manageEmailCredit() throws IOException, SQLException {
+    public void manageEmailCredit() throws IOException {
         ManageCreditImpl mcr = new ManageCreditImpl();
         char adminv = mcr.admiValue(); //get value for the one in session
 
@@ -597,7 +591,7 @@ public class UserController implements Serializable {
         UserScroller us = new UserScroller();
         try {
             String agent = ac.currentUSer();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             int current = Math.round(us.availableCredits(conn)[2]);
             SMSCredits smsCredit = new SMSCredits();
             ManageCreditApi creditManager = new ManageCreditImpl();
@@ -667,31 +661,25 @@ public class UserController implements Serializable {
                     break;
             }
             updateEmailAdminBal();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         }
         // FacesContext.getCurrentInstance().getExternalContext().redirect(toRedirect);
     }
 
     public void updateAdminBal() {
-        System.out.println("inside update admin bal");
         AlphaScroller ac = new AlphaScroller();
-        String sql = "UPDATE dbSMS.tUSER set max_total = '-1' where admin=1";
-        try (Connection con = HikariJDBCDataSource.getConnectionTodbSMS();){
-//            System.out.println("inside update admin initial try");
-
-                Statement st = con.createStatement();
-                System.out.println(sql);
-                st.executeUpdate(sql);
-                System.out.println("Upating the " + sql);
-             System.out.println("inside update admin try");
-
-             con.close();
+        String sql = "UPDATE tUSER set max_total = '-1' where admin=1";
+        JdbcUtil util = new JdbcUtil();
+        try {
+            Connection con = util.getConnectionTodbSMS();
+            Statement st = con.createStatement();
+            //System.out.println(sql);
+            st.executeUpdate(sql);
+            //System.out.println("Upating the ");
 
         } catch (SQLException ex) {
-              System.out.println("inside update admin try");
-
             Logger.getLogger(UserController.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -701,15 +689,14 @@ public class UserController implements Serializable {
     public void updateEmailAdminBal() {
         AlphaScroller ac = new AlphaScroller();
         String sql = "UPDATE tUSER set max_contacts = '-1' where admin=1";
-//        JdbcUtil util = new JdbcUtil();
+        JdbcUtil util = new JdbcUtil();
         try {
-            try (Connection con = HikariJDBCDataSource.getConnectionTodbSMS()) {
-                Statement st = con.createStatement();
-                //System.out.println(sql);
-                st.executeUpdate(sql);
-                //System.out.println("Upating the ");
-            }
-            
+            Connection con = util.getConnectionTodbSMS();
+            Statement st = con.createStatement();
+            //System.out.println(sql);
+            st.executeUpdate(sql);
+            //System.out.println("Upating the ");
+
         } catch (SQLException ex) {
             Logger.getLogger(UserController.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -762,7 +749,7 @@ public class UserController implements Serializable {
         return "/manager/viewUserperAgent.jsp";
     }
 
-    public void validateCredits(FacesContext context, UIComponent component, Object value) throws SQLException {
+    public void validateCredits(FacesContext context, UIComponent component, Object value) {
         char adminv = '0';
         int resellerBalance = 0;
         AlphaScroller ac = new AlphaScroller();
@@ -771,7 +758,7 @@ public class UserController implements Serializable {
         int current = Math.round(us.availableCredits(conn)[0]);
         String getRes = "SELECT admin,max_total from tUSER where username='" + agent + "'";
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
 
@@ -782,9 +769,7 @@ public class UserController implements Serializable {
                 //System.out.println("THE ADMIN VALUE IS  :" + adminv);
 
             }
-            conn.close();
         } catch (Exception e) {
-            conn.close();
         }
         //if 
         if (Integer.valueOf(value.toString()) > resellerBalance && adminv != '1') {
@@ -795,13 +780,13 @@ public class UserController implements Serializable {
 
     }
 
-    public void saveEmailUser() throws IOException, SQLException {
+    public void saveEmailUser() throws IOException {
 
         AlphaServiceImpl asi = new AlphaServiceImpl();
 
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         this.setSelectedGroup(asi.getGroup(group, conn));
-        conn.close();
+        JdbcUtil.closeConnection(conn);
 
         char adminv = '0';
         int resellerBalance = 0;
@@ -811,7 +796,7 @@ public class UserController implements Serializable {
         String agent = ac.currentUSer();
         String getRes = "SELECT admin,max_contacts from tUSER where username='" + agent + "'";
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
 
@@ -861,24 +846,21 @@ public class UserController implements Serializable {
             userService.updateCredits(username, credits.getNumCredits(), conn);
             this.updateEmailAdminBal();
             clearAll();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
     }
 //    
 ////    
 
-    public void saveUser() throws IOException, SQLException {
+    public void saveUser() throws IOException {
 
-        System.out.println("inside save user");
         AlphaServiceImpl asi = new AlphaServiceImpl();
 
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         this.setSelectedGroup(asi.getGroup(group, conn));
-        conn.close();
-
-        System.out.println("selectedGroup");
+        JdbcUtil.closeConnection(conn);
 
         char adminv = '0';
         int resellerBalance = 0;
@@ -889,7 +871,7 @@ public class UserController implements Serializable {
         int current = Math.round(us.availableCredits(conn)[0]);
         String getRes = "SELECT admin,max_total from tUSER where username='" + agent + "'";
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
 
@@ -899,9 +881,6 @@ public class UserController implements Serializable {
                 resellerBalance = rs.getInt("max_total");
 
             }
-            
-           System.out.println("inside save user method");
-
 
             UserServiceApi service = new UserServiceImpl();
             ManageCreditApi creditManager = new ManageCreditImpl();
@@ -950,9 +929,9 @@ public class UserController implements Serializable {
             userService.updateCredits(username, credits.getNumCredits(), conn);
             this.updateAdminBal();
             clearAll();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
     }
 //    end added code
@@ -962,9 +941,9 @@ public class UserController implements Serializable {
     }
 
     //=======================================================================================
-    public void saveReseller() throws IOException, SQLException {
+    public void saveReseller() throws IOException {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("saveUser");
             UserServiceApi service = new UserServiceImpl();
             ManageCreditApi creditManager = new ManageCreditImpl();
@@ -1010,18 +989,17 @@ public class UserController implements Serializable {
             JsfUtil.addSuccessMessage("Reseller saved successfully.");
 
             clearAll();
-            conn.close();
-                        
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
     }
 //=======================================================================================
 
-    public void updateUser() throws SQLException {
+    public void updateUser() {
 
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("updateUser");
             UserServiceApi service = new UserServiceImpl();
             AlphaServiceApi alphaService = new AlphaServiceImpl();
@@ -1032,16 +1010,15 @@ public class UserController implements Serializable {
             alphaService.updateAlphaByUsername(previousUsername, username, conn);
             service.updateUser(this, conn);
             JsfUtil.addSuccessMessage("User info updated succssfully.");
-            conn.close();
-                                    
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
     }
 
-    public void fullProfile() throws SQLException {
+    public void fullProfile() {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             UserServiceApi userService = new UserServiceImpl();
             UserController aUser = userService.loadCustomerByUsername(username, conn);
             this.id = aUser.getId();
@@ -1051,22 +1028,22 @@ public class UserController implements Serializable {
             this.password = aUser.getPassword();
             this.smsCredits = aUser.getSmsCredits();
             this.organization = aUser.getOrganization();
-            conn.close();
-                        
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
-//            JdbcUtil.printSQLException(e);
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
 
     }
 
     public void generateXSL() {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("generateXSL");
             UserServiceApi service = new UserServiceImpl();
             service.generateXSL(conn);
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException e) {
+            JdbcUtil.printSQLException(e);
         }
     }
 

@@ -5,7 +5,6 @@
  */
 package ke.co.mspace.nonsmppmanager.invalids;
 
-import com.zaxxer.hikari.HikariDataSource;
 import ke.co.mspace.nonsmppmanager.invalids.Tuser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,10 +22,9 @@ import java.util.logging.Level;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
 
 /**
@@ -35,7 +33,7 @@ import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
  */
 public class tuserimplementor implements tuserinterface {
 
-//    private final JdbcUtil util = new JdbcUtil();
+    private final JdbcUtil util = new JdbcUtil();
     Logger logger = LoggerFactory.getLogger(tuserimplementor.class);
     Encryption sha256Encryption = new Sha256Encryption();
     Calendar calendar = Calendar.getInstance();
@@ -91,11 +89,11 @@ public Tuser getUserJDBC(String username, String password) {
     int encrypted = encryptionLogin();
 
     try {
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         PreparedStatement pst = conn.prepareStatement(jdbcSql);
         pst.setString(1, username);
         ResultSet rs = pst.executeQuery();
-        
+
         if (rs.next()) {
             String dbPassword = rs.getString("password");
 
@@ -140,8 +138,6 @@ public Tuser getUserJDBC(String username, String password) {
                 pst2.setString(1, username);
                 pst2.setString(2, dbPassword); // Note: should match the stored password
                 pst2.execute();
-                System.out.println("Login successfull");
-
             } else {
                 FacesMessage message = new FacesMessage("Not Successful", " Either your Username or password is invalid");
                 FacesContext.getCurrentInstance().addMessage(null, message);
@@ -153,22 +149,21 @@ public Tuser getUserJDBC(String username, String password) {
             return null;
         }
 
-//        JdbcUtil.closeConnection(conn);
+        JdbcUtil.closeConnection(conn);
 
     } catch (Exception m) {
         FacesMessage message = new FacesMessage("Not Successful", " Either your Username or password is invalid");
         FacesContext.getCurrentInstance().addMessage(null, message);
-        System.out.println("Invalid login credentials");
 
         m.printStackTrace();
-//        JdbcUtil.closeConnection(conn);
+        JdbcUtil.closeConnection(conn);
     }
     System.out.println("Returning user");
     return u;
 }
 
 private int encryptionLogin() {
-    try (Connection con = HikariJDBCDataSource.getConnectionTodbTask(); PreparedStatement ps = con.prepareStatement("SELECT encryptedlogin FROM dbTASK.tClient LIMIT 1")) {
+    try (Connection con = util.getConnectionTodbTask(); PreparedStatement ps = con.prepareStatement("SELECT encryptedlogin FROM dbTASK.tClient LIMIT 1")) {
         ResultSet rs = ps.executeQuery();
         int result = 0;
         if (rs.next()) {
@@ -197,17 +192,18 @@ private int encryptionLogin() {
 //        Session session = getSessionFactory().openSession();
         Connection conn = null;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             String sql = "update tUSER   set logged_in=0, logged_in_time='" + ourJavaTimestampObject + "' where username =? and id= ?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, user);
             pst.setLong(2, id);
             pst.execute();
-            conn.close();
+            JdbcUtil.closeConnection(conn);
 
         } catch (SQLException e) {
             e.printStackTrace();
+            JdbcUtil.closeConnection(conn);
         }
 
     }
@@ -217,7 +213,7 @@ private int encryptionLogin() {
         Connection conn = null;
         boolean result = false;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbTask();
+            conn = util.getConnectionTodbTask();
             String sql = "select id from tClient  where id != 0";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -231,10 +227,11 @@ private int encryptionLogin() {
                 }
             }
 
-           conn.close();
+            JdbcUtil.closeConnection(conn);
 
         } catch (SQLException e) {
             e.printStackTrace();
+            JdbcUtil.closeConnection(conn);
         }
         return result;
 

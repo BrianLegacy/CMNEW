@@ -13,7 +13,7 @@ import ke.co.mspace.nonsmppmanager.model.EmailCredits;
 
 import org.mspace.clientmanager.credits.model.SMSCredits;
 import ke.co.mspace.nonsmppmanager.service.AlphaScroller;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
  *
@@ -21,6 +21,7 @@ import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
  */
 public class ManageCreditImpl implements ManageCreditApi {
 
+    JdbcUtil util = new JdbcUtil();
     Connection conn = null;
     private static final Logger LOG = Logger.getLogger(ManageCreditImpl.class.getName());
 
@@ -36,7 +37,7 @@ public class ManageCreditImpl implements ManageCreditApi {
             String agent = ac.currentUSer();
             String getRes = "SELECT admin from tUSER where username='" + agent + "'";
 
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement t = conn.createStatement();
             ResultSet rs = t.executeQuery(getRes);
             while (rs.next()) {
@@ -152,7 +153,7 @@ public class ManageCreditImpl implements ManageCreditApi {
             //pstmt.setString(6,adminv==1?user:user);
             pstmt1.setString(6, user);
             pstmt1.setString(7, "ClientManager");
-            boolean count1 = pstmt1.execute();
+//            boolean count1 = pstmt1.execute();
             PreparedStatement pstmt = conn.prepareStatement(sql);
             // Bind values to the parameters
             pstmt.setString(1, smsCredits.getUsername());

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -112,7 +111,7 @@ public class Alpha {
     public List<Alpha> listAlphas() {
         List<Alpha> alphas = null;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("listAlphas");
             AlphaServiceApi alphaService = new AlphaServiceImpl();
             alphas = alphaService.getAllAlphanumerics(conn);
@@ -137,7 +136,7 @@ public class Alpha {
     public void persistAlpha() {
         LOG.info("PERSIST ALPHA");
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             AlphaServiceImpl service = new AlphaServiceImpl();
             LOG.info("persistAlphas");
             String alphaType = service.getAlphanumericType(name, conn);
@@ -153,7 +152,7 @@ public class Alpha {
 
         Alpha anAlpha = null;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("loadAlphaByUsername");
             AlphaServiceImpl service = new AlphaServiceImpl();
             anAlpha = service.loadAlphanumericByUsername(username, conn);
@@ -171,7 +170,7 @@ public class Alpha {
 
     public void saveOrUpdateAlpha() {
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("listAlphas");
             AlphaServiceImpl service = new AlphaServiceImpl();
 

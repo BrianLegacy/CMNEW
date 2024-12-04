@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class client_logo implements Serializable {
     private Tclient tclient;
     private String userType = "show";
     private String footer;
-//    private final JdbcUtil util = new JdbcUtil();
+    private final JdbcUtil util = new JdbcUtil();
 
     public void init() {
         Tclient k = new Tclient();
@@ -66,19 +66,16 @@ public class client_logo implements Serializable {
         Connection conn = null;
         boolean result = false;
         try {
-            System.out.println("inside getSystemType before establishing connection todbTask");
-            conn = HikariJDBCDataSource.getConnectionTodbTask();
-            
-            System.out.println("client_logo connection: " + conn);
-            System.out.println("inside getSystemType after establishing connection todbTask");
-            String sql = "select * from dbTASK.tClient";
+//            System.out.println("inside get before system");
+            conn = util.getConnectionTodbTask();
+//            System.out.println("inside get after system");
+            String sql = "select * from tClient";
             System.out.println("testing type");
             PreparedStatement pst = conn.prepareStatement(sql);
 
             final ResultSet rs = pst.executeQuery();
             if (rs.next()) {
 
-                System.out.println("tClient data found!");
                 tclient.setId(rs.getInt("id"));
                 tclient.setClientName(rs.getString("clientName"));
                 tclient.setPicPath(rs.getString("picPath"));
@@ -87,17 +84,14 @@ public class client_logo implements Serializable {
                 logopath = tclient.getPicPath();
                 String lsystem_type = tclient.getSystemType();
                 userType = lsystem_type.equalsIgnoreCase("integrated") ? "none" : "show";
-            }else{
-                System.out.println("client_logo data not found!");
             }
-            
-            conn.close();
+            JdbcUtil.closeConnection(conn);
 
         } catch (SQLException e) {
             logopath = "../files/config/MSpacelogo.png";
-            System.out.println("An exception occured while trying to connect to dbTask " + e);
 //            e.printStackTrace();
 //uncomment create conn in dbtask connection
+            JdbcUtil.closeConnection(conn);
         }
         return tclient;
     }
@@ -138,7 +132,7 @@ public class client_logo implements Serializable {
         Connection conn = null;
         boolean result = false;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbTask();
+            conn = util.getConnectionTodbTask();
             String sql = "select * from tClient";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -155,12 +149,12 @@ public class client_logo implements Serializable {
                 String lsystem_type = tclient.getSystemType();
                 userType = lsystem_type.equalsIgnoreCase("integrated") ? "none" : "show";
             }
+            JdbcUtil.closeConnection(conn);
 
-            conn.close();
         } catch (SQLException e) {
             logopath = "../files/config/MSpacelogo.png";
 //            e.printStackTrace();
-
+            JdbcUtil.closeConnection(conn);
         }
 
         return logopath;
@@ -171,7 +165,7 @@ public class client_logo implements Serializable {
         Connection conn = null;
         boolean result = false;
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbTask();
+            conn = util.getConnectionTodbTask();
             String sql = "select * from tClient";
 
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -188,11 +182,12 @@ public class client_logo implements Serializable {
                 String lsystem_type = tclient.getSystemType();
                 userType = lsystem_type.equalsIgnoreCase("integrated") ? "none" : "show";
             }
-            conn.close();
+            JdbcUtil.closeConnection(conn);
 
         } catch (SQLException e) {
             logopath = "../files/config/MSpacelogo.png";
 //            e.printStackTrace();
+            JdbcUtil.closeConnection(conn);
         }
 
         return logopath;
@@ -204,9 +199,9 @@ public class client_logo implements Serializable {
 //        String smsserver = "https://mspace.co.ke";
         ///String smsserver = "http://smsgateway.mspace.co.ke:8080";
         String reseller_logopath = "";
-        String sql = "SELECT * FROM dbTASK.tClient WHERE clientName = ?";
+        String sql = "SELECT * FROM tClient WHERE clientName = ?";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbTask(); PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbTask(); PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, username);
             try (ResultSet rs = pst.executeQuery()) {

@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import ke.co.mspace.nonsmppmanager.model.tLargeFileExport;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
@@ -223,7 +222,7 @@ File fileDir = new File("/files/SMSBulkReports/");
         String username="";
        JdbcUtil jdbcUtil=new JdbcUtil();
         try {
-            Connection con=HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection con=jdbcUtil.getConnectionTodbSMS();
             ResultSet rs=con.prepareStatement("select username from tUSER where id="+loggedID).executeQuery();
             rs.next();
           username= rs.getString("username");

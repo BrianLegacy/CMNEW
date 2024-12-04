@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ke.co.mspace.nonsmppmanager.model.EmailOut;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -50,7 +49,8 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
         List<EmailOut> results = new ArrayList<>();
 
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL(); PreparedStatement pstmt = conn.prepareStatement(sqlmain)) {
+        try (Connection conn = jdbcUtil
+                .getConnectionTodbEMAIL(); PreparedStatement pstmt = conn.prepareStatement(sqlmain)) {
             try (ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
@@ -113,7 +113,7 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
                 + "AND dbEMAIL.tEMAILOUT.timesubmitted BETWEEN '" + startDate + "'\n"
                 + "AND '" + endDate + "'";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL(); PreparedStatement pstmt = conn.prepareStatement(sqlcountmain)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbEMAIL(); PreparedStatement pstmt = conn.prepareStatement(sqlcountmain)) {
             try (ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {

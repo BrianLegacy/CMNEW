@@ -22,7 +22,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceApi;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 
@@ -288,7 +287,7 @@ public class OPTOut implements Serializable {
         List<OPTOut> report = null;
         try {
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             LOG.info("smsOutReport");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -318,7 +317,7 @@ public class OPTOut implements Serializable {
         Connection conn = null;
         try {
 
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("smsOutReport2");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -363,7 +362,7 @@ public class OPTOut implements Serializable {
         try {
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("smsOutReoport3");
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -408,7 +407,7 @@ public class OPTOut implements Serializable {
             try {
                 Connection conn = null;
                 JdbcUtil util = new JdbcUtil();
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
 
                 LOG.info("generateXLSX");
 
@@ -436,7 +435,7 @@ public class OPTOut implements Serializable {
             try {
                 Connection conn = null;
                 final JdbcUtil util = new JdbcUtil();
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 LOG.info("getSMPPUsernames");
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 output = service.getSMPPUsernames(conn);

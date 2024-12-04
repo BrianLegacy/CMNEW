@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
@@ -84,7 +83,7 @@ public class ResetPassword implements Serializable {
     public void resetPassword() {
         String sql = "Select email_address, contact_number from tUSER where username = '" + username + "'";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = util.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (!rs.next()) {
                 JsfUtil.addErrorMessage("User does not exist");
                 return;
@@ -132,7 +131,7 @@ public class ResetPassword implements Serializable {
         String sql = "insert into tEMAILOUT (emailSrc, emailTo, emailReplyTo, emailBody, subject, user) "
                 + " values(?,?,?,?,?,?)";
         int result = 0;
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbEMAIL(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, emailSource);
             ps.setString(2, userEmail);
             ps.setString(3, emailReplyTo);
@@ -218,7 +217,7 @@ public class ResetPassword implements Serializable {
         String sql = "insert into tEMAILOUT (emailSrc, emailTo, emailReplyTo, emailBody, subject, user) "
                 + " values(?,?,?,?,?,?)";
 
-        try (Connection conn = HikariJDBCDataSource.getConnectionTodbEMAIL(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = util.getConnectionTodbEMAIL(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, emailSource);
             ps.setString(2, accountantEmail);
             ps.setString(3, emailReplyTo);

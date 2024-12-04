@@ -24,7 +24,6 @@ import javax.faces.context.FacesContext;
 import ke.co.mspace.export.LargeFileExport;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceApi;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.slf4j.LoggerFactory;
@@ -356,7 +355,7 @@ public class SMPPOut implements Serializable {
         List<SMPPOut> report = null;
         try {
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -407,7 +406,7 @@ public class SMPPOut implements Serializable {
         Connection conn = null;
         try {
 
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -451,7 +450,7 @@ public class SMPPOut implements Serializable {
         try {
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -499,7 +498,7 @@ public class SMPPOut implements Serializable {
             try {
                 Connection conn = null;
                 JdbcUtil util = new JdbcUtil();
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
 
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -525,7 +524,7 @@ public class SMPPOut implements Serializable {
             try {
                 Connection conn = null;
                 final JdbcUtil util = new JdbcUtil();
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 output = service.getSMPPUsernames(conn);
                 JdbcUtil.closeConnection(conn);
@@ -551,7 +550,7 @@ public class SMPPOut implements Serializable {
     }
         public void executeReport() {
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
             LargeFileExport export = new LargeFileExport();
             export.checkSmsList(conn, "SMS OUT REPORT");
@@ -580,7 +579,7 @@ public  int smppSummarySMS(){
         int summarycount=0;
         try {
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);

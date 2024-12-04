@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 
 /**
@@ -39,7 +38,7 @@ public class PageController {
         try {
              Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
         } catch (SQLException ex) {
             Logger.getLogger(PageController.class.getName()).log(Level.SEVERE, null, ex);
         }

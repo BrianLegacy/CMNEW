@@ -31,7 +31,6 @@ import ke.co.mspace.export.LargeFileExport;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceApi;
 import ke.co.mspace.nonsmppmanager.service.SMSOutServiceImpl;
 import ke.co.mspace.nonsmppmanager.service.UserScroller;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
 import org.primefaces.PrimeFaces;
@@ -446,7 +445,7 @@ public class SMSOut implements Serializable {
         try {
 //            System.out.println("processing began");
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -496,7 +495,7 @@ public class SMSOut implements Serializable {
         int summarycount = 0;
         try {
             final JdbcUtil util = new JdbcUtil();
-            Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -544,7 +543,7 @@ public class SMSOut implements Serializable {
 //        System.out.println("Execute Report....generate");
 
         final JdbcUtil util = new JdbcUtil();
-        Connection conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        Connection conn = util.getConnectionTodbSMS();
         //int rows = (Integer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("rowSize");
         LargeFileExport export = new LargeFileExport();
         export.checkSmsList(conn, "SMS OUT REPORT");
@@ -558,7 +557,7 @@ public class SMSOut implements Serializable {
         Connection conn = null;
         try {
 
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -602,7 +601,7 @@ public class SMSOut implements Serializable {
         try {
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             String startDate = simpleDateFormat.format(reportStartDate);
@@ -650,7 +649,7 @@ public class SMSOut implements Serializable {
         try {
             Connection conn = null;
             JdbcUtil util = new JdbcUtil();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             SMSOutServiceApi service = new SMSOutServiceImpl();
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -670,7 +669,7 @@ public class SMSOut implements Serializable {
 
         Connection conn = null;
         JdbcUtil util = new JdbcUtil();
-        conn = HikariJDBCDataSource.getConnectionTodbSMS();
+        conn = util.getConnectionTodbSMS();
         SMSOutServiceApi service = new SMSOutServiceImpl();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -713,7 +712,7 @@ public class SMSOut implements Serializable {
         Statement stmt = null;
         try {
             final JdbcUtil util = new JdbcUtil();
-            con = HikariJDBCDataSource.getConnectionTodbSMS();
+            con = util.getConnectionTodbSMS();
             stmt = con.createStatement();
             String fetch = "SELECT username from dbSMS.tUSER where admin !='5' and agent ='email' order by username asc";
             String fetchForReseller = "SELECT username from dbSMS.tUSER where  admin ='3' and agent ='email' ";
@@ -739,7 +738,7 @@ public class SMSOut implements Serializable {
         Statement stmt = null;
         try {
             final JdbcUtil util = new JdbcUtil();
-            con = HikariJDBCDataSource.getConnectionTodbSMS();
+            con = util.getConnectionTodbSMS();
             stmt = con.createStatement();
             String sql = "SELECT distinct username from dbSMS.tManageCredits where username  is not null  group by username";
             String sqlReseller = "select distinct t.username from tManageCredits t inner join tUSER u on "
@@ -766,7 +765,7 @@ public class SMSOut implements Serializable {
             try {
                 Connection conn = null;
                 final JdbcUtil util = new JdbcUtil();
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 SMSOutServiceApi service = new SMSOutServiceImpl();
                 output = service.getUsernames(conn);
                 JdbcUtil.closeConnection(conn);
@@ -801,7 +800,7 @@ public class SMSOut implements Serializable {
         Statement stmt = null;
         try {
             final JdbcUtil util = new JdbcUtil();
-            con = HikariJDBCDataSource.getConnectionTodbSMS();
+            con = util.getConnectionTodbSMS();
             stmt = con.createStatement();
             String fetch = "SELECT username from dbSMS.tUSER where admin='5'";
             String fetchForReseller = "SELECT username from dbSMS.tUSER where agent = '" + user_id + "' and admin !=3 ";

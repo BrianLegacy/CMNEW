@@ -41,7 +41,7 @@ import ke.co.mspace.nonsmppmanager.model.Paybill;
 import org.mspace.clientmanager.user.UserController;
 import ke.co.mspace.nonsmppmanager.model.UserProfile;
 import ke.co.mspace.nonsmppmanager.model.creditRecord;
-import ke.co.mspace.nonsmppmanager.util.HikariJDBCDataSource;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
 //import org.richfaces.component.UIScrollableDataTable;
@@ -65,6 +65,7 @@ public class EmailUserScroller {
     private UserController currentItem = new UserController();
     private Paybill currentItem1 = new Paybill();
     private CallBack currentItem2=new CallBack();
+    private final JdbcUtil util = new JdbcUtil();
     private final UserProfile userProfile = UserServiceImpl.getUserProfile();
     Connection conn = null;
     Connection conn2 = null;
@@ -274,7 +275,7 @@ public class EmailUserScroller {
                 JsfUtil.addErrorMessage("Agent or Alpha not Selected ");
                 //System.out.println("Please select analpha");
             } else {
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 LOG.info("saveOrUpdateAlpha - UserScroller");
                 AlphaServiceImpl service = new AlphaServiceImpl();
                 service.updateAgentAlphas(this.UserID(), selectedAlpha, conn);
@@ -294,7 +295,7 @@ public class EmailUserScroller {
         try {
             String sql = "SELECT username from tAllowedAlphanumerics where username='" + agent + "'";
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
@@ -352,27 +353,27 @@ public class EmailUserScroller {
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("close connection");
+                    JdbcUtil.printSQLException(e);
                 }
             } else {
                 allUsers = null;
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUsers(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    conn.close();
+                    JdbcUtil.printSQLException(e);
                 }
             }
         }
@@ -426,7 +427,7 @@ public class EmailUserScroller {
         if (alphanumeric != null) {
             System.out.println("Alpah to delete: " + alphanumeric);
             try {
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 userAlphas = new ArrayList<>();
                 AlphaServiceApi userService = new AlphaServiceImpl();
                 
@@ -434,9 +435,9 @@ public class EmailUserScroller {
                     JsfUtil.addSuccessMessage("Sender ID " + alphanumeric + " removed successfully");
                 }
                // LOG.info("ALL ALPHAS EMPTY | NULL");
-                
+                JdbcUtil.closeConnection(conn);
             } catch (SQLException e) {
-                System.out.println("An sql error has occured " + e);
+                JdbcUtil.printSQLException(e);
             }
         }
         
@@ -445,7 +446,8 @@ public class EmailUserScroller {
     public String lastInsert() throws SQLException {
         String lname = "";
         UserServiceImpl us = new UserServiceImpl();
-        Connection con = HikariJDBCDataSource.getConnectionTodbSMS();
+        JdbcUtil obj = new JdbcUtil();
+        Connection con = obj.getConnectionTodbSMS();
         int id = us.getAutoId(con);
         int next = id + 1;
         
@@ -476,28 +478,28 @@ public class EmailUserScroller {
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An exception has occured " + e);
+                    JdbcUtil.printSQLException(e);
                 }
             } else {
                 allUsers = null;
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An sql exception has occured");
+                    JdbcUtil.printSQLException(e);
                 }
             }
         }
@@ -509,28 +511,28 @@ public class EmailUserScroller {
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An exception has occured " + e);
+                    JdbcUtil.printSQLException(e);
                 }
             } else {
                 allUsers = null;
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getLastCreated(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An exception has occured");
+                    JdbcUtil.printSQLException(e);
                 }
             }
         }
@@ -541,29 +543,29 @@ public class EmailUserScroller {
         synchronized (this) {
             if (allUsersC == null || allUsersC.isEmpty()) {
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsersC = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsersC = userService.getAllUsersCred(conn, userS);
                     System.out.println("test1: " + allUsersC);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An exception has occurred " + e);
+                    JdbcUtil.printSQLException(e);
                 }
             } else {
                 allUsersC = null;
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsersC = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsersC = userService.getAllUsersCred(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An exception has occured " + e);
+                    JdbcUtil.printSQLException(e);
                 }
             }
         }
@@ -772,7 +774,7 @@ public class EmailUserScroller {
     public void store() {
         
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("storeUsers - UserScroller");
             allUsers.set(currentRow, currentItem);
             UserServiceApi service = new UserServiceImpl();
@@ -787,10 +789,10 @@ public class EmailUserScroller {
             
             keys.clear();
             keys.add(currentRow);
-            
+            JdbcUtil.closeConnection(conn);
             
         } catch (SQLException e) {
-            System.out.println("An sqlexception has occured " + e);
+            JdbcUtil.printSQLException(e);
         }
     }
     
@@ -800,7 +802,7 @@ public class EmailUserScroller {
         
         if (!userS.isEmpty() || userS != null) {
             try {
-                conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                conn = util.getConnectionTodbSMS();
                 LOG.info("saveOrUpdateAlpha - UserScroller");
                 AlphaServiceImpl service = new AlphaServiceImpl();
                 String username = userS;
@@ -832,9 +834,9 @@ public class EmailUserScroller {
 //                    JsfUtil.addSuccessMessage("UserController alphanumeric updated successfully");
 //                    //currentItem.setMessage("UserController alpha updated successfully.");
 //                }
-                conn.close();
+                JdbcUtil.closeConnection(conn);
             } catch (SQLException e) {
-                System.out.println("An exception has occured");
+                JdbcUtil.printSQLException(e);
             }
         } else {
             JsfUtil.addErrorMessage("Select user to assign Sender ID");
@@ -878,7 +880,7 @@ public class EmailUserScroller {
         try {
             String sql = "SELECT id from tUSER where username='" + current_user + "'";
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
@@ -931,9 +933,9 @@ public class EmailUserScroller {
         
         try {
             UserServiceApi usv = new UserServiceImpl();
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             usv.updatePassword(conn, password);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
         } catch (SQLException ex) {
             Logger.getLogger(UserScroller.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -962,10 +964,10 @@ public class EmailUserScroller {
         
     }
     
-    public void storeResller() throws SQLException {
+    public void storeResller() {
         
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("storeResller- Reseller");
             
             allUsers.set(currentRow, currentItem);
@@ -980,10 +982,10 @@ public class EmailUserScroller {
             
             keys.clear();
             keys.add(currentRow);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
             
         } catch (SQLException e) {
-            conn.close();
+            JdbcUtil.printSQLException(e);
         }
     }
     public String ulploadms = "";
@@ -1153,7 +1155,7 @@ public class EmailUserScroller {
     column with the path from the temp folder*/
     public void setImagePath(int id, String picPath) throws SQLException {
         String sqlUpdate = "UPDATE dbTASK.tClient  set picPath= ? where id='" + id + "' ";
-        conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+        conn = util.getConnectionTodbPAYMENT();
         PreparedStatement pstm = conn.prepareStatement(sqlUpdate);
         //System.out.println("The update querry ====>" + sqlUpdate);
         //System.out.println("image to be inserted is ====>" + picPath);
@@ -1190,35 +1192,34 @@ public class EmailUserScroller {
     }
 
     //=======================================================================================================
-    public List<UserController> getAllUserByAgent() throws SQLException {
+    public List<UserController> getAllUserByAgent() {
         
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUserPerAgent(conn, userS);
                     System.out.println("My name is:" + userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    conn.close();
+                    JdbcUtil.printSQLException(e);
                 }
             } else {
                 allUsers = null;
                 try {
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllUsers");
                     allUsers = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     allUsers = userService.getAllUserPerAgent(conn, userS);
                     LOG.info("ALL USERS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 } catch (SQLException e) {
-                    System.out.println("An sql exception has occured!");
-                    conn.close();
+                    JdbcUtil.printSQLException(e);
                 }
             }
         }
@@ -1257,7 +1258,7 @@ public class EmailUserScroller {
         try {
             String sql = "SELECT id from tUSER where username='" + userS + "'";
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
@@ -1276,7 +1277,7 @@ public class EmailUserScroller {
     public float [] availableCredits(Connection conn) {
         float available_credits []= new float[2];
         try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             AlphaScroller ac = new AlphaScroller();
             String user = ac.currentUSer();
             String sql = "Select max_total,cost_per_sms from tUSER where username='" + user + "' ";
@@ -1327,13 +1328,13 @@ public class EmailUserScroller {
     }
 
     ///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    public List<Alpha> getAgentAlphas() throws SQLException {
+    public List<Alpha> getAgentAlphas() {
         
         synchronized (this) {
             if (allUsers != null && !allUsers.isEmpty()) {
                 
                     //String username=currentItem.getUsername();
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     LOG.info("getAllAlphas");
                     UserServiceApi service = new UserServiceImpl();
                     agentAlphas = service.getAgentAlphas(conn, this.UserID());
@@ -1351,7 +1352,7 @@ public class EmailUserScroller {
 //                    }
 //
                     // System.out.println("Am being executed....yes I was made to be executed");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
                 
             }
         }
@@ -1363,7 +1364,7 @@ public class EmailUserScroller {
     public void updateAgentAlpha() {
         try {
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             LOG.info("saveOrUpdateAlpha - UserScroller");
             AlphaServiceImpl service = new AlphaServiceImpl();
             String username = currentItem.getUsername();
@@ -1379,10 +1380,10 @@ public class EmailUserScroller {
         
     }
     
-    public void deleteUser() throws SQLException {
+    public void deleteUser() {
        
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             
             LOG.info("deleteAlphanumeric");
             UserServiceImpl service = new UserServiceImpl();
@@ -1391,15 +1392,16 @@ public class EmailUserScroller {
             JsfUtil.addSuccessMessage("User " + currentItem.getUsername() + "  has been removed successfully.");
 
             //allUsers.remove(currentItem);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
        
+        
     }
     
     
-    public void deleteEmailUser() throws SQLException {
+    public void deleteEmailUser() {
         
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             
             LOG.info("deleteAlphanumeric");
             UserServiceImpl service = new UserServiceImpl();
@@ -1408,15 +1410,16 @@ public class EmailUserScroller {
             JsfUtil.addSuccessMessage("User " + currentItem.getUsername() + "  has been removed successfully.");
 
             //allUsers.remove(currentItem);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
       
+        
     }
     
     
-    public void updateUserEmails() throws SQLException {
+    public void updateUserEmails() {
        
             
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             
             LOG.info("Update user Emails");
             UserServiceImpl service = new UserServiceImpl();
@@ -1431,7 +1434,7 @@ public class EmailUserScroller {
             }
 
             //allUsers.remove(currentItem);
-            conn.close();
+            JdbcUtil.closeConnection(conn);
        
         
     }
@@ -1439,8 +1442,7 @@ public class EmailUserScroller {
     public void deleteReseller() {
       
             
-        try {
-            conn = HikariJDBCDataSource.getConnectionTodbSMS();
+            conn = util.getConnectionTodbSMS();
             
             LOG.info("deleteAlphanumeric");
             UserServiceImpl service = new UserServiceImpl();
@@ -1449,20 +1451,16 @@ public class EmailUserScroller {
             JsfUtil.addSuccessMessage("Reseller " + currentItem.getUsername() + "  has been removed successfully.");
 
             //allUsers.remove(currentItem);
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(EmailUserScroller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            JdbcUtil.closeConnection(conn);
        
         
     }
     
     public void addPaybill() {
-        try {
-            String user = this.userS;
-            
-            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
-            this.conn2 = HikariJDBCDataSource.getConnectionTodbSMS();
+        String user = this.userS;
+        
+            this.conn = this.util.getConnectionTodbPAYMENT();
+            this.conn2 = this.util.getConnectionTodbSMS();
             UserServiceImpl paybill2 = new UserServiceImpl();
             if (this.paybill == null) {
                 System.out.println("THE PAY BILL IS NULL");
@@ -1471,40 +1469,34 @@ public class EmailUserScroller {
             JsfUtil.addSuccessMessage("Paybill added successfully!");
             this.paybill = new Paybill();
             this.userS = "";
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(EmailUserScroller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            JdbcUtil.closeConnection(this.conn);
+            JdbcUtil.closeConnection(this.conn2);
        
     }
     
     public void deletePaybill() {
       
-            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+            this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl paybill2 = new UserServiceImpl();
             //System.out.println("CURRENT ITEM"+this.currentItem);
             paybill2.deletePaybill(this.currentItem1, this.conn);
             JsfUtil.addSuccessMessage("Paybill deleted successfully!");
             
-        try {
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(EmailUserScroller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            JdbcUtil.closeConnection(this.conn);
        
     }
     
     
     public void updatePaybill() {
         try {
-            this.conn = HikariJDBCDataSource.getConnectionTodbPAYMENT();
+            this.conn = this.util.getConnectionTodbPAYMENT();
             UserServiceImpl paybill2 = new UserServiceImpl();
             paybill2.updatePaybill(this.paybill, this.conn);
             JsfUtil.addSuccessMessage("Paybill updated successfully!");
             
-            conn.close();
+            JdbcUtil.closeConnection(this.conn);
         } catch (SQLException e) {
-            System.out.println("An sql exception has occured");
+            JdbcUtil.printSQLException(e);
         }
     }
     
@@ -1515,7 +1507,7 @@ public class EmailUserScroller {
         int id = 0;
         String username = "";
         try {
-            Connection con2 = HikariJDBCDataSource.getConnectionTodbSMS();
+            Connection con2 = this.util.getConnectionTodbSMS();
             String sql = "SELECT * FROM tUSER WHERE username=?";
             PreparedStatement ps = con2.prepareStatement(sql);
             ps.setString(1, uservalue);
@@ -1538,18 +1530,18 @@ public class EmailUserScroller {
         synchronized (this) {
             if (userAlphas == null || userAlphas.isEmpty()) {
                 
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                    // LOG.info("getAllUsers");
                     userAlphas = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
                     userAlphas = userService.getUserAlphas(conn, userS);
                     //.info("ALL ALPHAS EMPTY | NULL");
-                    conn.close();
+                    JdbcUtil.closeConnection(conn);
              
             } else {
                 userAlphas = null;
               
-                    conn = HikariJDBCDataSource.getConnectionTodbSMS();
+                    conn = util.getConnectionTodbSMS();
                     //LOG.info("Get " + userS + "'s Alphas");
                     userAlphas = new ArrayList<>();
                     UserServiceApi userService = new UserServiceImpl();
