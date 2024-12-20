@@ -33,13 +33,13 @@
                                 <f:selectItems value="#{sMSOut.data}" />
                             </p:selectOneMenu>
                             <h:panelGroup layout="block">
-                                <p:commandLink  id="pdf_export">
+                                <p:commandLink  id="pdf_export" onstart="PF('dlg2').show()" oncomplete="PF('dlg2').hide()">
                                     <p:dataExporter type="csv" target="report:table" fileName="SMSOut"/>
                                     <h:graphicImage value="/resources/images/csv.png" id="export_to_pdf" />
                                 </p:commandLink>
                             </h:panelGroup>
                             <h:panelGroup layout="block">
-                                <p:commandLink  id="xlsx_export" >
+                                <p:commandLink  id="xlsx_export" onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide();" >
                                     <p:dataExporter type="xlsx" target="report:table" fileName="SMSOut" postProcessor="#{smsout.postProcessXLSX}"/>
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
                                 </p:commandLink>
@@ -50,6 +50,10 @@
                             <p:commandButton value="Generate" action="#{smsout.generateSMSOut()}"
                                              update=":report:table msgs"/>
                         </h:panelGrid>
+                        
+                        <p:dialog header="Please Wait" widgetVar="dlg2" minHeight="40" width="200" showEffect="fade" modal="true" closeOnEscape="true">
+                            <i class="pi pi-spin pi-spinner" style="font-size: 2rem" ></i>
+                        </p:dialog>                        
                     </h:form>
 
                     <h:form id="report">

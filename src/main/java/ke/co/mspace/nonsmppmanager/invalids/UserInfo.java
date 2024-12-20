@@ -9,6 +9,7 @@ package ke.co.mspace.nonsmppmanager.invalids;
 import org.mspace.clientmanager.util.getsession;
 import java.io.IOException;
 import java.io.Serializable;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -27,7 +28,7 @@ public class UserInfo implements Serializable {
 //    private tuseraddressbook user;
     private final String lagent = (String) getsession.getSession().getAttribute("agent");
     @ManagedProperty(value = "#{facePainter}")
-    public FacePainter facePainter;
+    public FacePainter facePainter = new FacePainter();
 
     private long maxTotal = (long) getsession.getSession().getAttribute("max_total");
 
@@ -86,6 +87,10 @@ public class UserInfo implements Serializable {
 
     public void credithistoryreport() {
         facePainter.setMainContent("clientmanager/reports/credithistoryreport.xhtml");
+    }
+    
+    public void bulkReports(){
+        facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
     }
 
     public void createSmsApiKey() {

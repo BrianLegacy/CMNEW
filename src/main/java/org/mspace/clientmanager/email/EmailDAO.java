@@ -30,4 +30,5 @@ public interface EmailDAO {
     
     public boolean verify(UserController user);
     
+    public int countSmsUsers();
 }

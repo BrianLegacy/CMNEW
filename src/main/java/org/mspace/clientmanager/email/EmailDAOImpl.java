@@ -259,4 +259,27 @@ public class EmailDAOImpl implements EmailDAO {
         return false;
     }
 
+    @Override
+    public int countSmsUsers() {
+             String query="";
+        if (admin == 'Y') {
+            query = "SELECT COUNT(*) FROM dbEMAIL.tEMAILOUT";
+        } 
+//        else {
+//            query = "SELECT COUNT(*) FROM dbSMS.tUSER WHERE dbSMS.tUSER.agent = '" + agent + "'  AND dbSMS.tUSER.admin = '3' AND dbSMS.tUSER.smsuser = 'Y'";
+//        }
+
+//        System.out.println(query);
+        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);  // Return total record count
+            }
+        } catch (SQLException e) {
+            System.out.println("an error occured in count " + e);
+        }
+
+        return 0;
+    }
+
 }

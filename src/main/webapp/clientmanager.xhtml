@@ -25,9 +25,9 @@
                     </p:panel>                 
                 </div>  
 
-            </div >
+            </div>
 
-            <div id="sidebar"   >   
+            <div id="sidebar">   
                 <p:panel  toggleable="true" toggleOrientation="horizontal" toggleSpeed="500" closeSpeed="500" widgetVar="panel" style="height: 95vh;overflow: auto;">
                     <f:facet name="header">
                         Hide
@@ -39,7 +39,7 @@
             </div>   
 
 
-            <div id="content" >  
+            <div id="content">  
                 <p:panel id="kevol" style="height: 95vh; overflow-y:  auto; width:auto ;  overflow-x:  auto;  "  > 
 
                     <ui:insert name="content">                                                      
@@ -71,6 +71,9 @@
                 </h:panelGrid>
             </h:form>
         </p:dialog> 
+        <p:idleMonitor timeout="600000">
+            <p:ajax event="idle"  listener="#{tusercontroller.timeout()}"  update="growl"/>
+        </p:idleMonitor>
 
     </h:body>
 </html>

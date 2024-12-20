@@ -51,8 +51,7 @@
                                          background-position:  0.5rem center;" 
                                          onclick="PF('createSMSUser').show();" 
                                          actionListener="#{smscontroller.resetSmsUser()}" />
-
-
+                       
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
                                 <p:commandButton value="Add existing User" onclick="PF('existingUser').show();" />
@@ -244,7 +243,7 @@
                                                 </f:facet>
                                                 <p:commandButton ajax="true"
                                                                  id="deletealphanumeric"
-                                                                 icon="fa fa-trash"
+                                                                 icon="pi pi-trash"
                                                                  title="Click to delete alphanumeric"
                                                                  oncomplete="PF('delAlpha').show();">
                                                     <p:ajax listener="#{smscontroller.setSelectedAlpha(ualpha)}" 

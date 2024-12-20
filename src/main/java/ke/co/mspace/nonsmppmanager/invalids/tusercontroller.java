@@ -23,6 +23,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
@@ -51,6 +53,8 @@ public class tusercontroller implements Serializable {
     private String passwrdReset;
     org.slf4j.Logger logger =LoggerFactory.getLogger(tusercontroller.class);
       private final JdbcUtil util=new JdbcUtil();
+      @Inject
+      private FacePainter facePainter;
 
     /**
      * Creates a;; new instance of tusercontroller
@@ -145,6 +149,15 @@ public class tusercontroller implements Serializable {
         this.passwrdReset = passwrdReset;
     }
     
+    private boolean timedout = false;
+
+     public boolean isTimedout() {
+        return timedout;
+    }
+
+    public void setTimedout(boolean timedout) {
+        this.timedout = timedout;
+    }
 
     public String login() {
         HttpSession httpsession = getsession.getSession();
@@ -260,12 +273,15 @@ public class tusercontroller implements Serializable {
                                 }
                                 session.setAttribute("goto", "none");
                             }
+                            
 
                         } else {
                             termsAgreed = false;
                             //return "home.jsf";
                             return getHomePage();
                         }
+                        
+
                     } else {
 
                         FacesMessage lmessage = new FacesMessage("Your account is not activated", "Dear customer, your account is not yet activated. We shall get back to you within 48 hrs. You can also call us on 0722962934 or email us on info@mspace.co.ke");
@@ -479,5 +495,39 @@ public class tusercontroller implements Serializable {
         }
         return ret;
     }
+    
+       public void setNoCacheHeaders() {
+    HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
+                                      .getExternalContext()
+                                      .getResponse();
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); 
+    response.setHeader("Pragma", "no-cache"); 
+    response.setDateHeader("Expires", 0);
+}
+    
+     public void timeout() {
+
+        try {
+            Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+
+            flash.put("timedout", true);
+
+            timedout = true;
+
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .invalidateSession();
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .redirect("home.jsf");
+            
+            String name = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username");
+            System.out.println("logged out user name " + name);
+            
+            setNoCacheHeaders();
+
+        } catch (IOException e) {
+            System.out.println("could not timeout " + e);
+        }
+
+     }
 
 }

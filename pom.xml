@@ -43,11 +43,11 @@
             <version>5.2.0.CR1</version>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>5.2.3</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -115,7 +115,6 @@
     <artifactId>HikariCP</artifactId>
     <version>2.7.2</version>
 </dependency>
-
 
         <dependency>
             <groupId>org.primefaces.themes</groupId>

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,7 +41,6 @@ public class FacePainter implements Serializable {
 
     public void setMainContent2(String mainContent) {
         try {
-
             this.mainContent = mainContent;
         } catch (Exception ex) {
         }
@@ -49,7 +49,14 @@ public class FacePainter implements Serializable {
     public void resetMainContent() {
         this.mainContent = "clientmanager/manageuserdetails/showsmsusers.xhtml";
     }
+    
+    public void getBulkReports(){
+        System.out.println("get bulk reports being called here!");
+        System.out.println("maincontent " + this.mainContent);
+        this.mainContent = "clientmanager/reports/bulkreports.xhtml";
+        System.out.println("maincontent2 " + this.mainContent);
+
+    }
 
 }
-
 
