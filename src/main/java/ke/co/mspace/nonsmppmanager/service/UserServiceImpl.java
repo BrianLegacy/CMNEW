@@ -529,6 +529,7 @@ public class UserServiceImpl implements UserServiceApi {
                     drift = "resources/js/drift.js";
                     visual = "resources/js/visualization.js";
                     picLocation = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("myloc");
+                    System.out.println("Reseller is true");
 
                 } else {
                     showMpesaMenu = "show";
@@ -540,8 +541,8 @@ public class UserServiceImpl implements UserServiceApi {
                     showCreditHistoryReprt = "none";
                     picLocation = "resources/images/logo.gif";
                     isReseller = false;
-
-                }
+                    System.out.println("reseller is false");
+                }   
 
             }
             JdbcUtil.closeConnection(conn);

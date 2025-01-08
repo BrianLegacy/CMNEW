@@ -4,27 +4,17 @@
  */
 package ke.co.mspace.nonsmppmanager.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import ke.co.mspace.nonsmppmanager.invalids.UserInfo;
 import ke.co.mspace.nonsmppmanager.model.EmailOut;
-import ke.co.mspace.nonsmppmanager.model.LargeReport;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
-import org.mspace.clientmanager.reports.EmailOutController;
 
 /**
  *
