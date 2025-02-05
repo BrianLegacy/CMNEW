@@ -92,7 +92,7 @@ public class SmsOutController {
 
         if (!username.isEmpty()) {
             smsUsers = smsDAO.fetchSMSReport(username, startDate, endDate);
-            rows = smsDAO.getTotalSmsCount(startDate, endDate, username);
+            rows = smsDAO.getTotalSmsCount(startDate, endDate, username);           
             if (smsUsers.size() != 0) {
                 JsfUtil.addSuccessMessage(rows + " SMS sent.");
             } else {

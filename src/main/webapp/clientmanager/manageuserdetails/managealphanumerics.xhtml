@@ -27,13 +27,13 @@
                     <h:form>
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <p:commandButton value="XLSX" title="Export to XLSX" icon="fa fa-file-excel-o">
-                                <p:dataExporter type="xlsx" target=":table" fileName="Alphanumerics"/>
+                                 <p:dataExporter type="xlsxstream" target=":table" fileName="Alphanumerics"/>
                             </p:commandButton>
                             <p:commandButton value="CSV" title="Export to CSV" icon="fa fa-file-csv">
                                 <p:dataExporter type="csv" target=":table" fileName="Alphanumerics"/>
                             </p:commandButton>
                         </div>
-                    </h:form>
+                    </h:form> 
                     <p:dataTable var="data" value="#{alphaScroller.allAlphas}" id="table"
                                  rows="15"
                                  paginator="true" paginatorPosition="bottom"
@@ -92,13 +92,11 @@
                             </h:form>
                             <!--</p:panelGrid>-->
 
-
-
                             <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
                                 <h:form>
                                     <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                        <tr >
-                                            <td ><h:outputLabel for="groupname" value="Username" /></td>
+                                        <tr>
+                                            <td><h:outputLabel for="groupname" value="Username" /></td>
                                             <td><p:inputText style="width: 150px" id="groupname" value="#{alphaScroller.currentItem.username}" required="true" placeholder="" requiredMessage="Enter Group Name"  validatorMessage="Enter Group name" >
                                                     <f:validateLength minimum="3" />
                                                 </p:inputText></td>
@@ -109,7 +107,7 @@
 
                                         <tr>
                                             <td ><h:outputLabel  value="Alphanumeric" /></td>
-                                            <td  >
+                                            <td>
                                                 <p:selectOneMenu  
                                                     value="#{alphaScroller.currentItem.name}"
 

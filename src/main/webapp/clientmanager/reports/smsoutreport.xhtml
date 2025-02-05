@@ -19,7 +19,6 @@
 
             <div align="center">
                 <p:panel id="maintab" header="SMS OUT REPORT" >
-
                     <h:form>
                         <h:panelGrid columns="8" style="width:100%; margin-left:auto; margin-right:auto; padding:8px;">
                             <h:outputText value="Start Date :"/>
@@ -32,16 +31,12 @@
                                 <f:selectItem itemLabel="Select User" itemValue="" />
                                 <f:selectItems value="#{sMSOut.data}" />
                             </p:selectOneMenu>
-                            <h:panelGroup layout="block">
-                                <p:commandLink  id="pdf_export" onstart="PF('dlg2').show()" oncomplete="PF('dlg2').hide()">
-                                    <p:dataExporter type="csv" target="report:table" fileName="SMSOut"/>
-                                    <h:graphicImage value="/resources/images/csv.png" id="export_to_pdf" />
-                                </p:commandLink>
-                            </h:panelGroup>
+                            
                             <h:panelGroup layout="block">
                                 <p:commandLink  id="xlsx_export" onstart="PF('dlg2').show();" oncomplete="PF('dlg2').hide();" >
-                                    <p:dataExporter type="xlsx" target="report:table" fileName="SMSOut" postProcessor="#{smsout.postProcessXLSX}"/>
+                                    <p:dataExporter type="xlsxstream" target="report:table" fileName="SMS OUT REPORT" />
                                     <h:graphicImage value="/resources/images/xlsx.png" id="export_to_xlsx" />
+                                    <p:tooltip for="export_to_xlsx" value="Download to Excel" position="bottom"/>
                                 </p:commandLink>
                             </h:panelGroup>
                         </h:panelGrid>
@@ -118,6 +113,8 @@
                             </p:column>
 
                         </p:dataTable>
+                        
+                        <h:outputLabel value="#{smsOut.year}"/>
                     </h:form>
                 </p:panel>
             </div>

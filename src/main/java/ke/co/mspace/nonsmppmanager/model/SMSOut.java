@@ -209,7 +209,8 @@ public class SMSOut implements Serializable {
     }
 
     public String getTimeSubmitted() {
-        return timeSubmitted;
+        getDisplayTimeSubmitted();
+        return displayTimeSubmitted;
     }
 
     public void setTimeSubmitted(String timeSubmitted) {
@@ -217,7 +218,8 @@ public class SMSOut implements Serializable {
     }
 
     public String getTimeProcessed() {
-        return timeProcessed;
+        getDisplayTimeProcessed();
+        return displayTimeProcessed;
     }
 
     public void setTimeProcessed(String timeProcessed) {

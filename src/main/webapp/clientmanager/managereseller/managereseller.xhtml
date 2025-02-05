@@ -367,7 +367,7 @@
                                         <p:outputLabel for="creditManageType" value="Select Action:" style="margin-right: 10px; width: 150px;"/>
                                         <p:selectOneMenu id="creditManageType" value="#{resellercontroller.currentReseller.creditManageType}">
                                             <f:selectItem itemLabel="Add Credit" itemValue="add"/>
-                                            <f:selectItem itemLabel="Alter Credit" itemValue="update"/>
+                                            <f:selectItem itemLabel="Deduct Credit" itemValue="update"/>
                                         </p:selectOneMenu>
                                     </div>
                                     <div style="display: flex; align-items: center;">
@@ -408,7 +408,7 @@
                                     <p:outputLabel for="action" value="Select Action" style="margin-right: 10px; width: 150px;"/>
                                     <p:selectOneMenu id="action" value="#{resellercontroller.currentReseller.creditManageType}">
                                         <f:selectItem itemLabel="Add Credit" itemValue="add"/>
-                                        <f:selectItem itemLabel="Alter Credit" itemValue="update"/>
+                                        <f:selectItem itemLabel="Deduct Credit" itemValue="update"/>
                                     </p:selectOneMenu>
                                 </div>
                                 <div style="display: flex; align-items: center; margin-bottom: 10px;">

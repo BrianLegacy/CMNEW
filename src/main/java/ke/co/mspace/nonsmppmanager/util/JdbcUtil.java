@@ -21,12 +21,13 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcUtil implements Serializable{
 
-    boolean DATA_CENTER_NEW = false;     //dc
+    boolean DATA_CENTER_NEW = true;     //dc
     boolean DATA_CENTER_LIVE = false;     //gateway .5
-    boolean DEBUG = true;              //local
+    boolean DEBUG = false;              //local
     boolean DEV_SERVER = false;   //dev
     boolean GATEWAY = false;
     boolean WEBSITE = false;
+    boolean NAIVAS_SERVER = false;
     
     public String databaseType = "mysql";
     public String dbSMS = "dbSMS";
@@ -48,6 +49,11 @@ public class JdbcUtil implements Serializable{
     public String dataCenterUserNew = "clientmanager";
     public String dataCenterPasswordNew="ClientManager@2024#";
     private final String dataCenterHostNew="192.168.10.49";
+    
+//    naivas server
+    public String naivasServerUser= "dashboard";
+    public String naivasServerPassword="Dashboard@2025#";
+    private final String naivasServerHost="192.168.10.47";
     
 //    dev server
     public String devUser = "clientmanager";
@@ -95,6 +101,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+             //   Naivas Server
+            Properties naivasServerProps = new Properties();
+            naivasServerProps.put("user", this.naivasServerUser);
+            naivasServerProps.put("password", this.naivasServerPassword);
+            
 //            Dev_Server
             Properties DevProperties = new Properties();
             DevProperties.put("user", this.devUser);
@@ -141,6 +152,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+//                        Naivas server
+                        if (NAIVAS_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + naivasServerHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    naivasServerProps);
                         }
                         
 //                        DevServer
@@ -214,6 +232,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+//          Naivas Server
+            Properties naivasServerProps = new Properties();
+            naivasServerProps.put("user", this.naivasServerUser);
+            naivasServerProps.put("password", this.naivasServerPassword);
+            
 //          Dev_Server
             Properties DevProperties = new Properties();
             DevProperties.put("user", this.devUser);
@@ -260,6 +283,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+                        //                        Naivas server
+                        if (NAIVAS_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + naivasServerHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    naivasServerProps);
                         }
                         
 //                    DevServer
@@ -327,11 +357,16 @@ public class JdbcUtil implements Serializable{
     public Connection getConnectionTodbTask() {
         {
             Connection conn = null;
+            
             //DataCenterlocalMySQLUser
-
             Properties localDataCenterProps = new Properties();
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
+            
+            //          Naivas Server
+            Properties naivasServerProps = new Properties();
+            naivasServerProps.put("user", this.naivasServerUser);
+            naivasServerProps.put("password", this.naivasServerPassword);
             
             //            Dev_Server
             Properties DevProperties = new Properties();
@@ -379,6 +414,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbTASK + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+//                      Naivas server
+                        if (NAIVAS_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + naivasServerHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    naivasServerProps);
                         }
                         
                         //  DevServer
@@ -450,6 +492,11 @@ public class JdbcUtil implements Serializable{
             Properties localDataCenterProps = new Properties();
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
+              
+          //          Naivas Server
+            Properties naivasServerProps = new Properties();
+            naivasServerProps.put("user", this.naivasServerUser);
+            naivasServerProps.put("password", this.naivasServerPassword);
             
             //Dev_Server
             Properties DevProperties = new Properties();
@@ -504,6 +551,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + devHost
                                     + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
                                     DevProperties);
+                        }
+                        
+ //                      Naivas server
+                        if (NAIVAS_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + naivasServerHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    naivasServerProps);
                         }
                         
                          if(DATA_CENTER_NEW){
@@ -568,6 +622,11 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
+  //          Naivas Server
+            Properties naivasServerProps = new Properties();
+            naivasServerProps.put("user", this.naivasServerUser);
+            naivasServerProps.put("password", this.naivasServerPassword);
+            
             // Dev_Server
             Properties DevProperties = new Properties();
             DevProperties.put("user", this.devUser);
@@ -614,6 +673,13 @@ public class JdbcUtil implements Serializable{
                             conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + dataCenterHost
                                     + ":" + portNumber + "/" + dbUSSD + "?zeroDateTimeBehavior=convertToNull",
                                     localDataCenterProps);
+                        }
+                        
+ //                      Naivas server
+                        if (NAIVAS_SERVER) {
+                            conn = DriverManager.getConnection("jdbc:" + databaseType + "://" + naivasServerHost
+                                    + ":" + portNumber + "/" + dbSMS + "?zeroDateTimeBehavior=convertToNull",
+                                    naivasServerProps);
                         }
                         
                         // DevServer

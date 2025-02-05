@@ -11,7 +11,6 @@
         <ui:composition>
             <h:outputScript library="js" name="#{tusercontroller.diftChat}" target="body" />
 
-
             <style>
                 .fa-solid{
                     text-indent:0px;
@@ -62,8 +61,6 @@
             </style>
             <h:form>
 
-
-
                 <p:panelMenu style="border: none !important; " > 
 
                     <p:submenu label="Manage User Details" expanded="true">
@@ -74,7 +71,7 @@
                                     background-repeat: no-repeat;
                                     background-position: left;
                                     padding-left: 20px;"/>
-                        <p:menuitem value="Manage SMS User"  actionListener="#{userInfo.viewsmsuser()}"
+                        <p:menuitem value="Manage SMS Users"  actionListener="#{userInfo.viewsmsuser()}"
                                     ajax="false" style="background-image: url('#{resource['images/managesms.png']}');
                                     background-size: 1rem 1rem;
                                     background-repeat: no-repeat;

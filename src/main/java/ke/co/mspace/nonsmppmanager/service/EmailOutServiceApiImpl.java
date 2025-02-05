@@ -61,7 +61,7 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
          
                     ResultSet rs = pstmt.executeQuery();
 
-                System.out.println("inside rs: ");
+                System.out.println("Connection established! ");
                 
                 while (rs.next()) {
                                         

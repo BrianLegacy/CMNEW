@@ -235,7 +235,7 @@ public class tusercontroller implements Serializable {
 //                            char taskadmin = (char) httpsession.getAttribute("taskAdmin");
                             String systype = (String) httpsession.getAttribute("sysUser");
                             String sysname = (String) httpsession.getAttribute("ClientName");
-                            if ((systype.equalsIgnoreCase("intergrated") || systype.equalsIgnoreCase("integrated")) && sysname.equalsIgnoreCase("Sanlam")) {
+                            if ((systype.equalsIgnoreCase("integrated") || systype.equalsIgnoreCase("integrated")) && sysname.equalsIgnoreCase("Sanlam")) {
                                 //if value of ussd_report for this user is Y, show the ussed report menu item
                                 trights = urDao.getUser();
                                 if (trights.getUssdReport() != 'Y') {
