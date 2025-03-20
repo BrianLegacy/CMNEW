@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
@@ -161,7 +160,7 @@
                                 </p:selectOneMenu>
 
                                 <p:outputLabel for="newpass" value="New password"/>
-                                <p:inputText id="newpass" type="password" value="#{resellercontroller.newPassword}"/>
+                                <p:inputText id="newpass" type="password" value="#{resellercontroller.newPassword}" autocomplete="off"/>
                                 
                                 <p:outputLabel for="confirmpass" value="Confirm Password"/>
                                 <p:inputText id="confirmpass" type="password" value="#{resellercontroller.confirmPassword}"/>
@@ -183,7 +182,7 @@
                                         <f:selectItems value="#{smscontroller.listAlphas}"/>
                                     </p:selectOneMenu>
                                     <p:commandButton value="Assign" 
-                                                     action="#{resellercontroller.assignAlpha()}" 
+                                                     action="#{smscontroller.assignAlpha()}"
                                                      update=":numerics:alphaTable msgs" 
                                                      style="margin: 10px " />
 
@@ -218,7 +217,7 @@
                                                     <h:outputText value="Action"/>
                                                 </f:facet>
                                                 <p:commandButton id="deletealphanumeric" ajax="true" 
-                                                                 icon="fas fa-trash-alt" 
+                                                                 icon="pi pi-trash" 
                                                                  title="Click to delete user's alpha"
                                                                  oncomplete="PF('delAlpha').show();">
                                                     <p:ajax listener="#{resellercontroller.setSelectedAlpha(ualpha)}" 

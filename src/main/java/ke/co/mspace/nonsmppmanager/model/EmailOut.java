@@ -53,7 +53,7 @@ public class EmailOut implements Serializable{
         public List<SelectItem> getData() {
         dataTT = new ArrayList<>();
         String fetch = "SELECT username FROM dbSMS.tUSER WHERE  emailuser = 'Y' ORDER BY username";
-        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? OR emailuser = 'Y' ORDER BY username";
+        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? ORDER BY username";
 
         try (
                 Connection con = new JdbcUtil().getConnectionTodbSMS(); PreparedStatement stmt = adnminval == 5 ? con.prepareStatement(fetchForReseller) : con.prepareStatement(fetch)) {
@@ -66,7 +66,6 @@ public class EmailOut implements Serializable{
                     String originalUsername = rs.getString(1);
                     dataTT.add(new SelectItem(originalUsername));
                 }
-              
             }
        }catch (SQLException err) {
             System.err.println("SQL error: " + err.getMessage());

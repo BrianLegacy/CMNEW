@@ -127,7 +127,6 @@ public class SmsDAOImpl implements SmsDAO {
                     aUser.setGroup(getGroup(rs.getInt("group")));
 
                     smsUsers.add(aUser);
-
                 }
             }
 

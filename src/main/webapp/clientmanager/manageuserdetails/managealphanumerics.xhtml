@@ -27,7 +27,7 @@
                     <h:form>
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <p:commandButton value="XLSX" title="Export to XLSX" icon="fa fa-file-excel-o">
-                                 <p:dataExporter type="xlsxstream" target=":table" fileName="Alphanumerics"/>
+                                <p:dataExporter type="xlsxstream" target=":table" fileName="Alphanumerics"/>
                             </p:commandButton>
                             <p:commandButton value="CSV" title="Export to CSV" icon="fa fa-file-csv">
                                 <p:dataExporter type="csv" target=":table" fileName="Alphanumerics"/>
@@ -35,18 +35,22 @@
                         </div>
                     </h:form> 
                     <p:dataTable var="data" value="#{alphaScroller.allAlphas}" id="table"
-                                 rows="15"
-                                 paginator="true" paginatorPosition="bottom"
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-
+                                 rows="10"
+                                     rowsPerPageTemplate="10, 15, 25"
+                                     pageLinks="3"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="{totalRecords} records"
+                                     scrollable="true"
+                                     resizableColumns="true" 
+                                 
                                  >
 
                         <p:column headerText="Username">
-                            <h:outputText value="#{data.username}" />
+                            <h:outputText value="#{data.username}"/>
                         </p:column>
 
-                        <p:column headerText="Aplhanumerics">
+                        <p:column headerText="Aplhanumerics" >
                             <h:outputText value="#{data.name}" />
                         </p:column>
 
@@ -54,97 +58,81 @@
 
                             <!--<p:panelGrid columns="2"  style="width: 100px; ;" styleClass="pgid-borderless">-->
 
-                            <h:form> 
-                                <p:commandLink style="padding: .3em 1em;" 
-                                               id="editbutton"
-                                               ajax="true"
-                                               >
-                                    <h:graphicImage 
-                                        value="resources/images/edit.gif" width="15px">
-
-                                    </h:graphicImage>
+                            <h:form>
+                                <p:commandButton 
+                                    id="editbutton"
+                                    icon="pi pi-user-edit"
+                                    title="Click to edit user details" style="font-size: 1.5em;">
                                     <p:ajax  listener="#{alphaScroller.psetCurrentAlpha(data)}"
                                              oncomplete="PF('editgroupmodal').show();"
-                                             update="@([id$=editgroupmodal])" 
+                                             update="editgroupmodal" 
                                              event="click"
                                              />
-                                    <p:tooltip for="editbutton" value="Click to edit alphanumeric"/>
+                                </p:commandButton>
 
-                                </p:commandLink>  
-
-                                <p:commandLink rendered="#{userScroller.amIResellersUser()}" style="padding: .3em 1em;" 
-                                               id="deletebutton"
-                                               ajax="true"
-                                               >
-                                    <h:graphicImage 
-                                        value="resources/images/delete.gif" width="15px">
-
-                                    </h:graphicImage>
+                                <p:commandButton ajax="true"
+                                                 rendered="#{userScroller.amIResellersUser()}"
+                                                 id="deletebutton"
+                                                 icon="pi pi-trash"
+                                                 oncomplete="PF('deletegroupmodal').show();"
+                                                 title="Click to delete user"
+                                                 style="font-size: 1.3em;">
                                     <p:ajax  listener="#{alphaScroller.psetCurrentAlpha(data)}"
                                              oncomplete="PF('deletegroupmodal').show();;"
-                                             update="@([id$=deletegroupmodal])" 
                                              event="click"
                                              />
-                                    <p:tooltip for="deletebutton" value="Click to delete alphanumeric"/>
+                                </p:commandButton>
 
-                                </p:commandLink>
-
-                            </h:form>
-                            <!--</p:panelGrid>-->
-
-                            <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-                                <h:form>
-                                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                        <tr>
-                                            <td><h:outputLabel for="groupname" value="Username" /></td>
-                                            <td><p:inputText style="width: 150px" id="groupname" value="#{alphaScroller.currentItem.username}" required="true" placeholder="" requiredMessage="Enter Group Name"  validatorMessage="Enter Group name" >
+                                <!--</p:panelGrid>-->
+                                <p:dialog header="Edit User Alphanumerics" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                                    <table align="center" style="margin-top:15px; width: 400px; border: none" >
+                                        <tr style="border:none">
+                                            <td style=" border: none">
+                                                <h:outputLabel for="groupname" value="Username" />
+                                            </td>
+                                            <td style="border:none">
+                                                <p:inputText style="width: 150px; " id="groupname" value="#{alphaScroller.currentItem.username}" disabled="true" readonly="true" placeholder="" requiredMessage="Enter Group Name"  validatorMessage="Enter Group name" >
                                                     <f:validateLength minimum="3" />
-                                                </p:inputText></td>
+                                                </p:inputText>
+                                            </td>
                                         </tr>
-                                        <tr><td> <h:inputHidden id="alphaId" value="#{alphaScroller.currentItem.id}">
+                                        <tr>
+                                            <td style="border: none">
+                                                <h:inputHidden id="alphaId" value="#{alphaScroller.currentItem.id}">
 
-                                                </h:inputHidden></td></tr>
+                                                </h:inputHidden>
+                                            </td>
+                                        </tr>
 
                                         <tr>
-                                            <td ><h:outputLabel  value="Alphanumeric" /></td>
-                                            <td>
+                                            <td style="border:none" >
+                                                <h:outputLabel  value="Alphanumeric" />
+                                            </td>
+                                            <td style="border:none; margin-left: -10px">
                                                 <p:selectOneMenu  
                                                     value="#{alphaScroller.currentItem.name}"
 
                                                     id="org_alphanumeric" 
-                                                    required="true" requiredMessage="Aphanumerics Required" 
+                                                    required="true" requiredMessage="Alphanumerics Required" 
                                                     >
                                                     <f:selectItem itemLabel="Select Sender ID"/>
                                                     <f:selectItems  value="#{smscontroller.listAlphas}"  />
-
                                                 </p:selectOneMenu >
                                             </td>
                                         </tr>
                                     </table>
                                     <br/>
                                     <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                        <p:commandButton style="margin-right: 10px" ajax="true"  
-
-                                                         value="Update">
-                                            <p:ajax 
-                                                process="org_alphanumeric"
-                                                listener="#{alphaScroller.saveOrUpdateAlpha}"  
-                                                oncomplete="PF('editgroupmodal').hide();" 
-                                                update="@([id$=table])"
-                                                />
-
-
-                                        </p:commandButton>
-
-
-
+                                        <p:commandButton style="margin-right: 10px" ajax="false"  
+                                                         value="Update" process="org_alphanumeric" 
+                                                         action="#{alphaScroller.saveOrUpdateAlpha}" 
+                                                         update="table" />
+                                           
                                         <p:commandButton value="Cancel" 
                                                          onclick="PF('editgroupmodal').hide();"></p:commandButton>
                                     </div>
-                                </h:form>
-                            </p:dialog> 
-
-
+                                </p:dialog> 
+                            </h:form>
 
 
                             <p:dialog header="Delete  Alphanumeric" widgetVar="deletegroupmodal"  id="deletegroupmodal"  modal="true" >
@@ -162,7 +150,6 @@
                                     </div>
                                 </h:form>
                             </p:dialog> 
-
                         </p:column>
                         <f:facet name="paginatorTopLeft">
                             <h:form>
@@ -170,17 +157,12 @@
                         </f:facet>
 
                         <f:facet name="paginatorBottomRight">
-
                             <h:form>
-                                <p:commandButton type="button" icon="pi pi-cloud-upload"/></h:form>
+                                <p:commandButton type="button" icon="pi pi-cloud-upload"/>
+                            </h:form>
                         </f:facet>
 
                     </p:dataTable>
-
-
-
-
-
 
                 </p:panel>
             </div>

@@ -62,7 +62,7 @@ public class ManageCreditImpl implements ManageCreditApi {
             String sql2 = "INSERT INTO tManageCredits(username, actionType, actionTime"
                     + ", numCredits, previous_balance, new_balance,user,topupMode)"
                     + " VALUES (?, ?, now(), ?, ?, ?,?,?)";
-           
+            
 
             PreparedStatement pstmt2 = conn.prepareStatement(sql2);
             // Bind values to the parameters

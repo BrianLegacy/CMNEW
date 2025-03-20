@@ -139,6 +139,7 @@ public Tuser getUserJDBC(String username, String password) {
                 pst2.setString(2, dbPassword); // Note: should match the stored password
                 pst2.execute();
             } else {
+                System.out.println("Password did not match! " + password);
                 FacesMessage message = new FacesMessage("Not Successful", " Either your Username or password is invalid");
                 FacesContext.getCurrentInstance().addMessage(null, message);
                 return null;

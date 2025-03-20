@@ -7,7 +7,6 @@ package ke.co.mspace.nonsmppmanager.invalids;
 
 //import com.mspace1.model2.Tadpost;
 //import com.mspace1.model2.Tupdatenotifications;
-
 import org.mspace.clientmanager.util.getsession;
 import java.io.IOException;
 import java.io.Serializable;
@@ -51,10 +50,10 @@ public class tusercontroller implements Serializable {
     private String username;
     private String password;
     private String passwrdReset;
-    org.slf4j.Logger logger =LoggerFactory.getLogger(tusercontroller.class);
-      private final JdbcUtil util=new JdbcUtil();
-      @Inject
-      private FacePainter facePainter;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(tusercontroller.class);
+    private final JdbcUtil util = new JdbcUtil();
+    @Inject
+    private FacePainter facePainter;
 
     /**
      * Creates a;; new instance of tusercontroller
@@ -120,7 +119,6 @@ public class tusercontroller implements Serializable {
 //        show_survey = survey_opt();
 //        return show_survey;
 //    }
-
     public void setShow_survey(String show_survey) {
         this.show_survey = show_survey;
     }
@@ -148,10 +146,10 @@ public class tusercontroller implements Serializable {
     public void setPasswrdReset(String passwrdReset) {
         this.passwrdReset = passwrdReset;
     }
-    
+
     private boolean timedout = false;
 
-     public boolean isTimedout() {
+    public boolean isTimedout() {
         return timedout;
     }
 
@@ -160,8 +158,10 @@ public class tusercontroller implements Serializable {
     }
 
     public String login() {
+        System.out.println("Login called!");
         HttpSession httpsession = getsession.getSession();
         if (termsAgreed) {
+            System.out.println("terms agreed!");
             tuserinterface dao;
             Tuser result;
             TuserRights trights;
@@ -171,12 +171,13 @@ public class tusercontroller implements Serializable {
             try {
                 HttpSession session = getsession.getSession();
                 result = dao.getUserJDBC(this.username, this.password);
-              
+
                 if (result != null) {
+                    System.out.println("User Found!");
                     if (result.getContractNum() == null || result.getContractNum().equalsIgnoreCase("activated")) {
 
                         if (result.getUsername() != null) {
-                                    
+
                             user1 = result.getUsername();
                             session.setAttribute("temporaladmin", result.getAdmin());
                             session.setAttribute("username", user1);
@@ -186,7 +187,7 @@ public class tusercontroller implements Serializable {
                             session.setAttribute("taskAdmin", result.getTaskadmin());
                             session.setAttribute("id", result.getId());
                             session.setAttribute("user_id", result.getId());
-                            System.out.println("setting agent as "+result.getAgent());
+                            System.out.println("setting agent as " + result.getAgent());
                             session.setAttribute("agent", result.getAgent());
                             session.setAttribute("max_total", result.getMaxTotal());
                             session.setAttribute("max_contacts", result.getMax_contacts());
@@ -197,12 +198,11 @@ public class tusercontroller implements Serializable {
                             session.setAttribute("sysUser", user_type());
                             session.setAttribute("ClientName", client_name);
                             session.setAttribute("contact_number", result.getContactNumber());
-                             session.setAttribute("resend_failed_sms", result.getResend_failed_sms());
-                          
-                            session.setAttribute("non.smpp.manager",user1 );
+                            session.setAttribute("resend_failed_sms", result.getResend_failed_sms());
+
+                            session.setAttribute("non.smpp.manager", user1);
                             session.setAttribute("loggedInUser", user1);
 
-                            
                             try {
                                 long counttoday = result.getSmsCountToday();
                                 long countweek = result.getSmsCountWeek();
@@ -218,7 +218,6 @@ public class tusercontroller implements Serializable {
                                 session.setAttribute("countweek", 0);
                                 session.setAttribute("countmonth", 0);
                                 session.setAttribute("counttotoal", 0);
-
                             }
                             session.setAttribute("organization", result.getOrganization());
 
@@ -273,14 +272,14 @@ public class tusercontroller implements Serializable {
                                 }
                                 session.setAttribute("goto", "none");
                             }
-                            
+
+                            password = "";
 
                         } else {
                             termsAgreed = false;
                             //return "home.jsf";
                             return getHomePage();
                         }
-                        
 
                     } else {
 
@@ -294,19 +293,19 @@ public class tusercontroller implements Serializable {
 
                     }
                 } else {
-
+                    System.out.println("User does not exist!");
                     //return "home.jsf";
                     return getHomePage();
                 }
 
             } catch (Exception nullk) {
-            
+
                 return getHomePage();
             }
 
-            
-            return "clientmanager.jsf";
+            return "clientmanager.jsf?faces-redirect=true";
         } else {
+            System.out.println("Terms not agreed");
             FacesMessage msg = new FacesMessage("Check that you have read terms and conditions and agree ", "");
             FacesContext.getCurrentInstance().addMessage(null, msg);
             //return "home.jsf";
@@ -345,8 +344,6 @@ public class tusercontroller implements Serializable {
                 session.setAttribute("email_Address", result.getEmailAddress());//new
                 session.setAttribute("sysUser", user_type());
 
-               
-
                 session.setAttribute("organization", result.getOrganization());
                 if (result.getSuperAccountId() == 0 && !result.getAgent().equals("shortcode") && !user_type().equals("integrated")) {
                     session.setAttribute("subaccount", "show");
@@ -356,8 +353,6 @@ public class tusercontroller implements Serializable {
                 }
 
                 //login redirection 
-             
-
                 FacesContext context = FacesContext.getCurrentInstance();
                 HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
                 try {
@@ -378,7 +373,7 @@ public class tusercontroller implements Serializable {
             }
 
         } catch (Exception nullk) {
-          nullk.printStackTrace(); 
+            nullk.printStackTrace();
 
         }
 
@@ -396,16 +391,16 @@ public class tusercontroller implements Serializable {
     public void logout() {
 
         try {
- HttpSession session = getsession.getSession();
+            HttpSession session = getsession.getSession();
             ExternalContext context1 = FacesContext.getCurrentInstance().getExternalContext();
 
-       int temporaladmin =Character.getNumericValue( (char) session.getAttribute("temporaladmin"));
-       String agent =(String) session.getAttribute("agent");
+            int temporaladmin = Character.getNumericValue((char) session.getAttribute("temporaladmin"));
+            String agent = (String) session.getAttribute("agent");
             int id = (int) session.getAttribute("resellerId");
             tuserinterface dao = new tuserimplementor();
             dao.logindetailupdate();
 
- if (temporaladmin == 3) {
+            if (temporaladmin == 3) {
                 context1.redirect("reseller.jsf?id=" + agent);
             } else {
                 context1.redirect("home.jsf");
@@ -418,27 +413,27 @@ public class tusercontroller implements Serializable {
     }
 
     public String user_type() {
-        Tclient tclient=new Tclient();
-          Connection conn = null;
+        Tclient tclient = new Tclient();
+        Connection conn = null;
         boolean result = false;
-        String userType="";
+        String userType = "";
         try {
             conn = util.getConnectionTodbTask();
             String sql = "select * from tClient";
 
             PreparedStatement pst = conn.prepareStatement(sql);
-          
+
             final ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-               
-            tclient.setId(rs.getInt("id"));
-             tclient.setClientName(rs.getString("clientName"));
-               tclient.setPicPath(rs.getString("picPath"));
-               tclient.setEmail(rs.getString("email"));
-               tclient.setSystemType(rs.getString("systemType"));
-              String sysUser = tclient.getSystemType();
-            client_name = tclient.getClientName();
-            return sysUser;
+            if (rs.next()) {
+
+                tclient.setId(rs.getInt("id"));
+                tclient.setClientName(rs.getString("clientName"));
+                tclient.setPicPath(rs.getString("picPath"));
+                tclient.setEmail(rs.getString("email"));
+                tclient.setSystemType(rs.getString("systemType"));
+                String sysUser = tclient.getSystemType();
+                client_name = tclient.getClientName();
+                return sysUser;
             }
             JdbcUtil.closeConnection(conn);
 
@@ -448,7 +443,7 @@ public class tusercontroller implements Serializable {
             return null;
         }
         return "";
-    
+
     }
 
     private String getHomePage() {
@@ -466,13 +461,13 @@ public class tusercontroller implements Serializable {
             String sql = "select * from tUSERPAYBILL  WHERE tUSER_id = " + id + "";
 
             PreparedStatement pst = conn.prepareStatement(sql);
-          
+
             final ResultSet rs = pst.executeQuery();
-             HttpSession httpsession = getsession.getSession();
-            if(rs.next()){
+            HttpSession httpsession = getsession.getSession();
+            if (rs.next()) {
                 httpsession.setAttribute("resellerpaybill", String.valueOf(rs.getInt("paybill")));
-            } else{
-                  httpsession.setAttribute("resellerpaybill", "none");
+            } else {
+                httpsession.setAttribute("resellerpaybill", "none");
             }
             JdbcUtil.closeConnection(conn);
 
@@ -481,8 +476,6 @@ public class tusercontroller implements Serializable {
             JdbcUtil.closeConnection(conn);
         }
     }
-
-
 
     public boolean getResellerRender() {
         boolean ret = true;
@@ -495,17 +488,17 @@ public class tusercontroller implements Serializable {
         }
         return ret;
     }
-    
-       public void setNoCacheHeaders() {
-    HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
-                                      .getExternalContext()
-                                      .getResponse();
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); 
-    response.setHeader("Pragma", "no-cache"); 
-    response.setDateHeader("Expires", 0);
-}
-    
-     public void timeout() {
+
+    public void setNoCacheHeaders() {
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance()
+                .getExternalContext()
+                .getResponse();
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+    }
+
+    public void timeout() {
 
         try {
             Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
@@ -518,16 +511,16 @@ public class tusercontroller implements Serializable {
                     .invalidateSession();
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("home.jsf");
-            
+
             String name = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username");
             System.out.println("logged out user name " + name);
-            
+
             setNoCacheHeaders();
 
         } catch (IOException e) {
             System.out.println("could not timeout " + e);
         }
 
-     }
+    }
 
 }

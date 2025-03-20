@@ -7,237 +7,178 @@
       xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
+
+
     <h:body>
         <ui:composition> 
             <style>
                 .ui-growl-item-container.ui-state-highlight {
                     border-color: red;
+                }
 
-                }  </style>
-
+                .ui-grid{
+                    border:none;
+                }
+            </style>            
             <p:growl id="msgs" showDetail="true" life="3000"/>
+            <p:panel style=" width: 60%; margin:5em auto;" header="User Details" >
 
-            <div align="center">
-                <p:panel id="maintab" header="" >
+                <h:form  enctype="multipart/form-data">
+                    <p:panelGrid columns="2" style="width: 40%; padding: 20px; margin: auto; border: none">
+                        <h:outputLabel for="name" value="Client Name: " style="border: none; font-weight: bold"/>
+                        <p:inputText id="name" value="#{sessionmanager.loggedInuser}" />
 
-                    <p:dataTable value="#{userScroller.userProfile}" var="item"
-                                 id="usertb"  style="width: 100%; border-color: #e3f1fa ;">
+                        <h:outputLabel for="password" value="Password: " style=" font-weight: bold"/>
+                        <p:panelGrid columns="2" style=" margin-left: -1.0em; align-items: center" >
+                            <h:inputText id="password" value="*********"  disabled="true" readonly="true"/> 
+                            <p:commandButton icon="pi pi-pencil" title="Click to change password" style="margin-left: 4em" onclick="PF('editgroupmodal').show()"/>
+                        </p:panelGrid>
 
-                        <p:column>
-                            <f:facet name="header" >
+                        <h:outputLabel for="client_logo" value="Client Logo:" style="font-weight: bold; margin-bottom: -10em"/>
+                        <p:outputPanel style=" border: 1px solid; display: block; width:20rem; height: 10rem;">
+                            <img src="#{sessionmanager.logoPath}" style="height: 100%; width: 100%" alt="" />
+                        </p:outputPanel>
 
-                                <h:outputText value="User Details" style="height: 25px" />
+                        <p:fileUpload value="#{sessionmanager.uploadedFile}" mode="simple" label="Change Logo" chooseIcon="pi pi-minus" skinSimple="true" style=" margin-top: -10em;"/>
 
-                            </f:facet>
+                    </p:panelGrid>
 
-                            <h:panelGrid columns="3" cellspacing="2" width="100%">
+                    <p:panelGrid style="width: 100%;" columns="1">
+                        <p:commandButton value="Update Info" style=" margin-left: 50%" action="#{sessionmanager.storeData()}" ajax="false" update="msgs"/>
+                    </p:panelGrid>    
 
-                                <p:column style="background-color:#e3f1fa ">
-                                    <h:outputText value="Item"   style="color: #307eae; font-weight: bolder"/>
-                                </p:column  >
-                                <p:column style="background-color:#e3f1fa">
-                                    <h:outputText value="Details"   style="color: #307eae; font-weight: bolder" />
-                                </p:column>
-                                <p:column style="background-color:#e3f1fa">
-                                    <h:outputText value="Extra"  style="color: #307eae; font-weight: bolder" />
-                                </p:column>
-                                <p:column colspan="1"><h:outputText value="username" /></p:column>
-                                <p:column><h:outputText value="#{item.username}" /></p:column>
-                                <p:column>
+                </h:form>
+            </p:panel>
 
-                                    <h:form >
+            <p:panel id="maintab" header="More Info" style=" width: 80%; margin: auto "  >
 
+                <p:dataTable value="#{userScroller.userProfile}" var="item"
+                             id="usertb"  style="width: 100%; border-color: #e3f1fa ;">
 
-                                        <p:commandLink style="padding: .3em 1em;" 
-                                                       styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
-                                                       id="uploadbutton"
-                                                       type="button" 
-                                                       ajax="true"
-                                                       value="Upload photo"
-                                                       oncomplete="PF('editgroupmodaladvanced').show();">
-                                            <p:tooltip for="uploadbutton" value="Click to delete paybill/tillnumber"/>
+                    <p:column>
+                        <f:facet name="header" >
 
+                            <h:outputText value="User Details" style="height: 25px" />
 
-                                        </p:commandLink>
+                        </f:facet>
 
+                        <h:panelGrid columns="3" cellspacing="2" width="100%">
 
-                                    </h:form>
+                            <p:column style="background-color:#e3f1fa ">
+                                <h:outputText value="Item"   style="color: #307eae; font-weight: bolder"/>
+                            </p:column  >
+                            <p:column style="background-color:#e3f1fa">
+                                <h:outputText value="Details"   style="color: #307eae; font-weight: bolder" />
+                            </p:column>
+                            <p:column style="background-color:#e3f1fa">
+                                <h:outputText value="Extra"  style="color: #307eae; font-weight: bolder" />
+                            </p:column>
+                            <p:column colspan="1"><h:outputText value="username" /></p:column>
+                            <p:column><h:outputText value="#{item.username}" /></p:column>
+                            <p:column>
 
-                                </p:column>
+                            </p:column>
 
 
 
-                                <p:column colspan="1"><h:outputText value="Password" /></p:column>
-                                <p:column><h:outputText value="XXXXXX" /></p:column>
-                                <p:column>
-                                    <h:form >
+                            <p:column colspan="1"><h:outputText value="Password" /></p:column>
+                            <p:column><h:outputText value="*********" /></p:column>
+                            <p:column>
+                                <h:form >
+                                </h:form>
 
+                            </p:column>
 
+                            <p:column colspan="1"><h:outputText value="Start Date" /></p:column>
+                            <p:column><h:outputText value="#{item.startDate}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
-                                        <p:commandLink style="padding: .3em 1em;" 
-                                                       styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-text ui-c" 
-                                                       id="changepasswordbutton"
-                                                       type="button" 
-                                                       ajax="true"
-                                                       value="Change Password"
-                                                       oncomplete="PF('editgroupmodal').show();">
-                                            <p:tooltip for="changepasswordbutton" value="Click to change password"/>
 
+                            <p:column colspan="1"><h:outputText value="End Date" /></p:column>
+                            <p:column><h:outputText value="#{item.endDate}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
-                                        </p:commandLink>
 
-                                    </h:form>
+                            <p:column colspan="1"><h:outputText value="Max Daily" /></p:column>
+                            <p:column><h:outputText value="#{userScroller.userProfile.maxDaily}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
-                                </p:column>
 
-                                <p:column colspan="1"><h:outputText value="Start Date" /></p:column>
-                                <p:column><h:outputText value="#{item.startDate}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Max Weekly" /></p:column>
+                            <p:column><h:outputText value="#{item.maxWeekly}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="End Date" /></p:column>
-                                <p:column><h:outputText value="#{item.endDate}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Max Monthly" /></p:column>
+                            <p:column><h:outputText value="#{item.maxMonthly}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Max Daily" /></p:column>
-                                <p:column><h:outputText value="#{userScroller.userProfile.maxDaily}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Max Total" /></p:column>
+                            <p:column><h:outputText value="#{item.maxTotal}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Max Weekly" /></p:column>
-                                <p:column><h:outputText value="#{item.maxWeekly}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Sent Today" /></p:column>
+                            <p:column><h:outputText value="#{userScroller.dailyTotal()}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Max Monthly" /></p:column>
-                                <p:column><h:outputText value="#{item.maxMonthly}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Sent This week" /></p:column>
+                            <p:column><h:outputText value="#{userScroller.weeklyTotal()}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Max Total" /></p:column>
-                                <p:column><h:outputText value="#{item.maxTotal}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Sent This Month" /></p:column>
+                            <p:column><h:outputText value="#{userScroller.monthlyTotal()}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Sent Today" /></p:column>
-                                <p:column><h:outputText value="#{userScroller.dailyTotal()}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                            <p:column colspan="1"><h:outputText value="Sent  Total" /></p:column>
+                            <p:column><h:outputText value="#{userScroller.grandTotal()}" /></p:column>
+                            <p:column><h:outputText value="" /></p:column>
 
 
-                                <p:column colspan="1"><h:outputText value="Sent This week" /></p:column>
-                                <p:column><h:outputText value="#{userScroller.weeklyTotal()}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                        </h:panelGrid>
+                    </p:column>
 
+                </p:dataTable>
+            </p:panel>
 
-                                <p:column colspan="1"><h:outputText value="Sent This Month" /></p:column>
-                                <p:column><h:outputText value="#{userScroller.monthlyTotal()}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+            <p:dialog header="Change Password" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
+                <h:form>
 
+                    <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
+                        <tr >
+                            <td ><h:outputLabel for="newpassword" value="New Password" /></td>
+                            <td>
+                                <p:password style="width: 150px" id="newpassword" 
+                                            value="#{sessionmanager.newPassword}" 
+                                            required="true"  
+                                            >
+                                </p:password> 
+                                <!--<p:message for="@previous"/>-->
+                            </td>
+                        </tr>
 
-                                <p:column colspan="1"><h:outputText value="Sent  Total" /></p:column>
-                                <p:column><h:outputText value="#{userScroller.grandTotal()}" /></p:column>
-                                <p:column><h:outputText value="" /></p:column>
+                    </table>
+                    <br/>
+                    <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
+                        <p:commandButton style="margin-right: 10px" ajax="false"  
+                                         value="Update"
+                                         actionListener="#{sessionmanager.saveNewPassword()}"
+                                         update=":msgs"
+                                         >
 
+                        </p:commandButton>
 
-                            </h:panelGrid>
-                        </p:column>
+                        <p:commandButton value="Cancel" 
+                                         onclick="PF('editgroupmodal').hide();"></p:commandButton>
+                    </div>
+                </h:form>
 
-                    </p:dataTable>
-                    <h:form>
-                        <p:dialog header="Change Password" widgetVar="editgroupmodal" id="editgroupmodal" modal="true">
-
-                            <p:messages id="passwordmsgs"/>
-                            <table align="center" style="margin-top:15px; width: 400px; border-color: white" >
-                                <tr >
-                                    <td ><h:outputLabel for="password" value="Password" /></td>
-                                    <td><p:password style="width: 150px" id="password"
-                                                    value="#{userScroller.password}"
-                                                    requiredMessage="Password required"
-                                                    match="newpassword"
-
-                                                    >
-
-                                        </p:password>
-                                        <p:message for="@previous"/>
-                                    </td>
-                                </tr>
-
-                                <tr >
-                                    <td ><h:outputLabel for="newpassword" value="Confirm Password" /></td>
-                                    <td><p:password style="width: 150px" id="newpassword" 
-                                                    value="#{userScroller.confirm}" 
-                                                    required="true"  requiredMessage="Confirm password required"
-                                                    validatorMessage="confirm password too short or does not match password "
-
-                                                    >
-                                        </p:password> 
-                                        <!--<p:message for="@previous"/>-->
-                                    </td>
-                                </tr>
-
-                            </table>
-                            <br/>
-                            <div style="display: flex; justify-content: center; margin: 10px 10px 0px 10px">
-                                <p:commandButton style="margin-right: 10px" ajax="true"  
-                                                 oncomplete="if (!args.validationFailed){PF('editgroupmodal').hide();location.reload()} " 
-
-                                                 value="Update"
-                                                 actionListener="#{userScroller.storeNewPassword()}"
-                                                 update="@([id$=passwordmsgs]) @([id$=msgs])"
-                                                 >
-
-
-
-                                </p:commandButton>
-
-
-
-                                <p:commandButton value="Cancel" 
-                                                 onclick="PF('editgroupmodal').hide();"></p:commandButton>
-                            </div>
-
-                        </p:dialog> 
-                    </h:form>
-                    <!--df-->
-
-                    <!--df-->
-                    <h:form>
-                        <p:dialog id="editgroupmodaladvanced" widgetVar="editgroupmodaladvanced" width="450" >
-                            <f:facet name="header">
-                                <h:outputText value="Upload Logo" />
-                            </f:facet>
-
-                            <!--<p:outputLabel value="upload profile photo"/>-->
-                            <p:fileUpload listener="#{userScroller.uploadResImage}" mode="advanced" dragDropSupport="true"
-                                          allowTypes="/(\.|\/)(gif|jpeg|jpg|png)$/"
-                                          update="messages"
-                                          oncomplete="window.location.reload();">
-                            </p:fileUpload>
-                            <p:messages id="messages" showDetail="true" />
-                        </p:dialog>
-                    </h:form>
-
-                    <h:form>
-                        <p:dialog id="uploadphoto" width="450" >
-                            <f:facet name="header">
-                                <h:outputText value="Upload Logo" />
-                            </f:facet>
-
-
-
-
-
-                            <h:inputHidden id="previd" value="#{userScroller.current_user}"></h:inputHidden>
-                            <h:form enctype="multipart/form-data">
-                                <p:fileUpload  id="photo"  listener="#{userScroller.uploadResImage}" mode="advanced" update="msgs" />
-                                <!--<p:messages id="messages"   />-->
-                            </h:form>
-
-                        </p:dialog>
-                    </h:form>
-                </p:panel>
-            </div>
+            </p:dialog> 
+            <!--df-->
         </ui:composition>
     </h:body>
 </html> 

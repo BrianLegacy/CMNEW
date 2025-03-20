@@ -56,16 +56,16 @@
                         <p:dataTable id="table" var="sMPPOut" value="#{smppreport.records}"
                                      rows="10"
                                      paginator="true" paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {NextPageLink}"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="Summary total sms sent for this period #{smppreport.rows}"
                                      >
-                            <p:column >
+                            <p:column>
                                 <f:facet name="header">
                                     <h:outputText value="Mobile"/>
                                 </f:facet>
                                 <h:outputText value="#{sMPPOut.destinationAddr}"/>
                             </p:column>
-                            <p:column >
+                            <p:column>
                                 <f:facet name="header">
                                     <h:outputText value="Source Address"/>
                                 </f:facet>

@@ -355,16 +355,17 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
             // Set parameters for the prepared statement
-//            statement.setString(1, startDate);
-//            statement.setString(2, endDate);
-//            statement.setString(3, username);
-//            statement.setString(4, startDate);
-//            statement.setString(5, endDate);
-//            statement.setString(6, username);
+            statement.setString(1, startDate);
+            statement.setString(2, endDate);
+            statement.setString(3, username);
+            statement.setString(4, startDate);
+            statement.setString(5, endDate);
+            statement.setString(6, username);
 
             // Execute query and process results
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
+                    System.out.println("data present");
                     String messagePayload = rs.getString("short_message");
                     totalSmsCount += getSmsCount(messagePayload);
                 }
@@ -373,6 +374,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
             Logger.getLogger(SMSOutServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        System.out.println("totalSms count " + totalSmsCount);
         return totalSmsCount;
     }
 

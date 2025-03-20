@@ -143,6 +143,8 @@ public class SmsController implements Serializable {
     }
 
     public void setCurrentSmsUser(UserController currentSmsUser) {
+        newPassword = "";
+        confirmPassword = "";
         this.currentSmsUser = currentSmsUser;
         refreshAlphas();
     }
@@ -186,10 +188,13 @@ public class SmsController implements Serializable {
     }
 
     public void changePass() {
+        System.out.println("newPassword " + newPassword + " confirmedPass " + confirmPassword);
         if (!newPassword.isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Passwords do not match!"));
+                        newPassword = "";
+                        confirmPassword="";
                 return;
             }
 
@@ -221,7 +226,6 @@ public class SmsController implements Serializable {
                     JsfUtil.addErrorMessage("Error reading the form try again");
                 }
             }
-
         }
     }
 
@@ -254,7 +258,6 @@ public class SmsController implements Serializable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(SmsController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
     }
 

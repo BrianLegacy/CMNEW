@@ -217,7 +217,7 @@ public class EmailUserServiceImpl implements UserServiceApi {
 
     @Override
     public List<creditRecord> getAllUsersCred(Connection conn, String name) throws SQLException {
-        //System.out.println("nammme: " + name);
+        System.out.println("Inside getAllUsersCred of EmailUserServiceImpl ");
         String sql = "";
 
         sql = "SELECT tManageCredits.id, tManageCredits.username, tManageCredits.actionType, tManageCredits.actionTime,"

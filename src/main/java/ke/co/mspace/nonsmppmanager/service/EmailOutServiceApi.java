@@ -6,7 +6,6 @@ package ke.co.mspace.nonsmppmanager.service;
 
 import java.util.List;
 import ke.co.mspace.nonsmppmanager.model.EmailOut;
-import ke.co.mspace.nonsmppmanager.model.LargeReport;
 
 /**
  *
@@ -14,8 +13,8 @@ import ke.co.mspace.nonsmppmanager.model.LargeReport;
  */
 public interface EmailOutServiceApi {
     
-    List<EmailOut> fetchEmailReport(String user, String startDate, String endDate);
-
+    List<EmailOut> fetchEmailReport(String user, String startDate, String endDate, int first, int pageSize);
+    
     public int fetchRows(String user, String startDate, String endDate);
     
 //    public String insertIntotLARGEREPORTEXPORT(String user, String startDate, String endDate);

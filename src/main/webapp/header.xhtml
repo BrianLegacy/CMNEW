@@ -22,6 +22,7 @@
                     <div id="left" style="flex: 1;">
                         <h:outputText id="sessionName" value="#{sessionmanager.getsessionname()}" style="text-align: left;" escape="false"/>
                         <br/><br/>
+                        <h:outputLabel value="Available SMS Balance:: #{userScroller.userProfile.maxTotal}" style="font-weight: bolder; font-size: 13px; color: #de0b25" />
                         <p:commandButton id="dynaButton" rendered="#{menuView1.systemType}" value="Switch to" type="button" icon="fa fa-sign-in" style="font: 12px georgia; text-align: left; font-weight: bolder;"/>
                         <p:menu overlay="true" model="#{menuView1.model}" trigger="dynaButton" my="left top" at="left bottom"></p:menu>
                     </div>

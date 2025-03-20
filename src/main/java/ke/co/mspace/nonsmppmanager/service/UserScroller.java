@@ -34,6 +34,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -62,7 +63,7 @@ import org.primefaces.model.file.UploadedFile;
  * @author Norrey Osako
  */
 @ManagedBean
-@RequestScoped
+@SessionScoped
 public class UserScroller {
 
     public static int maxUsernameLength = 20;
@@ -77,7 +78,7 @@ public class UserScroller {
     private CallBack currentItem2 = new CallBack();
 
     private final JdbcUtil util = new JdbcUtil();
-    private final UserProfile userProfile = UserServiceImpl.getUserProfile();
+//    private final UserProfile userProfile = UserServiceImpl.getUserProfile();
     Connection conn = null;
     Connection conn2 = null;
     private static final Logger LOG = Logger.getLogger(UserScroller.class.getName());

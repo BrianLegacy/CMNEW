@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import ke.co.mspace.nonsmppmanager.invalids.getsession;
@@ -45,7 +47,7 @@ public class TSmsApiKeyDAO {
     public List<SelectItem> getUsers() {
         List<SelectItem> users = new ArrayList<>();
         String queryAdmin = "SELECT id, username FROM tUSER WHERE admin != 1 AND admin != 5 ORDER BY username" ;
-        String queryRes = "SELECT id, username FROM tUSER WHERE agent = '" + agent + "' ORDER BY username";
+        String queryRes = "SELECT id, username FROM tUSER WHERE agent = '" + agent + "' OR super_account_id= '" + agent +"' ORDER BY username";
 
         try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? conn.prepareStatement(queryAdmin) :conn.prepareStatement(queryRes)) {
             ResultSet rs = ps.executeQuery();
@@ -60,7 +62,7 @@ public class TSmsApiKeyDAO {
     }
 
     public List<TSmsApiKey> selectAll() {
-        String queryRes = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent = ?;";
+        String queryRes = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent = ? OR u.super_account_id=?;";
         String queryAdmin = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent IS NOT NULL;";
         List<TSmsApiKey> keys = new ArrayList<>();
 
@@ -68,6 +70,7 @@ public class TSmsApiKeyDAO {
 
             if ('Y' != admin) {
                 ps.setLong(1, agent);
+                ps.setLong(2, agent);
             }
 
             ResultSet rs = ps.executeQuery();
@@ -194,6 +197,39 @@ public class TSmsApiKeyDAO {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public void updateSmsApiKeyName(TSmsApiKey manageSmsApiKey){
+        
+        try(Connection conn = jdbcUtil.getConnectionTodbSMS()){
+            String sql = "UPDATE dbSMS.tApiKeys SET name=? WHERE id=?";
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, manageSmsApiKey.getName());
+            ps.setInt(2, manageSmsApiKey.getId());
+            
+            int updated = ps.executeUpdate();
+            
+            System.out.println("Updated: " + updated);
+            System.out.println("name: " + manageSmsApiKey.getName());
+            System.out.println("Id: " + manageSmsApiKey.getId());
+
+            
+            if(updated > 0){
+                System.out.println("Successfully updated!");
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Api Name Successfully Updated!");
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            }else{
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to update Api Name");
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            }
+                    
+        }catch(Exception ex){
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unable to update Api Name");
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            System.out.println("An sql exception ex has occured! " + ex);
+        }
+        
     }
 
     public String generateKey(String selectedUser, String username) {

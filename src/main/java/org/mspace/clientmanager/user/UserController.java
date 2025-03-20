@@ -30,6 +30,7 @@ import javax.faces.model.SelectItem;
 import javax.validation.constraints.Pattern;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
 import ke.co.mspace.nonsmppmanager.model.AuthenticationBean;
+import ke.co.mspace.nonsmppmanager.model.ManageCredit;
 import org.mspace.clientmanager.credits.model.SMSCredits;
 import ke.co.mspace.nonsmppmanager.service.AlphaScroller;
 import ke.co.mspace.nonsmppmanager.service.AlphaServiceApi;
@@ -42,6 +43,7 @@ import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.mspace.clientmanager.credits.AddCredits;
@@ -80,6 +82,7 @@ public class UserController implements Serializable {
 
     @NotEmpty(message = "Email required")
     @Pattern(regexp = ".+@.+\\..+", message = "Invalid Email")
+    @Email(message = "must be a valid email")
     private String userEmail;
 
     private List<String> comboAlphanumerics;
@@ -111,6 +114,7 @@ public class UserController implements Serializable {
     private float cost_per_sms = (float) 1.0;
     private int maxContacts;
     private int maxTotal;
+    private ManageCredit manageCredit;
 
     private String firstName = "";
     private String surName = "";
@@ -573,6 +577,7 @@ public class UserController implements Serializable {
 
         if (creditManageType.equalsIgnoreCase("add")) {
             manageCreditsOperations = new AddCredits();
+            
         } else {
             manageCreditsOperations = new SubtractCredits();
         }
@@ -705,7 +710,6 @@ public class UserController implements Serializable {
     }
 
     public String getCreditManageType() {
-
         return creditManageType;
     }
 

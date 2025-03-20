@@ -49,6 +49,9 @@ public class TSmsApiKeyService {
 
     public TSmsApiKey getSmsApiKeyById(int id) {
       return smsApiDAO.getSmsApiKeyById(id);
-
+    }
+    
+    public void updateSMSApiKeyName(TSmsApiKey manageSmsApiKey){
+        smsApiDAO.updateSmsApiKeyName(manageSmsApiKey);
     }
 }

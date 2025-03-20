@@ -105,9 +105,7 @@ public class Alpha {
         return "Alpha{" + "id=" + id + ", name=" + name + ", username=" + username + ", alpha=" + alpha + ", userid=" + userid + '}';
     }
     
-    
-    
-
+   
     public List<Alpha> listAlphas() {
         List<Alpha> alphas = null;
         try {

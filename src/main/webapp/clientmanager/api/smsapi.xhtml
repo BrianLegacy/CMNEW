@@ -53,11 +53,7 @@
                                  currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
                                  scrollable="true"
                                  resizableColumns="true" selectionMode ="single" 
-
                                  >
-                        <p:column headerText="ID" style="width:50px">
-                            <h:outputText value="#{key.id}" />
-                        </p:column>
                         <p:column headerText="User Name" style="width:100px">
                             <h:outputText value="#{key.username}" />
                         </p:column>
@@ -71,16 +67,25 @@
                             <h:outputText value="#{key.expiryDate}" />
                         </p:column>
                         <p:column headerText="Actions" style="text-align:center; width:250px">
-                            <p:commandButton icon="fa fa-power-off" title="Activate" 
+                            <p:commandButton 
+                                id="editbutton"
+                                icon="pi pi-user-edit"
+                                title="Click to edit sms api details" style="font-size: 1.5em;"
+                                update=":editsmsapi"
+                                actionListener="#{smsApiBean.showUpdate(key)}" 
+                                oncomplete="PF('editsmsapi').show();" 
+                            />
+                               
+                            <p:commandButton icon="pi pi-pause" title="click to Activate Api" 
                                              rendered="#{key.status eq 0}" action="#{smsApiBean.showActivateDialog(key.id)}" />
 
-                            <p:commandButton icon="pi pi-stop-circle" title="Deactivate" 
+                            <p:commandButton icon="pi pi-stop-circle" title="Click to Deactivate Api" 
                                              rendered="#{key.status eq 1}" style=" font-size: 1.3em" action="#{smsApiBean.showDeactivateDialog(key.id)}" />
 
-                            <p:commandButton icon="pi pi-refresh" title="Regenerate" style=" font-size: 1.3em" action="#{smsApiBean.showUpdateDialog(key.id)}"/>
+                            <p:commandButton icon="pi pi-refresh" title="Click to Regenerate Api" style=" font-size: 1.3em" action="#{smsApiBean.showUpdateDialog(key.id)}"/>
 
 
-                            <p:commandButton icon="pi pi-trash" style=" font-size: 1.3em" action="#{smsApiBean.showDeleteDialog(key.id)}"/>
+                            <p:commandButton icon="pi pi-trash" title="Click to Delete Api" style=" font-size: 1.3em" action="#{smsApiBean.showDeleteDialog(key.id)}"/>
                         </p:column>
 
 
@@ -169,7 +174,31 @@
                             </f:facet>
                         </h:panelGrid>
                     </p:dialog>
-                </h:form>       
+                </h:form>  
+
+
+                <p:dialog header="Edit SMS Api" widgetVar="editsmsapi" id="editsmsapi" modal="true">
+                    <h:form>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <p:outputLabel for="username" value="Username:" style="margin-right: 10px; width: 150px;"/>
+                                <p:inputText id="username" value="#{smsApiBean.manageUserKey.username}" readonly="true" disabled="true"/>
+                            </div>
+
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <p:outputLabel for="name" value="Name" style="margin-right: 10px; width: 150px;"/>
+                                <p:inputText id="name" value="#{smsApiBean.manageUserKey.name}" />
+                            </div>
+
+                            <div class="field-full align-center">
+                                <p:commandButton value="Save"
+                                                 action="#{smsApiBean.updateUserApiKeyName()}" ajax="false" update=":dataTable"/>
+                                <p:commandButton value="Cancel" onclick="PF('editsmsapi').hide();" ajax="true"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </p:dialog>
+
 
             </p:panel>
             <script>

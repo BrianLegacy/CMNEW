@@ -274,7 +274,7 @@
                                 <h:outputLabel id="cpusername" value="#{smscontroller.currentSmsUser.username}"/>
 
                                 <p:outputLabel for="newpass" value="New password"/>
-                                <p:inputText id="newpass" type="password" value="#{smscontroller.newPassword}"/>
+                                <p:inputText id="newpass" type="password" value="#{smscontroller.newPassword}" autocomplete="off"/>
                                 
                                 <p:outputLabel for="confirmpass" value="Confirm Password"/>
                                 <p:inputText id="confirmpass" type="password" value="#{smscontroller.confirmPassword}"/>
@@ -357,11 +357,12 @@
 
                                     <div class="field">
                                         <p:outputLabel for="useremail" value="User Email"/>
-                                        <p:inputText id="useremail" value="#{smscontroller.newSmsUser.userEmail}" 
+                                        <p:inputText id="useremail"  value="#{smscontroller.newSmsUser.userEmail}" 
                                                      required="true" placeholder="" 
                                                      requiredMessage="Enter User Email" 
-                                                     validatorMessage="Enter User Email">
+                                                     validatorMessage="Invalid Email Format">
                                             <f:ajax event="blur" render="userEmailMessage" />
+                                            <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"/>
                                         </p:inputText>
                                         <p:message for="useremail" id="userEmailMessage" />
                                     </div>
@@ -455,7 +456,7 @@
                                 <h:inputHidden id="secrete_smsCredit" value="#{smscontroller.currentSmsUser.smsCredits}"/>
                                 <!-- Command Button -->
                                 <div class="field-full align-center">
-                                    <p:commandButton value="Execute"
+                                    <p:commandButton value="Execute" ajax="false"
                                                      action="#{smscontroller.manageSmsCredit()}"
                                                      update="showusers:table, msgs :maintab"
                                                      oncomplete="if (#{facesContext.maximumSeverity==null}) PF('editsmscredits').hide();"/>

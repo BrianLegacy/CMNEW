@@ -111,10 +111,10 @@
         </dependency>
 
         <dependency>
-    <groupId>com.zaxxer</groupId>
-    <artifactId>HikariCP</artifactId>
-    <version>2.7.2</version>
-</dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.7.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.primefaces.themes</groupId>
@@ -215,7 +215,7 @@
             <version>${itext.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>bouncycastle</groupId>
+                    <groupId>bouncycastle</groupId>       
                     <artifactId>bcprov-jdk14</artifactId>
                 </exclusion>
                 <exclusion>

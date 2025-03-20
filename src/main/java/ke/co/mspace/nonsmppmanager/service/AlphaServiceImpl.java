@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
@@ -254,7 +255,7 @@ public class AlphaServiceImpl implements AlphaServiceApi {
     public List<Alpha> getAllAlphanumerics(Connection conn) {
 
         String sql = "SELECT * FROM tAllowedAlphanumerics";
-        String sqlReseller = "SELECT t.* FROM tAllowedAlphanumerics t inner join tUSER u on t.username = u.username where u.agent = '" + user_id + "'";
+        String sqlReseller = "SELECT t.* FROM tAllowedAlphanumerics t inner join tUSER u on t.username = u.username where u.agent = '" + user_id + "' OR u.super_account_id= '" + user_id +"'";
         List<Alpha> result = new ArrayList<>();
         try {
 
@@ -322,6 +323,28 @@ public class AlphaServiceImpl implements AlphaServiceApi {
         // Bind values to the parameters
 
         return count;
+    }
+    
+    public void updateAlphanumeric(String username, String alpha, String alpaType, Connection conn){
+        System.out.println("Inside Update AlphaNumeric");
+        String sql = "UPDATE tAllowedAlphanumerics SET alphanumeric= ? WHERE username=?";
+        
+        try{
+           PreparedStatement ps = conn.prepareStatement(sql);
+           ps.setString(1, alpha);
+           ps.setString(2, username);
+           int result = ps.executeUpdate();
+            System.out.println("result: " + result);
+           if(result > 0){
+               FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Alphanumeric successfully updated!");
+               FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+           }else{
+               FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Error", "Internal Server Error! Unable to update Alphanumeric");
+               FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+           }
+        }catch(SQLException ex){
+            System.out.println("An sql exception has occured! " + ex);
+        }
     }
 
     @Override

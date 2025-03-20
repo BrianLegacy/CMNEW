@@ -126,6 +126,7 @@ public class ResellerController implements Serializable {
 
     public void setCurrentReseller(UserController currentReseller) {
         this.currentReseller = currentReseller;
+        System.out.println("currentreseller " + currentReseller.getUsername());
         refreshAlphas();
     }
 

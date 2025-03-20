@@ -5,11 +5,16 @@
  */
 package org.mspace.clientmanager.credits;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import javax.faces.context.FacesContext;
+import ke.co.mspace.nonsmppmanager.invalids.Tuser;
+import ke.co.mspace.nonsmppmanager.model.ManageCredit;
 import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 import org.mspace.clientmanager.credits.model.SMSCredits;
 import org.mspace.clientmanager.credits.services.ManageCreditApi;
@@ -22,6 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AddCredits implements ManageCreditsOperations{
     org.slf4j.Logger logger= LoggerFactory.getLogger(AddCredits.class);
+    
+    JdbcUtil util = new JdbcUtil();
 
     @Override
     public void execute(CreditRequestObject creditRequestObject) {
@@ -65,6 +72,32 @@ public class AddCredits implements ManageCreditsOperations{
              }
                     }
              }
-    }
+    
+        public void addSMSCredit(){
+                ManageCredit smsCredit = new ManageCredit();
+                
+                String loggedInUser = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("username");
+                
+//                Tuser user = 
+                
+
+//              String sql2 = "INSERT INTO tManageCredits(username, actionType, actionTime"
+//                    + ", numCredits, previous_balance, new_balance,user,topupMode)"
+//                    + " VALUES (?, ?, now(), ?, ?, ?,?,?)";
+//       
+//              try{
+//                     Connection conn = util.getConnectionTodbSMS();
+//                     PreparedStatement ps = conn.prepareStatement(sql);
+//                     ps.setString(0, loggedInUser);
+//                     ps.setInt(1, 3);
+//                     ps.setDate(3, );
+//
+//              }catch(Exception ex){
+//                  System.out.println("An sql exception has occured! " + ex);
+//              }
+              
+              
+        }
     
 
+}

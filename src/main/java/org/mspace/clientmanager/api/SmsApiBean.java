@@ -20,6 +20,7 @@ public class SmsApiBean implements Serializable {
     private TSmsApiKeyDataModel keys;
     private TSmsApiKey newKey;
     private List<SelectItem> users;
+    private TSmsApiKey manageUserKey;
 
     private String selectedApiKey;
     private int selectedKeyId;
@@ -34,6 +35,15 @@ public class SmsApiBean implements Serializable {
         users = smsApiService.getUsers();
     }
 
+    public TSmsApiKey getManageUserKey() {
+        return manageUserKey;
+    }
+
+    public void setManageUserKey(TSmsApiKey manageUserKey) {
+        this.manageUserKey = manageUserKey;
+    }
+    
+    
     public int getSelectedKeyId() {
         return selectedKeyId;
     }
@@ -188,6 +198,17 @@ public class SmsApiBean implements Serializable {
     public void confirmDelete() {
         deleteKey(selectedKeyId);
         PrimeFaces.current().executeScript("PF('cd').hide();");
+    }
+    
+    
+    public void showUpdate(TSmsApiKey key){
+        this.setManageUserKey(key);
+        System.out.println("selected key name for update: " + manageUserKey.getName() + "\n username: " + 
+                manageUserKey.getUsername() + " \n Id: " + manageUserKey.getId() + "\n userId: " + manageUserKey.getUserId());
+    }
+    
+    public void updateUserApiKeyName(){
+        smsApiService.updateSMSApiKeyName(manageUserKey);
     }
 
 }

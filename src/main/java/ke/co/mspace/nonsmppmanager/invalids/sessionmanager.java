@@ -5,11 +5,30 @@
  */
 package ke.co.mspace.nonsmppmanager.invalids;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import ke.co.mspace.nonsmppmanager.model.UserProfile;
+import ke.co.mspace.nonsmppmanager.service.UserScroller;
+import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.PasswordUtil;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *
@@ -23,6 +42,14 @@ public class sessionmanager implements Serializable {
     long remainigsms;
     String company_logopath;
     private String info;
+    String fileName = null;
+    File file;
+    UploadedFile uploadedFile;
+    private String path = "";
+    private String loggedInuser = (String) session.getAttribute("username");
+    Long id = (Long) session.getAttribute("id");
+    private String username = (String) session.getAttribute("username");
+    private String newPassword;
 
     public String getInfo() {
 
@@ -84,7 +111,7 @@ public class sessionmanager implements Serializable {
         // Formulate the message
         String message = m + username + " - SMS : <b>" + smsBalanceMessage + "</b>, Email : <b>" + emailBalanceMessage + "</b>";
         String reseller = m + "<b>" + username + "</b>";
-        return (remainigsms== -1) ?  message: reseller;
+        return (remainigsms == -1) ? message : reseller;
     }
 
     public Boolean showChat() {
@@ -152,6 +179,94 @@ public class sessionmanager implements Serializable {
 
     }
 
+    public void handleFileUpload(UploadedFile uploadedFile1) {
+//        UploadedFile item = event.getFile();
+//        System.out.println("");
+
+        UploadedFile item = uploadedFile1;
+
+        fileName = "";
+        System.out.println("The file+ +++>>>" + item.getFileName());
+        if (item.getFileName() != null) {
+            //uploadedFile = event.getFile();
+            //fileName = uploadedFile.getFileName();
+
+            fileName = linuxFileName(item.getFileName());
+            System.out.println("The Linux file+ +++>>>" + fileName);
+            try {
+                InputStream inputs = uploadedFile1.getInputStream();
+                System.out.println("inputs " + inputs);
+                String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String undersc = "-";
+                fileName = undersc + fileName
+                        .replace(" ", "-");
+                fileName = timestamp.concat(fileName);
+
+                System.out.println("Name of Excel uploaded is " + fileName);
+
+                try {
+                    System.out.println("Uploaded file:  " + fileName);
+                    if (!fileName.isEmpty() || fileName != null) {
+                        this.copyFile(fileName, inputs);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } catch (Exception m) {
+                m.printStackTrace();
+//                messager = new FacesMessage(" Not Succesful", " Check the columns of your Excel file.");
+//                FacesContext.getCurrentInstance().addMessage(null, messager);
+            }
+
+        } else {
+//            messager = new FacesMessage(" NOT Succesful", item.getFileName() + " is not  uploaded.");
+//            FacesContext.getCurrentInstance().addMessage(null, messager);
+        }
+        System.out.println("Exiting file upload safely");
+        path = "/files/config/" + fileName;
+
+    }
+
+    public void copyFile(String fileName, InputStream in) {
+        try {
+            String catalina = System.getProperty("catalina.home");
+            String destination = catalina + "/webapps/files/config/";
+            // write the inputStream to a FileOutputStream
+
+            OutputStream out = new FileOutputStream(new java.io.File(destination + fileName));
+
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = in.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+
+            in.close();
+            out.flush();
+            out.close();
+
+            System.out.println("file copied to !" + destination + fileName);
+        } catch (IOException e) {
+            System.out.println("check System space remaining ");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private String linuxFileName(String fileName) {
+        char j = '"';
+        ArrayList StrChrList = new ArrayList(Arrays.asList("-,:@%$&#+<>?!=/\\*(){}[]~`".concat(String.valueOf(j)).split("")));
+        for (Iterator it = StrChrList.iterator(); it.hasNext();) {
+            Object obj = it.next();
+            fileName = fileName.replace(" ", "_");
+            if (fileName.contains(obj.toString())) {
+                fileName = fileName.replace(obj.toString(), "");
+            }
+        }
+        return fileName;
+    }
+
     public String getUrl() {
         HttpSession session = getsession.getSession();
         String agent = (String) session.getAttribute("agent");
@@ -177,4 +292,125 @@ public class sessionmanager implements Serializable {
         HttpSession session = getsession.getSession();
         return (String) session.getAttribute("clientname");
     }
+
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+    public void storeData() {
+          updateTuser_username();
+
+        if (this.uploadedFile != null) {
+            System.out.println("uploadedFile: " + uploadedFile.getFileName());
+
+            handleFileUpload(uploadedFile);
+            System.out.println("path: " + path);
+
+        } else {
+            System.out.println("No file selected!");
+        }
+
+        System.out.println("updated username: " + loggedInuser);
+        System.out.println("path: " + path);
+        
+        String updateSql;
+        if(this.uploadedFile != null){
+            System.out.println("1 called");
+            updateSql = "Update dbTASK.tClient set picPath='" + path + "', clientName='" + loggedInuser + "' where clientName='" + username + "'";
+        }else{
+            System.out.println("2 called");
+           updateSql = "Update dbTASK.tClient set clientName='" + loggedInuser + "' where clientName='" + username + "'";
+        }
+        
+       
+        try {
+            JdbcUtil jdbcUtil = new JdbcUtil();
+
+            try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+                System.out.println("update sql: " +updateSql);
+                PreparedStatement ps = conn.prepareStatement(updateSql);
+                int result = ps.executeUpdate();
+                if (result > 0) {
+                    System.out.println("Successfully updated client logo");
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Successfully updated client logo");
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("An sql exception has occured " + e);
+
+        }
+
+    }
+
+    public void saveNewPassword() {
+        if (newPassword != null) {
+
+            String encryptedPassword = PasswordUtil.encrypt(newPassword);
+
+            String sql = "UPDATE dbSMS.tUSER SET password = ? WHERE id = ?";
+
+            JdbcUtil jdbcUtil = new JdbcUtil();
+            try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+
+                PreparedStatement ps = conn.prepareStatement(sql);
+
+                ps.setString(1, encryptedPassword);
+                ps.setLong(2, id);
+                
+                int result = ps.executeUpdate();
+                
+                if(result > 0){
+                    System.out.println("Successfully updated password");
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "info", "Successfully updated user password");
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+                }else{
+                    System.out.println("Password not updated!");
+                }
+
+            } catch (SQLException e) {
+                System.out.println("An sql exception has occured " + e);
+            }
+        }
+    }
+
+    public void updateTuser_username() {
+        JdbcUtil jdbcUtil = new JdbcUtil();
+
+        String updateSql = "UPDATE dbSMS.tUSER SET username=? WHERE id=?";
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            PreparedStatement ps = conn.prepareStatement(updateSql);
+            ps.setString(1, loggedInuser);
+            ps.setLong(2, id);
+            int result = ps.executeUpdate();
+            if (result > 0) {
+                System.out.println("Successfully updated users name");
+            }
+        } catch (SQLException e) {
+            System.out.println("An sql exception has occured " + e);
+
+        }
+    }
+
+    public String getLoggedInuser() {
+        return loggedInuser;
+    }
+
+    public void setLoggedInuser(String loggedInuser) {
+        this.loggedInuser = loggedInuser;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
 }

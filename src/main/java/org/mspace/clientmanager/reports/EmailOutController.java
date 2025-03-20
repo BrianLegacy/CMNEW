@@ -9,19 +9,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import ke.co.mspace.nonsmppmanager.model.EmailOut;
+import ke.co.mspace.nonsmppmanager.model.EmailOutLazyDataModel;
 import ke.co.mspace.nonsmppmanager.service.EmailOutServiceApi;
 import ke.co.mspace.nonsmppmanager.service.EmailOutServiceApiImpl;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import org.primefaces.model.LazyDataModel;
 
 /**
  *
  * @author amos
  */
 @ManagedBean(name = "emailoutcontroller")
-@ViewScoped
+@SessionScoped
 public class EmailOutController implements Serializable {
 
     private List<EmailOut> emailUsers;
@@ -31,13 +34,26 @@ public class EmailOutController implements Serializable {
 
     private EmailOutServiceApi emailDao;
     private int rows;
+    private LazyDataModel<EmailOut> lazyModel; 
+    
 
     @PostConstruct
     public void init() {
+        System.out.println("EmailOutController created and PostConsutruct called ");
         emailDao = new EmailOutServiceApiImpl();
-    }
+        lazyModel = new EmailOutLazyDataModel();    
+        System.out.println("EmailOutController created and PostConsutruct called 2");
 
+    }
+    
     public void generateEmailOut() {
+        
+        if (username == null || username.trim().isEmpty()) {
+        System.out.println("Username is null");
+        JsfUtil.addErrorMessage("No User selected.");
+        return;
+    }
+        
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String startDate = simpleDateFormat.format(reportStartDate);
@@ -50,14 +66,16 @@ public class EmailOutController implements Serializable {
             System.out.println("Selected user is: " + username);
             System.out.println("startdate " + startDate);
             System.out.println("endDate " + endDate);
-            emailUsers = emailDao.fetchEmailReport(username, startDate, endDate);
+//            emailUsers = emailDao.fetchEmailReport(username, startDate, endDate);
+            lazyModel = new EmailOutLazyDataModel(emailDao, username, startDate, endDate);
+//            lazyModel.setRowCount(emailDao.fetchRows(username, startDate, endDate));
 
-            if (!emailUsers.isEmpty()) {
-                JsfUtil.addSuccessMessage("Fetched All Email Reports.");
-                System.out.println("rows: " + getRows());
-            } else {
-                JsfUtil.addSuccessMessage("No records found match search.");
-            }
+//            if (!emailUsers.isEmpty()) {
+//                JsfUtil.addSuccessMessage("Fetched All Email Reports.");
+//                System.out.println("rows: " + getRows());
+//            } else {
+//                JsfUtil.addSuccessMessage("No records found match search.");
+//            }
         } else {
 
             System.out.println("Username is null");
@@ -90,7 +108,10 @@ public class EmailOutController implements Serializable {
     }
 
     public int getRows() {
-
+        if (emailUsers == null || emailUsers.isEmpty()) {
+        return 0; 
+        }
+        
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
         String startDate = simpleDateFormat.format(reportStartDate);
@@ -119,4 +140,12 @@ public class EmailOutController implements Serializable {
         return emailDao;
     }
 
+    public LazyDataModel<EmailOut> getLazyModel() {
+        return lazyModel;
+    }
+
+    public void setLazyModel(LazyDataModel<EmailOut> lazyModel) {
+        this.lazyModel = lazyModel;
+    }
+    
 }

@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcUtil implements Serializable{
 
-    boolean DATA_CENTER_NEW = true;     //dc
+    boolean DATA_CENTER_NEW = false;     //dc
     boolean DATA_CENTER_LIVE = false;     //gateway .5
-    boolean DEBUG = false;              //local
+    boolean DEBUG = true;              //local
     boolean DEV_SERVER = false;   //dev
     boolean GATEWAY = false;
     boolean WEBSITE = false;
@@ -43,8 +43,12 @@ public class JdbcUtil implements Serializable{
     public String localMySQLUser = "mysql";
 //    public String clientManagerMySQLUser = "clientmanager
     public String clientManagerMySQLUser = "clientmanager";
-    public String websiteUser = "dlr";
     
+//    Website
+    public String websiteUser = "dlr";
+    public String websitePassword = "dlr123";
+    private final String websiteHost = "10.164.0.5";
+
 //    data center new
     public String dataCenterUserNew = "clientmanager";
     public String dataCenterPasswordNew="ClientManager@2024#";
@@ -55,9 +59,13 @@ public class JdbcUtil implements Serializable{
     public String naivasServerPassword="Dashboard@2025#";
     private final String naivasServerHost="192.168.10.47";
     
-//    dev server
-    public String devUser = "clientmanager";
-    public String devPassword ="ClientManager@2024#";
+//    public String devUser = "clientmanager";
+//    public String devPassword ="ClientManager@2024#";
+//    private final String devHost= "192.168.10.199";
+    
+    //    dev server
+     public String devUser = "dev";
+    public String devPassword ="dev123";
     private final String devHost= "192.168.10.199";
     
     public String testMySQLUser = "test";
@@ -72,7 +80,6 @@ public class JdbcUtil implements Serializable{
     public String testMySQLPassword64 = "mysql123";
 //    public String clientManagerMySQLPassword = "DatabaseMspace54#";
     public String clientManagerMySQLPassword = "ClientManager123#";
-    public String websitePassword = "dlr123";
 
     private final String dataCenterHost = "10.164.0.5";
     
@@ -84,7 +91,6 @@ public class JdbcUtil implements Serializable{
     private final String testMySQLHost64 = "192.168.1.51";
 //    private final String clientManagerMySQLHost = "34.90.100.104";
     private final String clientManagerMySQLHost = "10.164.0.5";
-    private final String websiteHost = "10.164.0.5";
 
     private final String mysqlOptions = "?zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&useUnicode=false";
 

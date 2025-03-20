@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 
 import javax.faces.context.FacesContext;
@@ -39,7 +40,7 @@ import ke.co.mspace.nonsmppmanager.util.JsfUtil;
  * @author Norrey Osako
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class AlphaScroller {
 
     private Alpha currentItem = new Alpha();
@@ -47,6 +48,7 @@ public class AlphaScroller {
     Connection conn = null;
     String user;
     private static final Logger LOG = Logger.getLogger(AlphaScroller.class.getName());
+    private List<Alpha> filteredUsers;
 
     private int rows = 10;
 
@@ -126,6 +128,9 @@ public class AlphaScroller {
 
         return allUsers;
     }
+    
+
+    
  public void psetCurrentAlpha(Alpha alpha){
      System.out.println("settingsx");
         currentItem=alpha;
@@ -133,7 +138,7 @@ public class AlphaScroller {
     }
     //==========================================================================
     public List<Alpha> getAgentAlphas() {
-
+         
         synchronized (this) {
             if (allUsers == null || allUsers.isEmpty()) {
               
@@ -357,19 +362,19 @@ public class AlphaScroller {
 
             System.out.println("Username : " + username);
             System.out.println("Alpha : " + alphanumeric);
+            System.out.println("Alphanumeric: " + alphanumeric);
             System.out.println("Id : " + id);
             AlphaServiceImpl aService = new AlphaServiceImpl();
             String alphaType = aService.getAlphanumericType(alphanumeric, conn);
             if (id == 0) {
-
                 service.persistAlpha(username, alphanumeric, alphaType, conn);
                 JsfUtil.addSuccessMessage("User alphanumeric saved successfully");
                 //currentItem.setMessage("UserController alpha saved successfully.");
             } else {
 
-                service.updateAlpha(username, alphanumeric, alphaType, conn);
-                JsfUtil.addSuccessMessage("User alphanumeric updated successfully");
-                allUsers = null;
+                service.updateAlphanumeric(username, alphanumeric, alphaType, conn);
+//                JsfUtil.addSuccessMessage("User alphanumeric updated successfully");
+//                allUsers = null;
                 getAllAlphas();
                 //currentItem.setMessage("UserController alpha updated successfully.");
 
@@ -444,4 +449,6 @@ public class AlphaScroller {
         return String.valueOf(currentItem.getId());
 
     }
+    
+    
 }

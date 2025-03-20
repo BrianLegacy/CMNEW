@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions" 
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head></h:head>
     <h:body>
@@ -23,6 +22,7 @@
                             <h:outputLabel for="user" value="User" />
                             <p:selectOneMenu id="user" value="#{credit.username}" filter="true">
                                 <f:selectItem itemLabel="Select User" itemValue="" />
+                                <f:selectItem itemLabel="View All" itemValue="" />
                                 <f:selectItems value="#{sMSOut.dataC}" ></f:selectItems>
                             </p:selectOneMenu>
                             <p:commandButton value="Generate" action="#{credit.generateCreditHistory()}"
