@@ -24,6 +24,7 @@ public class EmailOutLazyDataModel extends LazyDataModel<EmailOut>{
     private String user;
     private String startDate;
     private String endDate;
+    private int rows = 0;
     
     public EmailOutLazyDataModel(){
         
@@ -59,6 +60,7 @@ public class EmailOutLazyDataModel extends LazyDataModel<EmailOut>{
     public int count(Map<String, FilterMeta> filterBy) {
         if(this.emailDao != null){
             System.out.println("Inside count of lazyloader");
+             rows = emailDao.fetchRows(user, startDate, endDate);
              return emailDao.fetchRows(user, startDate, endDate);
         }
         return 0;
@@ -87,8 +89,14 @@ public class EmailOutLazyDataModel extends LazyDataModel<EmailOut>{
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
-    
-    
+
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
     
 }
 

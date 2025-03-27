@@ -59,9 +59,6 @@ public class JdbcUtil implements Serializable{
     public String naivasServerPassword="Dashboard@2025#";
     private final String naivasServerHost="192.168.10.47";
     
-//    public String devUser = "clientmanager";
-//    public String devPassword ="ClientManager@2024#";
-//    private final String devHost= "192.168.10.199";
     
     //    dev server
      public String devUser = "dev";
@@ -107,12 +104,12 @@ public class JdbcUtil implements Serializable{
             localDataCenterProps.put("user", this.dataCenterUser);
             localDataCenterProps.put("password", this.dataCenterPassword);
             
-             //   Naivas Server
+             //Naivas Server
             Properties naivasServerProps = new Properties();
             naivasServerProps.put("user", this.naivasServerUser);
             naivasServerProps.put("password", this.naivasServerPassword);
             
-//            Dev_Server
+//          Dev_Server
             Properties DevProperties = new Properties();
             DevProperties.put("user", this.devUser);
             DevProperties.put("password", this.devPassword);  
@@ -127,7 +124,7 @@ public class JdbcUtil implements Serializable{
             localConnectionProps.put("user", this.localMySQLUser);
             localConnectionProps.put("password", this.localMySQLPassword);
 
-//             Test 
+//          Test 
             Properties testConnectionProps = new Properties();
             testConnectionProps.put("user", this.testMySQLUser);
             testConnectionProps.put("password", this.testMySQLPassword);
@@ -142,7 +139,7 @@ public class JdbcUtil implements Serializable{
             liveConnectionProps.put("user", this.clientManagerMySQLUser);
             liveConnectionProps.put("password", this.clientManagerMySQLPassword);
 
-//               WEB
+//            WEB
             Properties websiteConnectionProps = new Properties();
             websiteConnectionProps.put("user", this.websiteUser);
             websiteConnectionProps.put("password", this.websitePassword);

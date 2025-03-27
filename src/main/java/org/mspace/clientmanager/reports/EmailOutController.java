@@ -66,16 +66,8 @@ public class EmailOutController implements Serializable {
             System.out.println("Selected user is: " + username);
             System.out.println("startdate " + startDate);
             System.out.println("endDate " + endDate);
-//            emailUsers = emailDao.fetchEmailReport(username, startDate, endDate);
             lazyModel = new EmailOutLazyDataModel(emailDao, username, startDate, endDate);
-//            lazyModel.setRowCount(emailDao.fetchRows(username, startDate, endDate));
 
-//            if (!emailUsers.isEmpty()) {
-//                JsfUtil.addSuccessMessage("Fetched All Email Reports.");
-//                System.out.println("rows: " + getRows());
-//            } else {
-//                JsfUtil.addSuccessMessage("No records found match search.");
-//            }
         } else {
 
             System.out.println("Username is null");

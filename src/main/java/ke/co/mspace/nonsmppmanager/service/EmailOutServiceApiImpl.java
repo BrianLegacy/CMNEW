@@ -17,6 +17,7 @@ import ke.co.mspace.nonsmppmanager.invalids.FacePainter;
 import ke.co.mspace.nonsmppmanager.invalids.UserInfo;
 import ke.co.mspace.nonsmppmanager.model.EmailOut;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
+import ke.co.mspace.nonsmppmanager.util.JsfUtil;
 
 /**
  *
@@ -118,10 +119,16 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
                 System.out.println("rows has data");
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully retrieved " + rows + "  records "));
+                
+                JsfUtil.addSuccessMessage("Successfully retrieved " + rows + "  records ");
+
             } else {
                 System.out.println("Rows has no data");
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "", "No data found!"));
+                
+                JsfUtil.addSuccessMessage("No records found!");
+
             }
 
             System.out.println("Finished data retrieval");
@@ -162,15 +169,11 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
                 while (rs.next()) {
                     rows += rs.getInt(1);
                 }
-                if(rs.next()){
-                     FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully retrieved " + rows + "  records "));
-                }else{
-                System.out.println("Rows has no data");
+               
+                System.out.println("rows: " + rows);
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "", "No data found!"));
-                }
-
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully retrieved " + rows + "  records "));
+                
             } catch (Exception ex) {
                 System.out.println("An exception has occured " + ex);
             }
