@@ -50,7 +50,7 @@
                 </h:form>
             </p:panel>
 
-            <p:panel id="maintab" header="More Info" style=" width: 80%; margin: auto "  >
+            <p:panel id="maintab" header="More Info" style=" width: 80%; margin: auto ">
 
                 <p:dataTable value="#{userScroller.userProfile}" var="item"
                              id="usertb"  style="width: 100%; border-color: #e3f1fa ;">
@@ -79,20 +79,16 @@
 
                             </p:column>
 
-
-
                             <p:column colspan="1"><h:outputText value="Password" /></p:column>
                             <p:column><h:outputText value="*********" /></p:column>
                             <p:column>
                                 <h:form >
                                 </h:form>
-
                             </p:column>
 
                             <p:column colspan="1"><h:outputText value="Start Date" /></p:column>
                             <p:column><h:outputText value="#{item.startDate}" /></p:column>
                             <p:column><h:outputText value="" /></p:column>
-
 
                             <p:column colspan="1"><h:outputText value="End Date" /></p:column>
                             <p:column><h:outputText value="#{item.endDate}" /></p:column>

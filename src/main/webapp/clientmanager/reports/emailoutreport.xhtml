@@ -14,6 +14,11 @@
                 .ui-growl-item-container.ui-state-highlight {
                     border-color: red;
                 }
+                
+                .custom-progress-bar .ui-progressbar-value {
+                    background-color: blue !important;
+                }
+
             </style>
 
 
@@ -49,7 +54,7 @@
 
                         <h:panelGrid columns="1" style="width:100%; margin-left:auto; margin-right:auto; padding:8px; text-align:center;">
                             <p:commandButton value="Generate" action="#{emailoutcontroller.generateEmailOut()}"
-                                             update="msgs report:table" ajax="true"/>
+                                             update="msgs report:table report:progressBarIndeterminate" ajax="true"/>
                         </h:panelGrid>
 
                         <p:dialog widgetVar="loader" modal="true" closable="false" draggable="false" resizable="false" showHeader="false" width="100" height="50">
@@ -120,6 +125,7 @@
                                 <h:outputText value="#{emailuser.status}"/>
                             </p:column>
                         </p:dataTable>
+                        <p:progressBar id="progressBarIndeterminate" style="height:6px; color: blue; margin-top: 10px " mode="indeterminate" styleClass="custom-progress-bar" rendered="#{emailOutLazyDataModel.loaderActive}"/>
                     </h:form>
 
                 </p:panel>

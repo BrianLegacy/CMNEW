@@ -23,7 +23,6 @@
                 <div id="eaders" >
                     <div align="center" style="margin-top: -90px"> <a  href="#{logo_client.getUrlLink()}" target="_blank">
                             <img src="#{logo_client.clnt_logo()}" alt="Mspace"                                  
-
                                  height="150px"  border="0"  
                                  longdesc="https://www.mspace.co.ke" />
                         </a></div>
@@ -31,7 +30,6 @@
            
                 <p:panel styleClass="customTitleBar" style="width: 80%; height: auto " id="basic" header="::System Login">
                     <h:form>
-
                         <p:ajaxStatus style="display:block;margin-bottom:2em;height:24px;">
                         </p:ajaxStatus>
                         <p:ajaxStatus onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()" />
@@ -42,8 +40,9 @@
                         <h:outputLabel value="Your session timedout. Please login to continue" style="color:red; font-size: 16px; font-weight:  600" rendered="#{flash.timedout}"/>
                         <h:panelGrid id="grid" columns="4" style="float: inside">
                             <p:outputLabel  for="username" value=" Username:"  style=" margin-left: -8%" class="fa fa-user"/>
-                            <p:inputText id="username" value="#{tusercontroller.username}" required="true" validatorMessage="username is too short" requiredMessage="username required">
-                                <f:validateLength minimum="4" />
+                            <p:inputText id="username" value="#{tusercontroller.username}" required="true" validatorMessage="username is either too long or too short" requiredMessage="username required">
+                                <f:validateLength minimum="4" maximum="15" />
+                                <f:validator validatorId="noLinkValidator"  />
                             </p:inputText>
                             <pe:tooltip for="username" value="Enter your username" showEffect="slideToggle"  
                                         hideEffect="slideToggle" showDelay="0" myPosition="left center" atPosition="right center"/>  
@@ -54,7 +53,6 @@
                             <pe:tooltip for="password" value="Enter your password" showEffect="slideToggle"  
                                         hideEffect="slideToggle" showDelay="0" myPosition="left center" atPosition="right center"/>  
                             <p:message for="password" display="message" />
-
                         </h:panelGrid>
                         <div  style="padding: 0.4rem">
                             <h:outputLink  id="reset" value="PasswordReset.jsf" onclick="PF('myDialogVar').show()" style="color: blue;text-decoration: none;"> 

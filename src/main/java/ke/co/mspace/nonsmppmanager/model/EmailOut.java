@@ -59,7 +59,7 @@ public class EmailOut implements Serializable{
                 Connection con = new JdbcUtil().getConnectionTodbSMS(); PreparedStatement stmt = adnminval == 5 ? con.prepareStatement(fetchForReseller) : con.prepareStatement(fetch)) {
             if (adnminval == 5) {
                 stmt.setString(1, user_id);
-            } 
+            }
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

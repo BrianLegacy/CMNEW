@@ -245,6 +245,8 @@ public class UserServiceImpl implements UserServiceApi {
                 actioType = "Top-Up";
             } else if (actioType.equals("2")) {
                 actioType = "Reduction";
+            }else if(actioType.equals("3")){
+                actioType = "Addition";
             }
             aUser.setUsernC(rs.getString("username"));
             aUser.setActionType(actioType);

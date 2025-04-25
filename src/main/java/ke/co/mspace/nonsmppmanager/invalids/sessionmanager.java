@@ -224,7 +224,7 @@ public class sessionmanager implements Serializable {
 //            FacesContext.getCurrentInstance().addMessage(null, messager);
         }
         System.out.println("Exiting file upload safely");
-        path = "/files/config/" + fileName;
+        path = "../files/config/" + fileName;
 
     }
 
@@ -341,6 +341,7 @@ public class sessionmanager implements Serializable {
                 }
             }
         } catch (SQLException e) {
+            System.out.println("++++++++++++++++++++++++++");
             System.out.println("An sql exception has occured " + e);
 
         }

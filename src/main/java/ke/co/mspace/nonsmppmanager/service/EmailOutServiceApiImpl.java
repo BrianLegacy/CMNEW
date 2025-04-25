@@ -30,30 +30,40 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
     private static final Logger LOG = Logger.getLogger(SMSOutServiceImpl.class.getName());
     private FacePainter facePainter = new FacePainter();
     private UserInfo userInfo = new UserInfo();
+    private boolean loader = false;
 
     @Override
     public List<EmailOut> fetchEmailReport(String user, String startDate, String endDate, int first, int pageSize) {
 
         System.out.println("Inside FetchEmail report");
 
-        String sqlmain = "(SELECT tEMAILOUT.id, tEMAILOUT.mobile, tEMAILOUT.name, tEMAILOUT.emailSrc,\n"
+//        String sqlmain = "SELECT * FROM (SELECT tEMAILOUT.id, tEMAILOUT.mobile, tEMAILOUT.name, tEMAILOUT.emailSrc,\n"
+//                + "                tEMAILOUT.emailTo, tEMAILOUT.emailReplyTo, \n"
+//                + "                tEMAILOUT.subject, tEMAILOUT.attachment, tEMAILOUT.message_id, tEMAILOUT.`user`,\n"
+//                + "                tEMAILOUT.submittedby , tEMAILOUT.timesubmitted, tEMAILOUT.emailBody,\n"
+//                + "                tEMAILOUT.status, tEMAILOUT.emailType\n"
+//                + "                FROM dbEMAIL.tEMAILOUT\n"
+//                + "                WHERE dbEMAIL.tEMAILOUT.user = '" + user + "' AND dbEMAIL.tEMAILOUT.timesubmitted BETWEEN '" + startDate + "' AND '" + endDate + "' \n"
+//                + "           UNION ALL\n"
+//                + "                \n"
+//                + "SELECT tEMAILOUT_COMPLETE.id, tEMAILOUT_COMPLETE.mobile, tEMAILOUT_COMPLETE.name, tEMAILOUT_COMPLETE.emailSrc,\n"
+//                + "                tEMAILOUT_COMPLETE.emailTo, tEMAILOUT_COMPLETE.emailReplyTo, \n"
+//                + "                tEMAILOUT_COMPLETE.subject, tEMAILOUT_COMPLETE.attachment, tEMAILOUT_COMPLETE.message_id, tEMAILOUT_COMPLETE.`user`,\n"
+//                + "                tEMAILOUT_COMPLETE.submittedby , tEMAILOUT_COMPLETE.timesubmitted, tEMAILOUT_COMPLETE.emailBody,\n"
+//                + "                tEMAILOUT_COMPLETE.status, tEMAILOUT_COMPLETE.emailType\n"
+//                + "                FROM dbEMAIL.tEMAILOUT_COMPLETE\n"
+//                + "                WHERE dbEMAIL.tEMAILOUT_COMPLETE.user = '" + user + "' AND dbEMAIL.tEMAILOUT_COMPLETE.timesubmitted BETWEEN '" + startDate + "' AND '" + endDate + "' \n"
+//                + "                ) AS combined_results \n"
+//                + "                ORDER BY timesubmitted DESC LIMIT ? OFFSET ?";
+
+                   String sqlmain = "SELECT tEMAILOUT.id, tEMAILOUT.mobile, tEMAILOUT.name, tEMAILOUT.emailSrc,\n"
                 + "                tEMAILOUT.emailTo, tEMAILOUT.emailReplyTo, \n"
                 + "                tEMAILOUT.subject, tEMAILOUT.attachment, tEMAILOUT.message_id, tEMAILOUT.`user`,\n"
                 + "                tEMAILOUT.submittedby , tEMAILOUT.timesubmitted, tEMAILOUT.emailBody,\n"
                 + "                tEMAILOUT.status, tEMAILOUT.emailType\n"
                 + "                FROM dbEMAIL.tEMAILOUT\n"
                 + "                WHERE dbEMAIL.tEMAILOUT.user = '" + user + "' AND dbEMAIL.tEMAILOUT.timesubmitted BETWEEN '" + startDate + "' AND '" + endDate + "' \n"
-                + "                ORDER BY dbEMAIL.tEMAILOUT.timesubmitted DESC LIMIT ? OFFSET ?)"
-                + "           UNION ALL\n"
-                + "                \n"
-                + "(SELECT tEMAILOUT_COMPLETE.id, tEMAILOUT_COMPLETE.mobile, tEMAILOUT_COMPLETE.name, tEMAILOUT_COMPLETE.emailSrc,\n"
-                + "                tEMAILOUT_COMPLETE.emailTo, tEMAILOUT_COMPLETE.emailReplyTo, \n"
-                + "                tEMAILOUT_COMPLETE.subject, tEMAILOUT_COMPLETE.attachment, tEMAILOUT_COMPLETE.message_id, tEMAILOUT_COMPLETE.`user`,\n"
-                + "                tEMAILOUT_COMPLETE.submittedby , tEMAILOUT_COMPLETE.timesubmitted, tEMAILOUT_COMPLETE.emailBody,\n"
-                + "                tEMAILOUT_COMPLETE.status, tEMAILOUT_COMPLETE.emailType\n"
-                + "                FROM dbEMAIL.tEMAILOUT_COMPLETE\n"
-                + "                WHERE dbEMAIL.tEMAILOUT_COMPLETE.user = '" + user + "' AND dbEMAIL.tEMAILOUT_COMPLETE.timesubmitted BETWEEN '" + startDate + "' AND '" + endDate + "' \n"
-                + "                ORDER BY dbEMAIL.tEMAILOUT_COMPLETE.timesubmitted DESC LIMIT ? OFFSET ?)";
+                + "                ORDER BY timesubmitted DESC LIMIT ? OFFSET ?";
 
         List<EmailOut> results = new ArrayList<>();
 
@@ -62,8 +72,8 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
             System.out.println("Established the connection and successfully prepared statement");
             pstmt.setInt(1, pageSize);
             pstmt.setInt(2, first);
-            pstmt.setInt(3, pageSize);
-            pstmt.setInt(4, first);
+//            pstmt.setInt(3, pageSize);
+//            pstmt.setInt(4, first);
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -170,7 +180,7 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
                     rows += rs.getInt(1);
                 }
                
-                System.out.println("rows: " + rows);
+                System.out.println("all rows: " + rows);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Successfully retrieved " + rows + "  records "));
                 
@@ -181,7 +191,6 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
             System.out.println("An exception has occured! " + ex);
         }
 
-        System.out.println("rows " + rows);
 
         return rows;
     }
