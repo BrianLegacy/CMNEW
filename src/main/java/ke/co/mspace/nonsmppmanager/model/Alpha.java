@@ -94,6 +94,7 @@ public class Alpha {
 
     public void setListAlphas(List<Alpha> listAlphas) {
         this.listAlphas = listAlphas;
+        //System.out.println("===nesh===" + listAlphas);
     }
 
     public void retrieveAlphas() {

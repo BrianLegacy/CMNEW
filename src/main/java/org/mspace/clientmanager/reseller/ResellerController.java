@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.model.Alpha;
@@ -37,7 +37,7 @@ import org.primefaces.model.file.UploadedFile;
  * @author olal
  */
 @ManagedBean(name = "resellercontroller")
-@ViewScoped
+@SessionScoped
 public class ResellerController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -144,6 +144,7 @@ public class ResellerController implements Serializable {
 
     public void setSelectedAlpha(Alpha selectedAlpha) {
         this.selectedAlpha = selectedAlpha;
+        System.out.println("====nesh====" + selectedAlpha);
     }
 
     public void addReseller() {

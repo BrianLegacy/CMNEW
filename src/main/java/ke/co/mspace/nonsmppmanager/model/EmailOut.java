@@ -19,15 +19,14 @@ import javax.faces.model.SelectItem;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.SessionUtil;
 
-
 /**
  *
  * @author amos
  */
 @ManagedBean(name = "emailout")
 @ViewScoped
-public class EmailOut implements Serializable{
-    
+public class EmailOut implements Serializable {
+
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_RESET = "\u001B[0m";
 
@@ -44,16 +43,16 @@ public class EmailOut implements Serializable{
     private String emailReplyTo;
     private Date timeSubmitted;
     private String attachment;
-    
-        private final int adnminval = Character.getNumericValue(SessionUtil.getAdmin());
-        List<SelectItem> dataTT;
-        private String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
 
-    
-        public List<SelectItem> getData() {
+    private final int adnminval = Character.getNumericValue(SessionUtil.getAdmin());
+    List<SelectItem> dataTT;
+    private String user_id = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("id").toString();
+
+    public List<SelectItem> getData() {
         dataTT = new ArrayList<>();
         String fetch = "SELECT username FROM dbSMS.tUSER WHERE  emailuser = 'Y' ORDER BY username";
-        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? | emailuser='Y' ORDER BY username";
+//        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? | emailuser='Y' ORDER BY username";
+        String fetchForReseller = "SELECT username FROM dbSMS.tUSER WHERE agent = ? AND emailuser = 'Y' ORDER BY username";
 
         try (
                 Connection con = new JdbcUtil().getConnectionTodbSMS(); PreparedStatement stmt = adnminval == 5 ? con.prepareStatement(fetchForReseller) : con.prepareStatement(fetch)) {
@@ -67,7 +66,7 @@ public class EmailOut implements Serializable{
                     dataTT.add(new SelectItem(originalUsername));
                 }
             }
-       }catch (SQLException err) {
+        } catch (SQLException err) {
             System.err.println("SQL error: " + err.getMessage());
         }
         return dataTT;
@@ -177,7 +176,5 @@ public class EmailOut implements Serializable{
     public void setAttachment(String attachment) {
         this.attachment = attachment;
     }
-    
-      
-}
 
+}

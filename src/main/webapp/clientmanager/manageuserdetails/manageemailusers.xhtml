@@ -356,7 +356,7 @@
                                     <div class="field">
                                         <p:outputLabel for="groups" value="Group"/>
                                         <p:selectOneMenu id="groups" value="#{emailcontroller.currentEmailUser.groupId}" filter="true">
-                                            <f:selectItem itemLabel="#{emailcontroller.currentEmailUser.group}" itemValue="" />
+<!--                                            <f:selectItem itemLabel="#{emailcontroller.currentEmailUser.group}" itemValue="" />-->
                                             <f:selectItems value="#{emailcontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>
                                     </div>

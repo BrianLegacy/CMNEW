@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -43,6 +43,7 @@ import ke.co.mspace.nonsmppmanager.service.UserServiceApi;
 import ke.co.mspace.nonsmppmanager.service.UserServiceImpl;
 import ke.co.mspace.nonsmppmanager.util.JdbcUtil;
 import ke.co.mspace.nonsmppmanager.util.JsfUtil;
+import ke.co.mspace.nonsmppmanager.validators.MultiEmail;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * @author Norrey Osako
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class UserController implements Serializable {
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -81,8 +82,9 @@ public class UserController implements Serializable {
     private String userMobile;
 
     @NotEmpty(message = "Email required")
-    @Pattern(regexp = ".+@.+\\..+", message = "Invalid Email")
-    @Email(message = "must be a valid email")
+//    @Pattern(regexp = ".+@.+\\..+", message = "Invalid Email")
+//    @Email(message = "must be a valid email")
+    @MultiEmail(message = "Enter valid email(s), separated by commas")
     private String userEmail;
 
     private List<String> comboAlphanumerics;
@@ -629,6 +631,7 @@ public class UserController implements Serializable {
                         creditManager.persistUpdateEmail(smsCredit, conn, creditsToManage, current, current - creditsToManage);
                         newBalace = adminv == '1' ? -1 : current - creditsToManage;
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("new_balace", newBalace);
+                        // Update max_contacts for user under management
                         userService.updateEmailCredits(username, maxContacts, conn);
 
                         UserServiceImpl.updateEmailAgentCredits(agent, current, creditsToManage, current - creditsToManage, conn);

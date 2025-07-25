@@ -60,35 +60,78 @@ public class TSmsApiKeyDAO {
         }
         return users;
     }
-
+    
     public List<TSmsApiKey> selectAll() {
-        String queryRes = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent = ? OR u.super_account_id=?;";
-        String queryAdmin = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent IS NOT NULL;";
-        List<TSmsApiKey> keys = new ArrayList<>();
+    String queryRes = "SELECT a.id, u.username, a.name, a.apiKey, a.expiryDate, a.status " +
+                      "FROM tApiKeys a " +
+                      "LEFT JOIN tUSER u ON a.tUserId = u.id " +
+                      "WHERE u.agent = ? OR u.super_account_id = ? OR u.id = ?";
 
-        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(queryAdmin) : connection.prepareStatement(queryRes)) {
+    String queryAdmin = "SELECT a.id, u.username, a.name, a.apiKey, a.expiryDate, a.status " +
+                        "FROM tApiKeys a " +
+                        "LEFT JOIN tUSER u ON a.tUserId = u.id " +
+                        "WHERE u.agent IS NOT NULL";
 
-            if ('Y' != admin) {
-                ps.setLong(1, agent);
-                ps.setLong(2, agent);
-            }
+    List<TSmsApiKey> keys = new ArrayList<>();
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                TSmsApiKey key = new TSmsApiKey();
-                key.setId(rs.getInt("id"));
-                key.setUsername(rs.getString("username"));
-                key.setName(rs.getString("name"));
-                key.setApiKey(rs.getString("apiKey"));
-                key.setExpiryDate(rs.getTimestamp("expiryDate"));
-                key.setStatus(rs.getInt("status"));
-                keys.add(key);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error loading users", e);
+    try (Connection connection = jdbcUtil.getConnectionTodbSMS();
+         PreparedStatement ps = (admin == 'Y')
+             ? connection.prepareStatement(queryAdmin)
+             : connection.prepareStatement(queryRes)) {
+
+        if (admin != 'Y') {
+            ps.setLong(1, agent);  // For u.agent = ?
+            ps.setLong(2, agent);  // For u.super_account_id = ?
+            ps.setLong(3, agent);  // For u.id = ?  (the reseller himself)
         }
-        return keys;
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            TSmsApiKey key = new TSmsApiKey();
+            key.setId(rs.getInt("id"));
+            key.setUsername(rs.getString("username"));
+            key.setName(rs.getString("name"));
+            key.setApiKey(rs.getString("apiKey"));
+            key.setExpiryDate(rs.getTimestamp("expiryDate"));
+            key.setStatus(rs.getInt("status"));
+            keys.add(key);
+        }
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error loading users", e);
     }
+
+    return keys;
+}
+
+
+//    public List<TSmsApiKey> selectAll() {
+//        String queryRes = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent = ? OR u.super_account_id=?;";
+//        String queryAdmin = "SELECT a.id ,u.username, a.name, a.apiKey, a.expiryDate, a.status FROM tApiKeys a LEFT JOIN tUSER u ON a.tUserId = u.id WHERE u.agent IS NOT NULL;";
+//        List<TSmsApiKey> keys = new ArrayList<>();
+//
+//        try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = admin == 'Y' ? connection.prepareStatement(queryAdmin) : connection.prepareStatement(queryRes)) {
+//
+//            if ('Y' != admin) {
+//                ps.setLong(1, agent);
+//                ps.setLong(2, agent);
+//            }
+//
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                TSmsApiKey key = new TSmsApiKey();
+//                key.setId(rs.getInt("id"));
+//                key.setUsername(rs.getString("username"));
+//                key.setName(rs.getString("name"));
+//                key.setApiKey(rs.getString("apiKey"));
+//                key.setExpiryDate(rs.getTimestamp("expiryDate"));
+//                key.setStatus(rs.getInt("status"));
+//                keys.add(key);
+//            }
+//        } catch (SQLException e) {
+//            LOGGER.log(Level.SEVERE, "Error loading users", e);
+//        }
+//        return keys;
+//    }
 
     public String insert(TSmsApiKey key) throws ApiException {
         try (Connection connection = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = connection.prepareStatement(INSERT)) {

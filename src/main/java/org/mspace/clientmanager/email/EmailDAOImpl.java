@@ -194,33 +194,113 @@ public class EmailDAOImpl implements EmailDAO {
         return result;
     }
 
+//    @Override
+//    public boolean editEmailUser(UserController user) {
+//        String sql = "UPDATE tUSER SET username = ?, max_total = ?, organization = ?, "
+//                + "contact_number = ?, email_address = ?, enable_email_alert = ?, cost_per_sms = ?, arrears = ?, "
+//                + "alertThreshold = ?, group = ?  WHERE id = ?";
+//
+//        boolean result = false;
+//        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//
+//            pstmt.setString(1, user.getUsername());
+//            pstmt.setLong(2, user.getSmsCredits());
+//            pstmt.setString(3, user.getOrganization());
+//            pstmt.setString(4, user.getUserMobile());
+//            pstmt.setString(5, user.getUserEmail());
+//            pstmt.setBoolean(6, user.isEnableEmailAlertWhenCreditOver());
+//            pstmt.setFloat(7, user.getCost_per_sms());
+//            pstmt.setInt(8, user.getArrears());
+//            pstmt.setInt(9, user.getAlertThreshold());
+//            pstmt.setInt(10, user.getGroupId());
+//            pstmt.setLong(11, user.getId());
+//
+//            result = pstmt.executeUpdate() > 0;
+//            LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
+//            return result;
+//        } catch (Exception e) {
+//            LOGGER.log(Level.SEVERE, "SQL error occurred", e);
+//        }
+//        return result;
+//    }
+
     @Override
     public boolean editEmailUser(UserController user) {
-        String sql = "UPDATE tUSER SET username = ?, max_total = ?, organization = ?, "
+        String updateUserSql = "UPDATE tUSER SET username = ?, max_total = ?, organization = ?, "
                 + "contact_number = ?, email_address = ?, enable_email_alert = ?, cost_per_sms = ?, arrears = ?, "
-                + "alertThreshold = ?, `group` = ?  WHERE id = ?";
+                + "alertThreshold = ?, `group` = ? WHERE id = ?";
+
+        String updateEmailSql = "UPDATE tUSER SET email_address = ? WHERE email_address = ?";
 
         boolean result = false;
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
 
-            pstmt.setString(1, user.getUsername());
-            pstmt.setLong(2, user.getSmsCredits());
-            pstmt.setString(3, user.getOrganization());
-            pstmt.setString(4, user.getUserMobile());
-            pstmt.setString(5, user.getUserEmail());
-            pstmt.setBoolean(6, user.isEnableEmailAlertWhenCreditOver());
-            pstmt.setFloat(7, user.getCost_per_sms());
-            pstmt.setInt(8, user.getArrears());
-            pstmt.setInt(9, user.getAlertThreshold());
-            pstmt.setInt(10, user.getGroupId());
-            pstmt.setLong(11, user.getId());
+        try {
+            conn = jdbcUtil.getConnectionTodbSMS();
+            conn.setAutoCommit(false); 
 
-            result = pstmt.executeUpdate() > 0;
-            LOGGER.log(Level.INFO, "Executed SQL: {0}", sql);
-            return result;
+            
+            String fetchEmail = "SELECT email_address FROM tUSER WHERE id = ?";
+            String oldEmail = null;
+
+            try (PreparedStatement fetchStmt = conn.prepareStatement(fetchEmail)) {
+                fetchStmt.setLong(1, user.getId());
+                try (ResultSet rs = fetchStmt.executeQuery()) {
+                    if (rs.next()) {
+                        oldEmail = rs.getString("email_address");
+                    } else {
+                        throw new SQLException("User ID not found: " + user.getId());
+                    }
+                }
+            }
+
+            
+            try (PreparedStatement pstmt = conn.prepareStatement(updateUserSql)) {
+                pstmt.setString(1, user.getUsername());
+                pstmt.setLong(2, user.getSmsCredits());
+                pstmt.setString(3, user.getOrganization());
+                pstmt.setString(4, user.getUserMobile());
+                pstmt.setString(5, user.getUserEmail()); 
+                pstmt.setBoolean(6, user.isEnableEmailAlertWhenCreditOver());
+                pstmt.setFloat(7, user.getCost_per_sms());
+                pstmt.setInt(8, user.getArrears());
+                pstmt.setInt(9, user.getAlertThreshold());
+                pstmt.setInt(10, user.getGroupId());
+                pstmt.setLong(11, user.getId());
+
+                result = pstmt.executeUpdate() > 0;
+            }
+
+            
+            if (oldEmail != null && !oldEmail.equals(user.getUserEmail())) {
+                try (PreparedStatement emailStmt = conn.prepareStatement(updateEmailSql)) {
+                    emailStmt.setString(1, user.getUserEmail()); 
+                    emailStmt.setString(2, oldEmail);           
+                    emailStmt.executeUpdate();
+                }
+            }
+
+            conn.commit(); 
+            LOGGER.log(Level.INFO, "Updated user and synchronized email_address changes.");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "SQL error occurred", e);
+            LOGGER.log(Level.SEVERE, "SQL error occurred during editEmailUser", e);
+            try {
+                if (conn != null && !conn.isClosed()) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Rollback failed", ex);
+            }
+        } finally {
+            try {
+                if (conn != null && !conn.isClosed()) {
+                    conn.close(); 
+                }
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Failed to close connection", ex);
+            }
         }
+
         return result;
     }
 
@@ -261,10 +341,10 @@ public class EmailDAOImpl implements EmailDAO {
 
     @Override
     public int countSmsUsers() {
-             String query="";
+        String query = "";
         if (admin == 'Y') {
             query = "SELECT COUNT(*) FROM dbEMAIL.tEMAILOUT";
-        } 
+        }
 //        else {
 //            query = "SELECT COUNT(*) FROM dbSMS.tUSER WHERE dbSMS.tUSER.agent = '" + agent + "'  AND dbSMS.tUSER.admin = '3' AND dbSMS.tUSER.smsuser = 'Y'";
 //        }

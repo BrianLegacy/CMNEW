@@ -58,6 +58,10 @@ public class UserInfo implements Serializable {
     public void viewcallbacks() {
         facePainter.setMainContent("clientmanager/callbacks/managecallbacks.xhtml");
     }
+    
+        public void viewsharedshortcode() {
+        facePainter.setMainContent("clientmanager/sharedshortcode/managesharedshortcode.xhtml");
+    }
 
     public void smsoutreport() {
         facePainter.setMainContent("clientmanager/reports/smsoutreport.xhtml");

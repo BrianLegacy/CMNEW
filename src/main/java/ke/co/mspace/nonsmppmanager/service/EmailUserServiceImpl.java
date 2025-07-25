@@ -761,8 +761,8 @@ public class EmailUserServiceImpl implements UserServiceApi {
         pstmt.setInt(1, smsCredits);
         pstmt.setString(2, username);
         int count = pstmt.executeUpdate();
-        //System.out.println("Updating user credits--------->"+new Date()+""+"  UserController:"+username+" Previous Balance: ");
-        //System.out.println("UPDATE CREDITS UPDATE CREDITS : " + count);
+        System.out.println("Updating user credits--------->"+new Date()+""+"  UserController:"+username+" Previous Balance: ");
+        System.out.println("UPDATE CREDITS UPDATE CREDITS : " + count);
     }
 
     @Override

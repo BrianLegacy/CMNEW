@@ -21,6 +21,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ExternalContext;
+
 /**
  *
  * @author olal
@@ -124,4 +129,56 @@ public class SmppController {
         String message = "SMS sent during this period is " + rows;
         newCell.setCellValue(message);
     }
+
+    public void exportCSV() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String startDate = dateFormat.format(reportStartDate).substring(0, 8) + "000001";
+        String endDate = dateFormat.format(reportEndDate).substring(0, 8) + "235959";
+
+        try {
+            externalContext.setResponseContentType("text/csv");
+            externalContext.setResponseHeader("Content-Disposition", "attachment;filename=smpp_report.csv");
+
+            OutputStream output = externalContext.getResponseOutputStream();
+
+            // CSV Header
+            String header = "Mobile,Source Address,Message,Time Sent,Last Update,User,Status,No of SMS\n";
+            output.write(header.getBytes());
+
+            // Fetch full report (stream or limit at DB if needed)
+            List<SMPPOut> exportData = smsDAO.fetchSMPPReport(username, startDate, endDate);
+
+            for (SMPPOut record : exportData) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(safe(record.getDestinationAddr())).append(",");
+                sb.append(safe(record.getSourceAddr())).append(",");
+                sb.append(safe(record.getMessagePayload())).append(",");
+                sb.append(safe(record.getTimeSubmitted())).append(",");
+                sb.append(safe(record.getTimeProcessed())).append(",");
+                sb.append(safe(record.getUser())).append(",");
+                sb.append(safe(record.getRealStatus())).append(",");
+                sb.append(record.getSmsCount()).append("\n");
+
+                output.write(sb.toString().getBytes("UTF-8"));
+            }
+
+            output.flush();
+            context.responseComplete();
+
+        } catch (IOException e) {
+            e.printStackTrace(); // replace with logging if needed
+        }
+    }
+
+// Helper to avoid null and handle commas
+    private String safe(Object val) {
+        if (val == null) {
+            return "";
+        }
+        return "\"" + val.toString().replace("\"", "\"\"") + "\"";
+    }
+
 }

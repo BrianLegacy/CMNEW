@@ -245,7 +245,7 @@ public class UserServiceImpl implements UserServiceApi {
                 actioType = "Top-Up";
             } else if (actioType.equals("2")) {
                 actioType = "Reduction";
-            }else if(actioType.equals("3")){
+            } else if (actioType.equals("3")) {
                 actioType = "Addition";
             }
             aUser.setUsernC(rs.getString("username"));
@@ -544,7 +544,7 @@ public class UserServiceImpl implements UserServiceApi {
                     picLocation = "resources/images/logo.gif";
                     isReseller = false;
                     System.out.println("reseller is false");
-                }   
+                }
 
             }
             JdbcUtil.closeConnection(conn);
@@ -1432,6 +1432,32 @@ public class UserServiceImpl implements UserServiceApi {
         return callbacklist;
     }
 
+//    public static ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
+//        String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
+//        JdbcUtil util = new JdbcUtil();
+//        Connection conn = util.getConnectionTodbEMAIL();
+//
+//        String sql = "select * from tEMAILPRICING te";
+//        PreparedStatement ps = conn.prepareStatement(sql);
+//        ArrayList<EmailPricingTable> pricingtable = new ArrayList();
+//        ResultSet rs = ps.executeQuery();
+//
+//        while (rs.next()) {
+//            EmailPricingTable pricing = new EmailPricingTable();
+//            pricing.setId(rs.getInt("id"));
+//            pricing.setPrice(rs.getFloat("price"));
+//            pricing.setEmails_purchased(rs.getString("emails_purchased"));
+//            String str = rs.getString("emails_purchased");
+//            String[] strarr = str.split("-");
+//            pricing.setEmails_purchased_start(strarr[0]);
+//            pricing.setEmails_purchased_end(strarr[1]);
+//            pricing.setExpiry(rs.getString("expiry"));
+//            pricing.setSelectType(new SelectItem(rs.getString("expiry")));
+//
+//            pricingtable.add(pricing);
+//        }
+//        return pricingtable;
+//    }
     public static ArrayList<EmailPricingTable> getPricingTable() throws SQLException {
         String username = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedUserCombo");
         JdbcUtil util = new JdbcUtil();
@@ -1439,23 +1465,36 @@ public class UserServiceImpl implements UserServiceApi {
 
         String sql = "select * from tEMAILPRICING te";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ArrayList<EmailPricingTable> pricingtable = new ArrayList();
+        ArrayList<EmailPricingTable> pricingtable = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
             EmailPricingTable pricing = new EmailPricingTable();
             pricing.setId(rs.getInt("id"));
             pricing.setPrice(rs.getFloat("price"));
-            pricing.setEmails_purchased(rs.getString("emails_purchased"));
-            String str = rs.getString("emails_purchased");
-            String[] strarr = str.split("-");
-            pricing.setEmails_purchased_start(strarr[0]);
-            pricing.setEmails_purchased_end(strarr[1]);
+
+            String emailsPurchased = rs.getString("emails_purchased");
+            pricing.setEmails_purchased(emailsPurchased);
+
+            String[] strarr = (emailsPurchased != null) ? emailsPurchased.split("-") : new String[0];
+            if (strarr.length >= 1) {
+                pricing.setEmails_purchased_start(strarr[0].trim());
+            } else {
+                pricing.setEmails_purchased_start("");
+            }
+
+            if (strarr.length >= 2) {
+                pricing.setEmails_purchased_end(strarr[1].trim());
+            } else {
+                pricing.setEmails_purchased_end("");
+            }
+
             pricing.setExpiry(rs.getString("expiry"));
             pricing.setSelectType(new SelectItem(rs.getString("expiry")));
 
             pricingtable.add(pricing);
         }
+
         return pricingtable;
     }
 
@@ -1476,12 +1515,12 @@ public class UserServiceImpl implements UserServiceApi {
     @Override
     public void updateEmailCredits(String username, int smsCredits, Connection conn) throws SQLException {
         String sql = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
-        String sqlReseller = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
+//        String sqlReseller = "UPDATE tUSER SET max_contacts = ? WHERE username = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         // Bind values to the parameters
         pstmt.setInt(1, smsCredits);
         pstmt.setString(2, username);
-        int count = pstmt.executeUpdate();
+        pstmt.executeUpdate();
     }
 
     @Override

@@ -408,7 +408,10 @@ public class AlphaServiceImpl implements AlphaServiceApi {
         // Bind values to the parameters
         pstmt.setString(1, username);
         pstmt.setString(2, alphanumeric);
-
+        
+        System.out.println("Executing SQL with:");
+        System.out.println("Username (agent_id): " + username);
+        System.out.println("Short code (WHERE): " + alphanumeric);
         // Execute the query
         result = pstmt.executeUpdate() > 0;
         return result;

@@ -132,7 +132,7 @@ public class AlphaScroller {
 
     
  public void psetCurrentAlpha(Alpha alpha){
-     System.out.println("settingsx");
+     System.out.println("settingsx" + alpha);
         currentItem=alpha;
         
     }
@@ -290,9 +290,11 @@ public class AlphaScroller {
                 Alpha[] items = new Alpha[6];
 
                 model.add(items);
+                System.out.println("settingsx" + model);
             }
         }
         return model;
+         
     }
 
     public ArrayList<Facet> getColumns() {

@@ -51,7 +51,7 @@
                                          background-position:  0.5rem center;" 
                                          onclick="PF('createSMSUser').show();" 
                                          actionListener="#{smscontroller.resetSmsUser()}" />
-                       
+
                         <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
                             <div>
                                 <p:commandButton value="Add existing User" onclick="PF('existingUser').show();" />
@@ -74,7 +74,8 @@
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      currentPageReportTemplate="{totalRecords} records"
                                      scrollable="true"
-                                     resizableColumns="true" >
+                                     resizableColumns="true" 
+                                     >
                             <p:column headerText="Username" sortBy="#{data.username}" filterBy="#{data.username}" filterMatchMode="contains">
                                 <h:outputText value="#{data.username}" />
                             </p:column>
@@ -105,11 +106,11 @@
                                       >
                                 <h:outputText value="#{data.group}" />
                             </p:column>
-                           
+
                             <p:column headerText="Action" style="width:170px" exportable="false">
 
                                 <div style="display: flex; justify-content: space-between;">
-                                    
+
                                     <p:commandButton ajax="true"
                                                      id="managecreditsbutton"
                                                      icon="pi pi-credit-card"
@@ -132,7 +133,7 @@
                                                 update="senderId" 
                                                 event="click"/>
                                     </p:commandButton>
-                                    
+
                                     <p:commandButton 
                                         id="changepasswrd"
                                         icon="pi pi-pencil"
@@ -143,7 +144,7 @@
                                                 update="changepass" 
                                                 event="click"/>
                                     </p:commandButton>
-                                    
+
                                     <p:commandButton 
                                         id="editbutton"
                                         icon="pi pi-user-edit"
@@ -172,28 +173,28 @@
                             </p:column>
                         </p:dataTable>
                     </h:form>
-                    
+
                     <!-- Add existing user -->
                     <p:dialog widgetVar="existingUser"  id="existingUser"  modal="true" width="350" >
                         <h:form>
                             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                                 <p:outputLabel for="user" value="user"/>
-                                 <p:selectOneMenu id="user" value="#{smscontroller.username}" filter="true">
+                                <p:outputLabel for="user" value="user"/>
+                                <p:selectOneMenu id="user" value="#{smscontroller.username}" filter="true">
                                     <f:selectItem itemLabel="Select One existing user" itemValue=""/>
                                     <f:selectItems value="#{smscontroller.existingUsers}"/>
                                 </p:selectOneMenu>
-                                 
+
                                 <p:commandButton value ="Add"
                                                  action ="#{smscontroller.addExistingUser()}"
                                                  update =":showusers:table :msgs"
                                                  oncomplete="PF('existingUser').hide();" 
                                                  >
                                 </p:commandButton>
-                               
+
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                     <!--assign and update sender IDs-->
                     <p:dialog header="Assign and Manage Sender IDs" widgetVar="senderId" id="senderId" modal="true" width="800">
                         <h:form id = "numerics">
@@ -275,7 +276,7 @@
 
                                 <p:outputLabel for="newpass" value="New password"/>
                                 <p:inputText id="newpass" type="password" value="#{smscontroller.newPassword}" autocomplete="off"/>
-                                
+
                                 <p:outputLabel for="confirmpass" value="Confirm Password"/>
                                 <p:inputText id="confirmpass" type="password" value="#{smscontroller.confirmPassword}"/>
 
@@ -491,7 +492,9 @@
                                     <div class="field">
                                         <p:outputLabel for="groups" value="Group"/>
                                         <p:selectOneMenu id="groups" value="#{smscontroller.currentSmsUser.groupId}" filter="true">
-                                            <f:selectItem itemLabel="#{smscontroller.currentSmsUser.group}" itemValue="" />
+<!--                                            <f:selectItems value="#{smscontroller.listGroups}" var="group"
+                                                           itemLabel="#{group.label}" itemValue="#{group.value}" />-->
+<!--                                            <f:selectItem itemLabel="#{smscontroller.currentSmsUser.group}" itemValue="" />-->
                                             <f:selectItems value="#{smscontroller.listGroups}" var="group" itemLabel="#{group.label}" itemValue="#{group.value}" />
                                         </p:selectOneMenu>
                                     </div>
@@ -499,10 +502,19 @@
                                         <p:outputLabel for="alertthreshold" value="Alert Threshold"/>
                                         <p:inputText id="alertthreshold" value="#{smscontroller.currentSmsUser.alertThreshold}"/>
                                     </div>
+                                    <!--                                    <div class="field">
+                                                                            <p:outputLabel for="costpersms" value="Cost Per SMS"/>
+                                                                            <p:inputText id="costpersms" value="#{smscontroller.currentSmsUser.cost_per_sms}"/>
+                                                                        </div>-->
                                     <div class="field">
                                         <p:outputLabel for="costpersms" value="Cost Per SMS"/>
-                                        <p:inputText id="costpersms" value="#{smscontroller.currentSmsUser.cost_per_sms}"/>
+                                        <p:inputText id="costpersms" value="#{smscontroller.currentSmsUser.cost_per_sms}" required="true">
+                                            <f:validator validatorId="validateCredits"/>
+                                            <f:ajax event="blur" render="costPerSmsMessage"/>
+                                        </p:inputText>
+                                        <h:message for="costpersms" id="costPerSmsMessage" />
                                     </div>
+
                                     <div class="field">
                                         <p:outputLabel for="arrears" value="Arrears"/>
                                         <p:inputText id="arrears" value="#{smscontroller.currentSmsUser.arrears}"/>

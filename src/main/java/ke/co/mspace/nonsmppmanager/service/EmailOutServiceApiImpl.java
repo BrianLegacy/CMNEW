@@ -80,11 +80,11 @@ public class EmailOutServiceApiImpl implements EmailOutServiceApi {
             System.out.println("Connection established! ");
             int count = 0;
 
-            if (rs.next()) {
-                System.out.println("Data Present!");
-            } else {
-                System.out.println("No Data found!");
-            }
+//            if (rs.next()) {
+//                System.out.println("Data Present!");
+//            } else {
+//                System.out.println("No Data found!");
+//            }
 
             while (rs.next()) {
 //                System.out.println("data " + count++);

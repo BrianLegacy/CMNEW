@@ -125,6 +125,14 @@
                                      background-position: left;
                                      padding-left: 20px;" />
                     </p:submenu>
+                    <p:submenu label="Shared Shortcode" expanded="true" style="display:#{userScroller.show()}">
+                        <p:menuitem  value="Manage Sharedshortcode" actionListener="#{userInfo.viewsharedshortcode()}"  ajax="false"
+                                     style="background-image: url('#{resource['images/managecallback.png']}');
+                                     background-size: 1rem 1rem;
+                                     background-repeat: no-repeat;
+                                     background-position: left;
+                                     padding-left: 20px;" />
+                    </p:submenu>
                     <p:submenu rendered="#{userScroller.amIAdmin()}" label="My Account" expanded="true" >
                         <p:menuitem  value="My Profile " actionListener="#{userInfo.myProfile()}"
                                      ajax="false" icon="pi pi-user" />
@@ -156,7 +164,7 @@
                         <p:menuitem  value="Opt Out Report" actionListener="#{userInfo.optoutreport()}"  ajax="false" icon="pi pi-sign-out"/>
                         <p:menuitem  value="Credit History Report" actionListener="#{userInfo.credithistoryreport()}" 
                                      ajax="false" icon="pi pi-book " />
-<!--                        <p:menuitem value="Bulk Reports" actionListener="{userInfo.bulkReports()}" ajax="false" icon="pi pi-envelope"/>-->
+                        <!--                        <p:menuitem value="Bulk Reports" actionListener="{userInfo.bulkReports()}" ajax="false" icon="pi pi-envelope"/>-->
                         <!--<p:menuitem  value="Single User Visual Report" actionListener="{userInfo.singleuservisualreport()}"  ajax="false" icon="fa-solid fa-file-image" />-->
                         <!--<p:menuitem  value="All Users VIsual Report" actionListener="{userInfo.alluservisualreport()}"  ajax="false" icon="fa-solid fa-photo-film" />-->
                     </p:submenu>

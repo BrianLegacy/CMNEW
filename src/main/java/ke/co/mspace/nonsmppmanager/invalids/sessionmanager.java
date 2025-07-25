@@ -178,29 +178,81 @@ public class sessionmanager implements Serializable {
         return company_logopath;
 
     }
-
+    
+    //COMMENTED 16/7/25 to allow similaarity with earlier system
+    
+//    
+//    public void handleFileUpload(UploadedFile uploadedFile1) {
+////        UploadedFile item = event.getFile();
+////        System.out.println("");
+//
+//        UploadedFile item = uploadedFile1;
+//
+//        fileName = "";
+//        System.out.println("The file+ +++>>>" + item.getFileName());
+//        if (item.getFileName() != null) {
+//            //uploadedFile = event.getFile();
+//            //fileName = uploadedFile.getFileName();
+//
+//            fileName = linuxFileName(item.getFileName());
+//            System.out.println("The Linux file+ +++>>>" + fileName);
+//            try {
+//                InputStream inputs = uploadedFile1.getInputStream();
+//                System.out.println("inputs " + inputs);
+//                String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+//                String undersc = "-";
+//                fileName = undersc + fileName
+//                        .replace(" ", "-");
+//                fileName = timestamp.concat(fileName);
+//
+//                System.out.println("Name of Excel uploaded is " + fileName);
+//
+//                try {
+//                    System.out.println("Uploaded file:  " + fileName);
+//                    if (!fileName.isEmpty() || fileName != null) {
+//                        this.copyFile(fileName, inputs);
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            } catch (Exception m) {
+//                m.printStackTrace();
+////                messager = new FacesMessage(" Not Succesful", " Check the columns of your Excel file.");
+////                FacesContext.getCurrentInstance().addMessage(null, messager);
+//            }
+//
+//        } else {
+////            messager = new FacesMessage(" NOT Succesful", item.getFileName() + " is not  uploaded.");
+////            FacesContext.getCurrentInstance().addMessage(null, messager)
+    /// @param uploadedFile1;
+//        }
+//        System.out.println("Exiting file upload safely");
+//        path = "../files/config/" + fileName;
+//
+//    }
+    
+//   CREATED 16/7/25 to allow similaarity with earlier system
+    
     public void handleFileUpload(UploadedFile uploadedFile1) {
 //        UploadedFile item = event.getFile();
 //        System.out.println("");
-
-        UploadedFile item = uploadedFile1;
+        String loggedInUsername = (String) org.mspace.clientmanager.util.getsession.getSession().getAttribute("username");
 
         fileName = "";
-        System.out.println("The file+ +++>>>" + item.getFileName());
-        if (item.getFileName() != null) {
+        String fileNameExt;
+
+        System.out.println("The uploaded filename" + uploadedFile1.getFileName());
+        if (fileName != null) {
             //uploadedFile = event.getFile();
             //fileName = uploadedFile.getFileName();
 
-            fileName = linuxFileName(item.getFileName());
             System.out.println("The Linux file+ +++>>>" + fileName);
             try {
                 InputStream inputs = uploadedFile1.getInputStream();
                 System.out.println("inputs " + inputs);
-                String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                String undersc = "-";
-                fileName = undersc + fileName
-                        .replace(" ", "-");
-                fileName = timestamp.concat(fileName);
+                fileNameExt = uploadedFile1.getFileName().substring(uploadedFile1.getFileName().indexOf("."), uploadedFile1.getFileName().length());
+                fileName = loggedInUsername.toLowerCase().concat("Logo").trim().concat(fileNameExt);
 
                 System.out.println("Name of Excel uploaded is " + fileName);
 
@@ -302,7 +354,7 @@ public class sessionmanager implements Serializable {
     }
 
     public void storeData() {
-          updateTuser_username();
+        updateTuser_username();
 
         if (this.uploadedFile != null) {
             System.out.println("uploadedFile: " + uploadedFile.getFileName());
@@ -316,22 +368,21 @@ public class sessionmanager implements Serializable {
 
         System.out.println("updated username: " + loggedInuser);
         System.out.println("path: " + path);
-        
+
         String updateSql;
-        if(this.uploadedFile != null){
+        if (this.uploadedFile != null) {
             System.out.println("1 called");
             updateSql = "Update dbTASK.tClient set picPath='" + path + "', clientName='" + loggedInuser + "' where clientName='" + username + "'";
-        }else{
+        } else {
             System.out.println("2 called");
-           updateSql = "Update dbTASK.tClient set clientName='" + loggedInuser + "' where clientName='" + username + "'";
+            updateSql = "Update dbTASK.tClient set clientName='" + loggedInuser + "' where clientName='" + username + "'";
         }
-        
-       
+
         try {
             JdbcUtil jdbcUtil = new JdbcUtil();
 
             try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
-                System.out.println("update sql: " +updateSql);
+                System.out.println("update sql: " + updateSql);
                 PreparedStatement ps = conn.prepareStatement(updateSql);
                 int result = ps.executeUpdate();
                 if (result > 0) {
@@ -362,14 +413,14 @@ public class sessionmanager implements Serializable {
 
                 ps.setString(1, encryptedPassword);
                 ps.setLong(2, id);
-                
+
                 int result = ps.executeUpdate();
-                
-                if(result > 0){
+
+                if (result > 0) {
                     System.out.println("Successfully updated password");
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "info", "Successfully updated user password");
                     FacesContext.getCurrentInstance().addMessage(null, message);
-                }else{
+                } else {
                     System.out.println("Password not updated!");
                 }
 

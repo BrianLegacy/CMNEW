@@ -244,11 +244,11 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
 
             try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement pstmt = conn.prepareStatement(UserServiceImpl.isReseller().equalsIgnoreCase("none") ? sqlReseller : sql)) {
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    if(rs.next()){
-                        System.out.println("Data present");
-                    }else{
-                        System.out.println("No data present");
-                    }
+//                    if(rs.next()){
+//                        System.out.println("Data present");
+//                    }else{
+//                        System.out.println("No data present");
+//                    }
                     while (rs.next()) {
                         SMSOut smsOut = new SMSOut();
                         smsOut.setSourceAddr(rs.getString("source_addr"));
