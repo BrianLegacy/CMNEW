@@ -377,7 +377,7 @@ public class SMSOutServiceImpl implements SMSOutServiceApi {
         System.out.println("totalSms count " + totalSmsCount);
         return totalSmsCount;
     }
-
+    //RETURNS TOTAL MESSAGE (PAGES) IN SMS OUT REPORT
     private int getSmsCount(String msg) {
         int ret = 0;
 
