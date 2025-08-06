@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head />
+    <h:body>
+        <ui:composition> 
+            <style>
+                .formgrid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 20px;
+                    margin: 20px;
+                }
+                .field-full {
+                    grid-column: span 2;
+                }
+                .align-center {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            </style>
+
+            <p:growl id="msgs" showDetail="true" life="3000"/>
+            <div align="center">
+                <p:panel id="maintab" header="AVAILABLE SHORTCODES (Dedicated Only)">
+                    <h:form id="shortcodesForm">
+                        <p:commandButton value="Create New Shortcode" 
+                                         actionListener="#{dedicatedShortcodeController.prepareNewShortcode}"
+                                         oncomplete="PF('createShortcodeDialog').show();"
+                                         process="@this"
+                                         update=":createShortcodeForm"
+                                         style="margin-bottom: 1rem;
+                                         padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+                                         background-image: url('#{resource['images/shortcode.png']}');
+                                         background-size: 1.5rem 1.5rem;
+                                         background-repeat: no-repeat;
+                                         background-position: 0.5rem center;" ajax="true"/>
+
+                        <p:dataTable id="table" var="data" value="#{dedicatedShortcodeController.shortcodes}"
+                                     rows="10" paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" currentPageReportTemplate="{totalRecords} records">
+
+                            <p:column headerText="Username" filterBy="#{data.username}">
+                                <h:outputText value="#{data.username}" />
+                            </p:column>
+
+                            <p:column headerText="Keyword">
+                                <h:outputText value="#{data.keyword}" />
+                            </p:column>
+
+                            <p:column headerText="Shortcode">
+                                <h:outputText value="#{data.shortcode}" />
+                            </p:column>
+
+                            <p:column headerText="Callback URL">
+                                <h:outputText value="#{data.callbackUrl}" />
+                            </p:column>
+
+                            <p:column headerText="Status">
+                                <h:outputText value="#{data.status ? 'Active' : 'Inactive'}" />
+                            </p:column>
+
+                            <p:column headerText="Due Date">
+                                <h:outputText value="#{data.dueDate}" />
+                            </p:column>
+
+                            <p:column headerText="Disconnection Date">
+                                <h:outputText value="#{data.disconnectDate}" />
+                            </p:column>
+
+                            <p:column headerText="Action">
+                                <p:commandButton icon="pi pi-pencil" id="editBtn"
+                                                 update=":editShortcodeDialog"
+                                                 oncomplete="PF('editShortcodeDialog').show();">
+                                    <p:ajax listener="#{dedicatedShortcodeController.setCurrentShortcode(data)}"
+                                            update="editShortcodeDialog" event="click"/>
+                                    <p:tooltip for="editBtn" value="Edit Shortcode"/>
+                                </p:commandButton>
+
+                                <p:commandButton icon="pi pi-trash" id="deleteBtn"
+                                                 update=":deleteShortcodeDialog"
+                                                 oncomplete="PF('deleteShortcodeDialog').show();">
+                                    <p:ajax listener="#{dedicatedShortcodeController.setCurrentShortcode(data)}"
+                                            update="deleteShortcodeDialog" event="click"/>
+                                    <p:tooltip for="deleteBtn" value="Delete Shortcode"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+
+                <!-- Create Shortcode Dialog -->
+                <p:dialog header="Create New Shortcode" widgetVar="createShortcodeDialog" modal="true" width="700">
+                    <h:form id="createShortcodeForm">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="user" value="User"/>
+                            <p:selectOneMenu id="user" value="#{dedicatedShortcodeController.username}" filter="true">
+                                <f:selectItem itemLabel="Select User" itemValue=""/>
+                                <f:selectItems value="#{sMSOut.data}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="keyword" value="Keyword"/>
+                            <p:inputText id="keyword" value="#{dedicatedShortcodeController.newShortcode.keyword}" required="false" />
+
+                            <p:outputLabel for="shortcode" value="Shortcode"/>
+                            <p:inputText id="shortcode" value="#{dedicatedShortcodeController.newShortcode.shortcode}" required="true"/>
+
+                            <p:outputLabel for="callbackUrl" value="Callback URL"/>
+                            <p:inputText id="callbackUrl" value="#{dedicatedShortcodeController.newShortcode.callbackUrl}" required="false"/>
+
+                            <p:outputLabel for="status" value="Status"/>
+                            <p:selectOneMenu id="status" value="#{dedicatedShortcodeController.newShortcode.status}">
+                                <f:selectItem itemLabel="Select One"/>
+                                <f:selectItem itemLabel="Active" itemValue="true"/>
+                                <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="dueDate" value="Due Date"/>
+                            <p:calendar id="dueDate" pattern="yyyy-MM-dd" value="#{dedicatedShortcodeController.newShortcode.dueDate}"/>
+
+                            <p:outputLabel for="disconnectDate" value="Disconnect Date"/>
+                            <p:calendar id="disconnectDate" pattern="yyyy-MM-dd" value="#{dedicatedShortcodeController.newShortcode.disconnectDate}"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Save" icon="fa fa-save"
+                                         action="#{dedicatedShortcodeController.createShortcode()}"
+                                         update=":shortcodesForm:table :msgs"
+                                         oncomplete="PF('createShortcodeDialog').hide();"/>
+                    </h:form>
+                </p:dialog>
+
+                <!-- Edit Shortcode Dialog -->
+                <p:dialog id="editShortcodeDialog" header="Edit Shortcode" widgetVar="editShortcodeDialog" modal="true" width="700">
+                    <h:form id="editShortcodeForm">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="User ID"/>
+                            <p:inputText value="#{dedicatedShortcodeController.currentShortcode.userid}" readonly="true"/>
+
+                            <p:outputLabel value="Username"/>
+                            <p:inputText value="#{dedicatedShortcodeController.currentShortcode.username}" readonly="true"/>
+
+                            <p:outputLabel value="Keyword"/>
+                            <p:inputText value="#{dedicatedShortcodeController.currentShortcode.keyword}" />
+
+                            <p:outputLabel value="Shortcode"/>
+                            <p:inputText value="#{dedicatedShortcodeController.currentShortcode.shortcode}" readonly="true"/>
+
+                            <p:outputLabel value="Callback URL"/>
+                            <p:inputText value="#{dedicatedShortcodeController.currentShortcode.callbackUrl}"/>
+
+                            <p:outputLabel value="Status"/>
+                            <p:selectOneMenu value="#{dedicatedShortcodeController.currentShortcode.status}">
+                                <f:selectItem itemLabel="Active" itemValue="true"/>
+                                <f:selectItem itemLabel="Inactive" itemValue="false"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Due Date"/>
+                            <p:calendar value="#{dedicatedShortcodeController.currentShortcode.dueDate}" pattern="yyyy-MM-dd"/>
+
+                            <p:outputLabel value="Disconnect Date"/>
+                            <p:calendar value="#{dedicatedShortcodeController.currentShortcode.disconnectDate}" pattern="yyyy-MM-dd"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Save"
+                                         action="#{dedicatedShortcodeController.editShortcode()}"
+                                         update=":shortcodesForm:table :msgs"
+                                         oncomplete="PF('editShortcodeDialog').hide();"/>
+                        <p:commandButton value="Cancel" onclick="PF('editShortcodeDialog').hide();"/>
+                    </h:form>
+                </p:dialog>
+
+                <!-- Delete Shortcode Dialog -->
+                <p:dialog id="deleteShortcodeDialog" header="Delete Shortcode" widgetVar="deleteShortcodeDialog" modal="true">
+                    <h:form>
+                        <p:outputLabel value="Are you sure you want to delete shortcode '#{dedicatedShortcodeController.currentShortcode.shortcode}'? This cannot be undone."/>
+                        <div style="margin-top:10px; display:flex; justify-content:center">
+                            <p:commandButton value="Delete"
+                                             action="#{dedicatedShortcodeController.deleteShortcode()}"
+                                             update=":shortcodesForm:table :msgs"
+                                             oncomplete="PF('deleteShortcodeDialog').hide();"
+                                             style="margin-right:10px"/>
+                            <p:commandButton value="Cancel" onclick="PF('deleteShortcodeDialog').hide();"/>
+                        </div>
+                    </h:form>
+                </p:dialog>
+            </div>
+        </ui:composition>
+    </h:body>
+</html>

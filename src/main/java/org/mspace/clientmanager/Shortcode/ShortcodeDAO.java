@@ -16,6 +16,8 @@ public interface ShortcodeDAO {
     boolean createShortcode(ShortcodeModel shortcode);
 
     List<ShortcodeModel> fetchShortcodes();
+    List<ShortcodeModel> fetchShortcodesWithNullKeyword();
+
 
     boolean editShortcode(ShortcodeModel shortcode);
 

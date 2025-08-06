@@ -17,13 +17,15 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
 
     @Override
     public List<ShortcodeModel> fetchShortcodes() {
+//        String sql = "SELECT * FROM dbSMS.shared_shortcode "
+//                + "LEFT JOIN dbSMS.tUSER ON dbSMS.shared_shortcode.userid = dbSMS.tUSER.id";
         String sql = "SELECT * FROM dbSMS.shared_shortcode "
-                   + "LEFT JOIN dbSMS.tUSER ON dbSMS.shared_shortcode.userid = dbSMS.tUSER.id";
+                + "LEFT JOIN dbSMS.tUSER ON dbSMS.shared_shortcode.userid = dbSMS.tUSER.id "
+                + "WHERE keyword IS NOT NULL AND keyword <> ''";
+
         List<ShortcodeModel> shortcodeList = new ArrayList<>();
 
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 ShortcodeModel shortcode = new ShortcodeModel();
@@ -50,9 +52,8 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
     @Override
     public boolean createShortcode(ShortcodeModel shortcode) {
         String sql = "INSERT INTO dbSMS.shared_shortcode(userid, username, shortcode, callback_url, status, due_date, disconnect_date, keyword) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, shortcode.getUserid());
             ps.setString(2, shortcode.getUsername());
@@ -75,8 +76,7 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
     @Override
     public boolean editShortcode(ShortcodeModel shortcode) {
         String sql = "UPDATE dbSMS.shared_shortcode SET shortcode=?, callback_url=?, status=?, due_date=?, disconnect_date=?, keyword=? WHERE id=?";
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, shortcode.getShortcode());
             ps.setString(2, shortcode.getCallbackUrl());
@@ -98,8 +98,7 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
     @Override
     public boolean deleteShortcode(ShortcodeModel shortcode) {
         String sql = "DELETE FROM dbSMS.shared_shortcode WHERE id=?";
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, shortcode.getId());
             return ps.executeUpdate() > 0;
@@ -110,4 +109,37 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
 
         return false;
     }
+
+    //DEDICATED SHORTCODE
+    @Override
+    public List<ShortcodeModel> fetchShortcodesWithNullKeyword() {
+        String sql = "SELECT * FROM dbSMS.shared_shortcode "
+                + "LEFT JOIN dbSMS.tUSER ON dbSMS.shared_shortcode.userid = dbSMS.tUSER.id "
+                + "WHERE keyword IS NULL OR keyword = '' ";
+        List<ShortcodeModel> shortcodeList = new ArrayList<>();
+
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ShortcodeModel shortcode = new ShortcodeModel();
+                shortcode.setId(rs.getInt("id"));
+                shortcode.setUserid(rs.getInt("userid"));
+                shortcode.setUsername(rs.getString("username"));
+                shortcode.setShortcode(rs.getString("shortcode"));
+                shortcode.setKeyword(rs.getString("keyword"));
+                shortcode.setCallbackUrl(rs.getString("callback_url"));
+                shortcode.setStatus(rs.getBoolean("status"));
+                shortcode.setDueDate(rs.getDate("due_date"));
+                shortcode.setDisconnectDate(rs.getDate("disconnect_date"));
+
+                shortcodeList.add(shortcode);
+            }
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+        return shortcodeList;
+    }
+
 }

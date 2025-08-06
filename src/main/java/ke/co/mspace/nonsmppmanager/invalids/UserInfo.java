@@ -42,7 +42,6 @@ public class UserInfo implements Serializable {
         return facePainter;
     }
 
-
     public void setFacePainter(FacePainter facePainter) {
         this.facePainter = facePainter;
     }
@@ -58,16 +57,20 @@ public class UserInfo implements Serializable {
     public void viewcallbacks() {
         facePainter.setMainContent("clientmanager/callbacks/managecallbacks.xhtml");
     }
-    
-        public void viewsharedshortcode() {
+
+    public void viewsharedshortcode() {
         facePainter.setMainContent("clientmanager/sharedshortcode/managesharedshortcode.xhtml");
+    }
+//DEDICATED SHORTCODE
+    public void viewdedicatedshortcode() {
+        facePainter.setMainContent("clientmanager/sharedshortcode/dedicatedshortcode.xhtml");
     }
 
     public void smsoutreport() {
         facePainter.setMainContent("clientmanager/reports/smsoutreport.xhtml");
     }
-    
-    public void emailoutreport(){
+
+    public void emailoutreport() {
         facePainter.setMainContent("clientmanager/reports/emailoutreport.xhtml");
     }
 
@@ -90,8 +93,8 @@ public class UserInfo implements Serializable {
     public void credithistoryreport() {
         facePainter.setMainContent("clientmanager/reports/credithistoryreport.xhtml");
     }
-    
-    public void bulkReports(){
+
+    public void bulkReports() {
         facePainter.setMainContent("clientmanager/reports/bulkreports.xhtml");
     }
 
@@ -127,7 +130,6 @@ public class UserInfo implements Serializable {
     public void manageReseller() {
         facePainter.setMainContent("clientmanager/managereseller/managereseller.xhtml");
     }
-
 
     public void viewsmsuser() {
         facePainter.setMainContent("clientmanager/manageuserdetails/showsmsusers.xhtml");
@@ -244,7 +246,7 @@ public class UserInfo implements Serializable {
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/Mspesa_dashboard.xhtml");
         } else {
-           
+
             PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
@@ -265,7 +267,7 @@ public class UserInfo implements Serializable {
         if (maxTotal > 1) {
             facePainter.setMainContent("MspacePESA/processed.xhtml");
         } else {
-           PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
+            PrimeFaces.current().executeScript("PF('myDialogVar2').show();");
         }
     }
 
