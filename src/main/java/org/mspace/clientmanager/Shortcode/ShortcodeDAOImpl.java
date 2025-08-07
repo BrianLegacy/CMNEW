@@ -49,23 +49,61 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
         return shortcodeList;
     }
 
+//    @Override
+//    public boolean createShortcode(ShortcodeModel shortcode) {
+//        String sql = "INSERT INTO dbSMS.shared_shortcode(userid, username, shortcode, callback_url, status, due_date, disconnect_date, keyword) "
+//                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+//        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//            ps.setInt(1, shortcode.getUserid());
+//            ps.setString(2, shortcode.getUsername());
+//            ps.setString(3, shortcode.getShortcode());
+//            ps.setString(4, shortcode.getCallbackUrl());
+//            ps.setBoolean(5, shortcode.isStatus());
+//            ps.setDate(6, new java.sql.Date(shortcode.getDueDate().getTime()));
+//            ps.setDate(7, new java.sql.Date(shortcode.getDisconnectDate().getTime()));
+//            ps.setString(8, shortcode.getKeyword());
+//
+//            return ps.executeUpdate() > 0;
+//
+//        } catch (SQLException ex) {
+//            LOGGER.log(Level.SEVERE, null, ex);
+//        }
+//
+//        return false;
+//    }
     @Override
     public boolean createShortcode(ShortcodeModel shortcode) {
-        String sql = "INSERT INTO dbSMS.shared_shortcode(userid, username, shortcode, callback_url, status, due_date, disconnect_date, keyword) "
+        String insertSQL = "INSERT INTO dbSMS.shared_shortcode(userid, username, shortcode, callback_url, status, due_date, disconnect_date, keyword) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        String updateUserSQL = "UPDATE dbSMS.tUSER SET short_codes = "
+                + "CONCAT_WS(',', IFNULL(NULLIF(short_codes, ''), NULL), ?) "
+                + "WHERE id = ? AND FIND_IN_SET(?, short_codes) = 0";
 
-            ps.setInt(1, shortcode.getUserid());
-            ps.setString(2, shortcode.getUsername());
-            ps.setString(3, shortcode.getShortcode());
-            ps.setString(4, shortcode.getCallbackUrl());
-            ps.setBoolean(5, shortcode.isStatus());
-            ps.setDate(6, new java.sql.Date(shortcode.getDueDate().getTime()));
-            ps.setDate(7, new java.sql.Date(shortcode.getDisconnectDate().getTime()));
-            ps.setString(8, shortcode.getKeyword());
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            conn.setAutoCommit(false); // Begin transaction
 
-            return ps.executeUpdate() > 0;
+            try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
+                ps.setInt(1, shortcode.getUserid());
+                ps.setString(2, shortcode.getUsername());
+                ps.setString(3, shortcode.getShortcode());
+                ps.setString(4, shortcode.getCallbackUrl());
+                ps.setBoolean(5, shortcode.isStatus());
+                ps.setDate(6, new java.sql.Date(shortcode.getDueDate().getTime()));
+                ps.setDate(7, new java.sql.Date(shortcode.getDisconnectDate().getTime()));
+                ps.setString(8, shortcode.getKeyword());
+                ps.executeUpdate();
+            }
 
+            try (PreparedStatement ps2 = conn.prepareStatement(updateUserSQL)) {
+                ps2.setString(1, shortcode.getShortcode());
+                ps2.setInt(2, shortcode.getUserid());
+                ps2.setString(3, shortcode.getShortcode());
+                ps2.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
