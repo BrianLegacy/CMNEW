@@ -231,6 +231,7 @@
     </dependencies>
 
     <build>
+         <finalName>cmaz</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
