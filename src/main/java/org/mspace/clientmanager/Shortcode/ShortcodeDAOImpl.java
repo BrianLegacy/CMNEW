@@ -133,14 +133,59 @@ public class ShortcodeDAOImpl implements ShortcodeDAO {
         return false;
     }
 
+//    @Override
+//    public boolean deleteShortcode(ShortcodeModel shortcode) {
+//        String sql = "DELETE FROM dbSMS.shared_shortcode WHERE id=?";
+//        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//            ps.setInt(1, shortcode.getId());
+//            return ps.executeUpdate() > 0;
+//
+//        } catch (SQLException ex) {
+//            LOGGER.log(Level.SEVERE, null, ex);
+//        }
+//
+//        return false;
+//    }
     @Override
     public boolean deleteShortcode(ShortcodeModel shortcode) {
-        String sql = "DELETE FROM dbSMS.shared_shortcode WHERE id=?";
-        try (Connection conn = jdbcUtil.getConnectionTodbSMS(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        String getShortcodeSQL = "SELECT shortcode, userid FROM dbSMS.shared_shortcode WHERE id = ?";
+        String deleteSQL = "DELETE FROM dbSMS.shared_shortcode WHERE id=?";
+        String updateUserSQL = "UPDATE dbSMS.tUSER SET short_codes = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', short_codes, ','), ?, ',')) WHERE id = ?";
 
-            ps.setInt(1, shortcode.getId());
-            return ps.executeUpdate() > 0;
+        try (Connection conn = jdbcUtil.getConnectionTodbSMS()) {
+            conn.setAutoCommit(false);
 
+            String shortcodeStr = null;
+            int userId = -1;
+
+            try (PreparedStatement ps1 = conn.prepareStatement(getShortcodeSQL)) {
+                ps1.setInt(1, shortcode.getId());
+                try (ResultSet rs = ps1.executeQuery()) {
+                    if (rs.next()) {
+                        shortcodeStr = rs.getString("shortcode");
+                        userId = rs.getInt("userid");
+                    }
+                }
+            }
+
+            if (shortcodeStr == null || userId == -1) {
+                return false;
+            }
+
+            try (PreparedStatement ps2 = conn.prepareStatement(deleteSQL)) {
+                ps2.setInt(1, shortcode.getId());
+                ps2.executeUpdate();
+            }
+
+            try (PreparedStatement ps3 = conn.prepareStatement(updateUserSQL)) {
+                ps3.setString(1, "," + shortcodeStr + ",");
+                ps3.setInt(2, userId);
+                ps3.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
