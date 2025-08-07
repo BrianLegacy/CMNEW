@@ -105,8 +105,8 @@
                                 <f:selectItems value="#{sMSOut.data}" />
                             </p:selectOneMenu>
 
-                            <p:outputLabel for="keyword" value="Keyword"/>
-                            <p:inputText id="keyword" value="#{dedicatedShortcodeController.newShortcode.keyword}" required="false" />
+                            <p:outputLabel for="keyword" value="Keyword" style="display: none"/>
+                            <p:inputText id="keyword" style="display: none" value="#{dedicatedShortcodeController.newShortcode.keyword}" required="false" />
 
                             <p:outputLabel for="shortcode" value="Shortcode"/>
                             <p:inputText id="shortcode" value="#{dedicatedShortcodeController.newShortcode.shortcode}" required="true"/>
