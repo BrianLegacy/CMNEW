@@ -22,7 +22,7 @@ jobs:
     - name: Build WAR
       run: mvn clean package
 
-    - name: Copy WAR to remote server (deploy folder)
+    - name: Copy WAR to remote server (flattened)
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -30,6 +30,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: target/cmaz.war
         target: /home/azureuser/deploy/
+        strip_components: 1
 
     - name: Move WAR to Tomcat and Restart
       uses: appleboy/ssh-action@master
@@ -38,6 +39,11 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          sudo mv /home/azureuser/deploy/cmaz.war /opt/tomcat/webapps/
-          sudo systemctl restart tomcat
+          if [ -f /home/azureuser/deploy/cmaz.war ]; then
+            sudo mv /home/azureuser/deploy/cmaz.war /opt/tomcat/webapps/
+            sudo systemctl restart tomcat
+          else
+            echo "WAR file not found in /home/azureuser/deploy"
+            exit 1
+          fi
 
