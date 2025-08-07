@@ -40,11 +40,11 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
-          
-          # Backup if existing WAR is present
-          if [ -f /opt/tomcat/webapps/cmaz.war ]; then
+
+          # Backup if existing WAR is present (check with sudo)
+          if sudo test -f /opt/tomcat/webapps/cmaz.war; then
             echo "Backing up existing WAR..."
-            cp /opt/tomcat/webapps/cmaz.war /home/azureuser/backups/cmaz-${TIMESTAMP}.war
+            sudo cp /opt/tomcat/webapps/cmaz.war /home/azureuser/backups/cmaz-${TIMESTAMP}.war
           else
             echo "No existing WAR to backup."
           fi
