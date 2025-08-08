@@ -27,7 +27,7 @@
 
             <p:growl id="msgs" showDetail="true" life="3000"/>
             <div align="center">
-                <p:panel id="maintab" header="AVAILABLE SHORTCODES">
+                <p:panel id="maintab" header="AVAILABLE SHORTCODES (SHARED)">
                     <h:form id="shortcodesForm">
                         <p:commandButton value="Create New Shortcode" 
                                          actionListener="#{shortcodeController.prepareNewShortcode}"
@@ -100,7 +100,7 @@
                     <h:form id="createShortcodeForm">
                         <p:panelGrid columns="2">
                             <p:outputLabel for="user" value="User"/>
-                            <p:selectOneMenu id="user" value="#{shortcodeController.username}" filter="true">
+                            <p:selectOneMenu id="user" value="#{shortcodeController.username}" filter="true" required="true">
                                 <f:selectItem itemLabel="Select User" itemValue=""/>
                                 <f:selectItems value="#{sMSOut.data}" />
                             </p:selectOneMenu>
